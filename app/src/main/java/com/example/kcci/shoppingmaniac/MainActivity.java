@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
                         // TODO: handle navigation
 
+
                         // Closing drawer on item click
                         mDrawerLayout.closeDrawers();
                         return true;
