@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 public class ListContentFragment extends Fragment {
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
