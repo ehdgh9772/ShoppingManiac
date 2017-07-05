@@ -5,4 +5,5 @@ package com.example.kcci.shoppingmaniac;
  */
 
 public class DatabaseManager {
+    
 }
