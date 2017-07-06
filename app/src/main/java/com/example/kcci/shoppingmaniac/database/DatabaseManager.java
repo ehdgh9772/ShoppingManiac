@@ -2,6 +2,8 @@ package com.example.kcci.shoppingmaniac.database;
 
 import android.os.AsyncTask;
 
+import com.example.kcci.shoppingmaniac.type.*;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -10,7 +12,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 
 /**
  * Created by koo on 17. 7. 6.
@@ -19,7 +20,8 @@ import java.util.ArrayList;
 public class DatabaseManager {
 
     private String RESULT = "result";
-    private SaleInfo[] _saleInfos;
+    private DiscountInfo[] _discountInfos;
+    private String _rootUrl = "server.raystar.kro.kr:3030/";
 
     public void getData(final String url) {
         class GetDataJSON extends AsyncTask<String, Void, String> {
@@ -48,7 +50,6 @@ public class DatabaseManager {
 
             protected void onPostExecute(String str) {
                 distributeJSON(parseToJSON(str), url);
-
             }
         }
         GetDataJSON g = new GetDataJSON();
@@ -69,7 +70,7 @@ public class DatabaseManager {
 
         JSONConverter converter = new JSONConverter();
         switch (url) {
-            case "selectAllSaleInfo":
+            case "saleinfo":
                 converter.convertToSale(json);
                 break;
             default:
@@ -77,20 +78,34 @@ public class DatabaseManager {
         }
     }
 
+    public void request(String requestUrl){
+        String url = _rootUrl + requestUrl;
+        getData(url);
+    }
+    //TODO GET방식 요청 오버로딩
+//    public void request(String requestUrl, String... params){
+//        StringBuilder builder = new StringBuilder(_rootUrl);
+//        builder.append(requestUrl).append("?");
+//        for (int i = 0; i < params.length ; i = i + 2) {
+//            builder.append(params[i]).append("/")
+//        }
+//        getData(url);
+//    }
+
     class JSONConverter {
 
         void convertToSale(JSONObject json) {
             try {
                 JSONArray jsArray = json.getJSONArray(RESULT);
-                _saleInfos = new SaleInfo[jsArray.length()];
+                _discountInfos = new DiscountInfo[jsArray.length()];
                 for (int i = 0; i < jsArray.length(); i++) {
                     JSONObject c = jsArray.getJSONObject(i);
-                    _saleInfos[i] = new SaleInfo();
-                    _saleInfos[i].name = c.getString("Name");
-                    _saleInfos[i].discountType = c.getString("DiscountType");
-                    _saleInfos[i].price = c.getString("Price");
-                    _saleInfos[i].discountedPrice = c.getString("DiscountedPrice");
-                    _saleInfos[i].category = c.getString("Category");
+                    _discountInfos[i] = new DiscountInfo();
+                    _discountInfos[i].name = c.getString("Name");
+                    _discountInfos[i].discountType = c.getString("DiscountType");
+                    _discountInfos[i].price = c.getString("Price");
+                    _discountInfos[i].discountedPrice = c.getString("DiscountedPrice");
+                    _discountInfos[i].category = c.getString("Category");
                 }
                 _loadCompleteListener.onLoadComplete();
             } catch (Exception e) {
@@ -98,6 +113,8 @@ public class DatabaseManager {
             }
         }
     }
+
+    //region LoadCompleteListener
     LoadCompleteListener _loadCompleteListener;
 
     interface LoadCompleteListener {
@@ -108,4 +125,5 @@ public class DatabaseManager {
         if (_loadCompleteListener != loadCompleteListener)
             _loadCompleteListener = loadCompleteListener;
     }
+    //endregion
 }
