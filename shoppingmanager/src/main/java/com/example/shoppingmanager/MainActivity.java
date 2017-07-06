@@ -1,9 +1,11 @@
 package com.example.shoppingmanager;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -20,7 +22,10 @@ public class MainActivity extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        Intent intent=new Intent(MainActivity.this,ImageShooting.class);
+                        startActivity(intent);
 
+                        Toast.makeText(getApplicationContext(), "촬영 화면으로 이동", Toast.LENGTH_LONG).show();
                     }
                 }
         );
