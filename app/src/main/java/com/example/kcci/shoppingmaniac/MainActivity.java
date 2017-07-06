@@ -63,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
 
                         // TODO: handle navigation
 
-
                         // Closing drawer on item click
                         mDrawerLayout.closeDrawers();
                         return true;
@@ -83,8 +82,6 @@ public class MainActivity extends AppCompatActivity {
     // Add Fragments to Tabs
     private void setupViewPager(ViewPager viewPager) {
         Adapter adapter = new Adapter(getSupportFragmentManager());
-        //adapter.addFragment(new ListContentFragment(), "List");
-        //adapter.addFragment(new TileContentFragment(), "Tile");
         adapter.addFragment(new CardContentFragment(), "이마트 화곡역점");
         viewPager.setAdapter(adapter);
     }
