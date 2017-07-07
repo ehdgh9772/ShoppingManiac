@@ -64,6 +64,7 @@ public class DatabaseManager {
                     return "{}";
                 }
             }
+            
 
             protected void onPostExecute(String str) {
                 Log.i("log", "Posting");
