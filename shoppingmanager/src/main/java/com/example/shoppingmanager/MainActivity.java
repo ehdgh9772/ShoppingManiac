@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
                         Intent intent=new Intent(MainActivity.this,ImageShooting.class);
                         startActivity(intent);
 
-                        Toast.makeText(getApplicationContext(), "촬영 화면으로 이동", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "촬영 화면으로 이동", Toast.LENGTH_SHORT).show();
                     }
                 }
         );
@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
                         Intent intent=new Intent(MainActivity.this,ListInquiry.class);
                         startActivity(intent);
 
-                        Toast.makeText(getApplicationContext(), "목록 조회화면으로 이동", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "목록 조회화면으로 이동", Toast.LENGTH_SHORT).show();
                     }
                 }
         );
