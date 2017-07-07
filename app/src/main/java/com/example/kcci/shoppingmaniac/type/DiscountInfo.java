@@ -10,4 +10,6 @@ public class DiscountInfo {
     public String price;
     public String discountedPrice;
     public String category;
+    public String startTime;
+    public String endTime;
 }
