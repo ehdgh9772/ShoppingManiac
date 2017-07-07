@@ -13,6 +13,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Objects;
 
 /**
@@ -84,27 +85,29 @@ public class DatabaseManager {
         }
     }
 
-    public DiscountInfo[] getDiscountInfos() {
+    public ArrayList<DiscountInfo> getDiscountInfos() {
         return _discountInfos;
     }
 
-    private DiscountInfo[] _discountInfos;
+    private ArrayList<DiscountInfo> _discountInfos;
 
     private void convert(JSONObject json, String url) {
         if (Objects.equals(url, "discountinfo")) {
             try {
                 JSONArray jsArray = json.getJSONArray(url);
-                _discountInfos = new DiscountInfo[jsArray.length()];
+                _discountInfos = new ArrayList();
                 for (int i = 0; i < jsArray.length(); i++) {
                     JSONObject c = jsArray.getJSONObject(i);
-                    _discountInfos[i] = new DiscountInfo();
-                    _discountInfos[i].name = c.getString("Name");
-                    _discountInfos[i].discountType = c.getString("DiscountType");
-                    _discountInfos[i].price = c.getString("Price");
-                    _discountInfos[i].discountedPrice = c.getString("DiscountedPrice");
-                    _discountInfos[i].category = c.getString("Category");
-                    _discountInfos[i].startTime = c.getString("StartTime");
-                    _discountInfos[i].endTime = c.getString("EndTime");
+                    DiscountInfo discountInfo = new DiscountInfo();
+                    discountInfo.name = c.getString("Name");
+                    discountInfo.discountType = c.getString("DiscountType");
+                    discountInfo.price = c.getString("Price");
+                    discountInfo.discountedPrice = c.getString("DiscountedPrice");
+                    discountInfo.category = c.getString("Category");
+                    discountInfo.startTime = c.getString("StartTime");
+                    discountInfo.endTime = c.getString("EndTime");
+
+                    _discountInfos.add(discountInfo);
                     Log.i("tag", "put on array");
                 }
             } catch (Exception e) {
