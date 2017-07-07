@@ -30,6 +30,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
+    private ArrayList<DiscountInfo> infos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,12 +39,11 @@ public class MainActivity extends AppCompatActivity {
 
         final DatabaseManager manager = new DatabaseManager();
 
-        manager.request("beacon");
-        final DiscountInfo[][] infos = {new DiscountInfo[100]};
+        manager.request("discountinfo");
         manager.setLoadCompleteListener(new DatabaseManager.LoadCompleteListener() {
             @Override
             public void onLoadComplete() {
-                infos[0] = manager.getDiscountInfos();
+                infos = manager.getDiscountInfos();
             }
         });
         // Adding Toolbar to Main screen
