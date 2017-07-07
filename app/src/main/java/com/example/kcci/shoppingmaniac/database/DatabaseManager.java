@@ -1,6 +1,7 @@
 package com.example.kcci.shoppingmaniac.database;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.example.kcci.shoppingmaniac.type.*;
 
@@ -12,6 +13,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Objects;
 
 /**
  * Created by koo on 17. 7. 6.
@@ -19,11 +21,23 @@ import java.net.URL;
 
 public class DatabaseManager {
 
-    private String RESULT = "result";
-    private DiscountInfo[] _discountInfos;
-    private String _rootUrl = "server.raystar.kro.kr:3030/";
+    private String _protocol = "http://server.raystar.kro.kr:3030/";
 
-    public void getData(final String url) {
+    public void request(String requestUrl) {
+        String url = _protocol + requestUrl;
+        getData(requestUrl);
+    }
+    //TODO GET방식 요청 오버로딩
+//    public void request(String requestUrl, String... params){
+//        StringBuilder builder = new StringBuilder(_protocol);
+//        builder.append(requestUrl).append("?");
+//        for (int i = 0; i < params.length ; i = i + 2) {
+//            builder.append(params[i]).append("=")
+//        }
+//        getData(url);
+//    }
+
+    private void getData(final String url) {
         class GetDataJSON extends AsyncTask<String, Void, String> {
 
             @Override
@@ -32,7 +46,7 @@ public class DatabaseManager {
 
                 BufferedReader bufferedReader;
                 try {
-                    URL url = new URL(uri);
+                    URL url = new URL(_protocol + uri);
                     HttpURLConnection con = (HttpURLConnection) url.openConnection();
                     StringBuilder sb = new StringBuilder();
 
@@ -42,14 +56,18 @@ public class DatabaseManager {
                     while ((json = bufferedReader.readLine()) != null) {
                         sb.append(json + "\n");
                     }
+                    Log.i("log", "Downloading");
                     return sb.toString().trim();
                 } catch (Exception e) {
-                    return "ERROR";
+                    System.out.println(e.getMessage());
+                    return "{}";
                 }
             }
 
             protected void onPostExecute(String str) {
-                distributeJSON(parseToJSON(str), url);
+                Log.i("log", "Posting");
+                convert(parseToJSON(str), url);
+                _loadCompleteListener.onLoadComplete();
             }
         }
         GetDataJSON g = new GetDataJSON();
@@ -66,37 +84,16 @@ public class DatabaseManager {
         }
     }
 
-    private void distributeJSON(JSONObject json, String url) {
-
-        JSONConverter converter = new JSONConverter();
-        switch (url) {
-            case "saleinfo":
-                converter.convertToSale(json);
-                break;
-            default:
-                break;
-        }
+    public DiscountInfo[] getDiscountInfos() {
+        return _discountInfos;
     }
 
-    public void request(String requestUrl){
-        String url = _rootUrl + requestUrl;
-        getData(url);
-    }
-    //TODO GET방식 요청 오버로딩
-//    public void request(String requestUrl, String... params){
-//        StringBuilder builder = new StringBuilder(_rootUrl);
-//        builder.append(requestUrl).append("?");
-//        for (int i = 0; i < params.length ; i = i + 2) {
-//            builder.append(params[i]).append("/")
-//        }
-//        getData(url);
-//    }
+    private DiscountInfo[] _discountInfos;
 
-    class JSONConverter {
-
-        void convertToSale(JSONObject json) {
+    private void convert(JSONObject json, String url) {
+        if (Objects.equals(url, "discountinfo")) {
             try {
-                JSONArray jsArray = json.getJSONArray(RESULT);
+                JSONArray jsArray = json.getJSONArray(url);
                 _discountInfos = new DiscountInfo[jsArray.length()];
                 for (int i = 0; i < jsArray.length(); i++) {
                     JSONObject c = jsArray.getJSONObject(i);
@@ -106,8 +103,10 @@ public class DatabaseManager {
                     _discountInfos[i].price = c.getString("Price");
                     _discountInfos[i].discountedPrice = c.getString("DiscountedPrice");
                     _discountInfos[i].category = c.getString("Category");
+                    _discountInfos[i].startTime = c.getString("StartTime");
+                    _discountInfos[i].endTime = c.getString("EndTime");
+                    Log.i("tag", "put on array");
                 }
-                _loadCompleteListener.onLoadComplete();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -117,7 +116,7 @@ public class DatabaseManager {
     //region LoadCompleteListener
     LoadCompleteListener _loadCompleteListener;
 
-    interface LoadCompleteListener {
+    public interface LoadCompleteListener {
         void onLoadComplete();
     }
 
