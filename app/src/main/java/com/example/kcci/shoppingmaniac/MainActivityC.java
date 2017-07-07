@@ -40,7 +40,6 @@ public class MainActivityC extends Activity {
                         startActivity(new Intent(this, LineChartActivity.class));
 
 //                break;
-
                 }
             }
         });
