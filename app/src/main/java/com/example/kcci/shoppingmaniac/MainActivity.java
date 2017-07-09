@@ -9,7 +9,6 @@ import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.content.Loader;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -21,7 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.example.kcci.shoppingmaniac.database.DatabaseManager;
+import com.example.kcci.shoppingmaniac.database.Database;
 import com.example.kcci.shoppingmaniac.type.DiscountInfo;
 
 import java.util.ArrayList;
@@ -37,13 +36,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final DatabaseManager manager = new DatabaseManager();
+        final Database manager = new Database();
 
         manager.request("discountinfo");
-        manager.setLoadCompleteListener(new DatabaseManager.LoadCompleteListener() {
+        manager.setLoadCompleteListener(new Database.LoadCompleteListener() {
             @Override
             public void onLoadComplete() {
-                infos = manager.getDiscountInfos();
+                infos = manager.getDiscountInfoArray();
             }
         });
         // Adding Toolbar to Main screen
