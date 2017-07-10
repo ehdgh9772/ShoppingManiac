@@ -39,14 +39,20 @@ public class MainActivity extends AppCompatActivity {
 
         final Database db = new Database();
 
-        db.setLoadCompleteListener(new Database.LoadCompleteListener() {
+        db.request("discountinfo", new Database.LoadCompleteListener() {
             @Override
             public void onLoadComplete() {
                 infos = db.getDiscountInfoArray();
                 Log.i("LOG", infos.get(0).discountedPrice);
             }
         });
-        db.request("discountinfo");
+
+        db.request("beacon", new Database.LoadCompleteListener() {
+            @Override
+            public void onLoadComplete() {
+                Log.i("LOG", "beaconLoaded");
+            }
+        });
 
         // Adding Toolbar to Main screen
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

@@ -25,8 +25,8 @@ public class Database {
     private static final String DISCOUNT_INFO = "discountinfo";
     private static final String LOG = "Database";
 
-    public void request(String requestUrl) {
-        scrap(requestUrl);
+    public void request(String requestUrl, LoadCompleteListener loadCompleteListener) {
+        scrap(requestUrl, loadCompleteListener);
         Log.i(LOG, "requested");
     }
     //TODO GET방식 요청 오버로딩
@@ -66,7 +66,6 @@ public class Database {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        _loadCompleteListener.onLoadComplete();
     }
 
     //region LoadCompleteListener
@@ -82,7 +81,7 @@ public class Database {
     }
     //endregion
 
-    private void scrap(final String url) {
+    private void scrap(final String url, final LoadCompleteListener loadCompleteListener) {
 
         final String protocol = "http://server.raystar.kro.kr:3030/";
         final String LOG = "webScrapper";
@@ -119,6 +118,8 @@ public class Database {
                     setDiscountInfoArray(parseToJSON(str));
                 else if (Objects.equals(url, DISCOUNT_INFO))
                     setDiscountInfoArray(parseToJSON(str));
+
+                loadCompleteListener.onLoadComplete();
             }
 
             private JSONObject parseToJSON(String result) {
@@ -131,6 +132,6 @@ public class Database {
             }
         }
         WebScrapper g = new WebScrapper();
-        g.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url);
+        g.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, url);
     }
 }
