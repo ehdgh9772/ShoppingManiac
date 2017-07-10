@@ -41,7 +41,7 @@ public class Database {
 
     public void requestPriceHistory(int index, LoadCompleteListener loadCompleteListener){
         scrap(EXTRA_JSON,
-                PRICE_HISTORY + "?arg0=" + _discountInfoArray.get(index).itemId,
+                PRICE_HISTORY + "?itemid=" + _discountInfoArray.get(index).itemId,
                 loadCompleteListener);
     }
 
