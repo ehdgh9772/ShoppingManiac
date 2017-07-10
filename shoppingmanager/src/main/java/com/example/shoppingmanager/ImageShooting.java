@@ -78,7 +78,6 @@ public class ImageShooting extends AppCompatActivity{
         public void onAutoFocus(boolean success, Camera camera) {
 //            mShutter.setEnabled(true);
             mSurface.mCamera.takePicture(null, null, mPicture);
-
         }
     };
 
