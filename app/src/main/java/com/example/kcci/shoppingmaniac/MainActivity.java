@@ -16,6 +16,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,15 +37,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final Database manager = new Database();
+        final Database db = new Database();
 
-        manager.request("discountinfo");
-        manager.setLoadCompleteListener(new Database.LoadCompleteListener() {
+        db.setLoadCompleteListener(new Database.LoadCompleteListener() {
             @Override
             public void onLoadComplete() {
-                infos = manager.getDiscountInfoArray();
+                infos = db.getDiscountInfoArray();
+                Log.i("LOG", infos.get(0).discountedPrice);
             }
         });
+        db.request("discountinfo");
+
         // Adding Toolbar to Main screen
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
