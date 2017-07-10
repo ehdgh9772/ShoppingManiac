@@ -23,10 +23,11 @@ import java.util.Objects;
 public class Database {
 
     private static final String DISCOUNT_INFO = "discountinfo";
+    private static final String LOG = "Database";
 
     public void request(String requestUrl) {
-        WebScrapper scrapper = new WebScrapper();
-        scrapper.getJSON(requestUrl);
+        scrap(requestUrl);
+        Log.i(LOG, "requested");
     }
     //TODO GET방식 요청 오버로딩
    /* public void request(String requestUrl, String... params){
@@ -35,7 +36,7 @@ public class Database {
         for (int i = 0; i < params.length ; i = i + 2) {
             builder.append(params[i]).append("=")
         }
-        getJSON(url);
+        scrap(url);
     }*/
 
     public ArrayList<DiscountInfo> getDiscountInfoArray() {
@@ -76,59 +77,60 @@ public class Database {
     }
 
     public void setLoadCompleteListener(LoadCompleteListener loadCompleteListener) {
-        if (_loadCompleteListener != loadCompleteListener)
-            _loadCompleteListener = loadCompleteListener;
+        _loadCompleteListener = loadCompleteListener;
+        Log.i(LOG, "Listener Setted");
     }
     //endregion
 
-    private class WebScrapper {
-        private String _protocol = "http://server.raystar.kro.kr:3030/";
-        private final String LOG = "webScrapper";
-        private void getJSON(final String url) {
-            class GetDataJSON extends AsyncTask<String, Void, String> {
+    private void scrap(final String url) {
 
-                @Override
-                protected String doInBackground(String... params) {
-                    String uri = params[0];
+        final String protocol = "http://server.raystar.kro.kr:3030/";
+        final String LOG = "webScrapper";
 
-                    BufferedReader bufferedReader;
-                    try {
-                        URL url = new URL(_protocol + uri);
-                        HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                        StringBuilder sb = new StringBuilder();
+        class WebScrapper extends AsyncTask<String, Void, String> {
 
-                        bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            @Override
+            protected String doInBackground(String... params) {
+                String uri = params[0];
 
-                        String json;
-                        while ((json = bufferedReader.readLine()) != null) {
-                            sb.append(json).append("\n");
-                        }
-                        Log.i(LOG, "Downloading");
-                        return sb.toString().trim();
-                    } catch (Exception e) {
-                        System.out.println(e.getMessage());
-                        return "{}";
+                BufferedReader bufferedReader;
+                try {
+                    URL url = new URL(protocol + uri);
+                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                    StringBuilder sb = new StringBuilder();
+
+                    bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream()));
+
+                    String json;
+                    while ((json = bufferedReader.readLine()) != null) {
+                        sb.append(json).append("\n");
                     }
-                }
-
-                protected void onPostExecute(String str) {
-                    Log.i(LOG, "Posting");
-                    Database database = new Database();
-                    if (Objects.equals(url, DISCOUNT_INFO))
-                        database.setDiscountInfoArray(parseToJSON(str));
+                    Log.i(LOG, "Downloading");
+                    return sb.toString().trim();
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                    return "{}";
                 }
             }
-            GetDataJSON g = new GetDataJSON();
-            g.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url);
-        }
 
-        private JSONObject parseToJSON(String result) {
-            try {
-                return new JSONObject(result);
-            } catch (JSONException e) {
-                e.printStackTrace();
-                return null;
+            protected void onPostExecute(String str) {
+                Log.i(LOG, "Posting");
+                if (Objects.equals(url, DISCOUNT_INFO))
+                    setDiscountInfoArray(parseToJSON(str));
+                else if (Objects.equals(url, DISCOUNT_INFO))
+                    setDiscountInfoArray(parseToJSON(str));
+            }
+
+            private JSONObject parseToJSON(String result) {
+                try {
+                    return new JSONObject(result);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return new JSONObject();
+                }
             }
         }
+        WebScrapper g = new WebScrapper();
+        g.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url);
     }
 }
