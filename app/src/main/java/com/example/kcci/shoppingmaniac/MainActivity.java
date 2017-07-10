@@ -55,6 +55,29 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        final ImageView imageView = (ImageView) findViewById(R.id.img);
+        final TextView txvName = (TextView) findViewById(R.id.textTitle);
+        final TextView txvPrice = (TextView) findViewById(R.id.textArtist);
+
+        final Database database = new Database();
+        database.requestDiscountInfo(new Database.LoadCompleteListener() {
+            @Override
+            public void onLoadComplete() {
+                database.getDiscountInfoArray();
+                Log.i("main", "discount ended");
+
+                txvName.setText(database.getDiscountInfoArray().get(0).name);
+                txvPrice.setText(database.getDiscountInfoArray().get(0).price);
+
+                database.requestImage(0, new Database.LoadCompleteListener() {
+                    @Override
+                    public void onLoadComplete() {
+                        imageView.setImageBitmap(database.getBitmap(0));
+                    }
+                });
+            }
+        });
+
         Button btnLineChart =  (Button)findViewById(R.id.btnLineChart);
         btnLineChart.setOnClickListener(new View.OnClickListener() {
             @Override
