@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -27,12 +28,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_client_main);
         setContentView(R.layout.row_album);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerViewMain);
 
         final ImageView imageView = (ImageView) findViewById(R.id.img);
-        final TextView txvName = (TextView) findViewById(R.id.textTitle);
-        final TextView txvPrice = (TextView) findViewById(R.id.textArtist);
+        final TextView txvName = (TextView) findViewById(R.id.textSaleType);
+        final TextView txvPrice = (TextView) findViewById(R.id.textSaleType);
 
         final Database database = new Database();
         database.requestDiscountInfo(new Database.LoadCompleteListener() {
@@ -104,6 +106,30 @@ public class MainActivity extends AppCompatActivity {
 //        lecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 //        lecyclerView.setItemAnimator(new DefaultItemAnimator());
 
+    }
+
+    class ViewHolder extends RecyclerView.ViewHolder{
+        public ViewHolder(View itemView) {
+            super(itemView);
+
+        }
+    }
+
+    class ContentAdapter extends RecyclerView.Adapter<ViewHolder> {
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            return null;
+        }
+
+        @Override
+        public void onBindViewHolder(ViewHolder holder, int position) {
+
+        }
+
+        @Override
+        public int getItemCount() {
+            return 0;
+        }
     }
 
 
