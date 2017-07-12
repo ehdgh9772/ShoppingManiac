@@ -9,8 +9,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.kcci.shoppingmaniac.database.Database;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +28,32 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_client_main);
         setContentView(R.layout.row_album);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerViewMain);
+
+        final ImageView imageView = (ImageView) findViewById(R.id.img);
+        final TextView txvName = (TextView) findViewById(R.id.textSaleType);
+        final TextView txvPrice = (TextView) findViewById(R.id.textSaleType);
+
+        final Database database = new Database();
+        database.requestDiscountInfo(new Database.LoadCompleteListener() {
+            @Override
+            public void onLoadComplete() {
+                database.getDiscountInfoArray();
+                Log.i("main", "discount ended");
+
+                txvName.setText(database.getDiscountInfoArray().get(0).name);
+                txvPrice.setText(database.getDiscountInfoArray().get(0).price);
+
+                database.requestImage(0, new Database.LoadCompleteListener() {
+                    @Override
+                    public void onLoadComplete() {
+                        imageView.setImageBitmap(database.getBitmap(0));
+                    }
+                });
+            }
+        });
 
         Button btnLineChart =  (Button)findViewById(R.id.btnLineChart);
         btnLineChart.setOnClickListener(new View.OnClickListener() {
@@ -77,6 +106,30 @@ public class MainActivity extends AppCompatActivity {
 //        lecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 //        lecyclerView.setItemAnimator(new DefaultItemAnimator());
 
+    }
+
+    class ViewHolder extends RecyclerView.ViewHolder{
+        public ViewHolder(View itemView) {
+            super(itemView);
+
+        }
+    }
+
+    class ContentAdapter extends RecyclerView.Adapter<ViewHolder> {
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            return null;
+        }
+
+        @Override
+        public void onBindViewHolder(ViewHolder holder, int position) {
+
+        }
+
+        @Override
+        public int getItemCount() {
+            return 0;
+        }
     }
 
 
@@ -160,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
 //            mBackgroundRangingTimeoutText.setText(R.string.settings_result_false);
 //        }
 //
-//        //If a user device turns off bluetooth, request to turn it on.
+//        //If a user device turns off bluetooth, requestDiscountInfo to turn it on.
 //        //사용자가 블루투스를 켜도록 요청합니다.
 //        mBluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
 //        mBluetoothAdapter = mBluetoothManager.getAdapter();
@@ -195,7 +248,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_ENABLE_BT && resultCode == Activity.RESULT_CANCELED) {
-            //If the request to turn on bluetooth is denied, the app will be finished.
+            //If the requestDiscountInfo to turn on bluetooth is denied, the app will be finished.
             //사용자가 블루투스 요청을 허용하지 않았을 경우, 어플리케이션은 종료됩니다.
             finish();
             return;
@@ -245,7 +298,7 @@ public class MainActivity extends AppCompatActivity {
      * the location permission (ACCESS_COARSE_LOCATION or ACCESS_FINE_LOCATION) is required.
      *
      * This sample project requests "ACCESS_COARSE_LOCATION" permission only,
-     * but you may request "ACCESS_FINE_LOCATION" permission depending on your application.
+     * but you may requestDiscountInfo "ACCESS_FINE_LOCATION" permission depending on your application.
      *
      * "ACCESS_COARSE_LOCATION" permission is recommended.
      *
