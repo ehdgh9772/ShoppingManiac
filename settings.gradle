@@ -1,1 +1,1 @@
-include ':app', ':shoppingmanager'
+include ':app', ':shoppingmanager', ':reco-sdk-android_1.1.4'
