@@ -36,7 +36,6 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View view) {
                         Intent intent=new Intent(MainActivity.this,ListInquiry.class);
                         startActivity(intent);
-
                         Toast.makeText(getApplicationContext(), "목록 조회화면으로 이동", Toast.LENGTH_SHORT).show();
                     }
                 }
