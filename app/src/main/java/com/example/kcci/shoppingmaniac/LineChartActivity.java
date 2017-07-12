@@ -19,22 +19,16 @@ import org.achartengine.renderer.XYSeriesRenderer;
 
 public class LineChartActivity extends AppCompatActivity {
 
-
     // 막대그래프의 가로축
 
     private String[] mMonth = new String[] {
-
             "Jan", "Feb" , "Mar", "Apr", "May", "Jun",
-
             "Jul", "Aug" , "Sep", "Oct", "Nov", "Dec"
-
     };
 
     private GraphicalView mChartView;
 
-
     @Override
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -44,24 +38,18 @@ public class LineChartActivity extends AppCompatActivity {
 
     }
 
-
     private void drawChart(){
-
         int[] x = { 1,2,3,4,5,6,7,8 };
-
-        int[] income = { 2000,2500,2700,3000,2800,3500,3700,3800};
-
-        int[] expense = {2200, 2700, 2900, 2800, 2600, 3000, 3300, 3400 };
-
+        int[] income = {2000,2500,2700,3000,2800,3500,3700,3800};
+//        int[] expense = {2200, 2700, 2900, 2800, 2600, 3000, 3300, 3400 };
 
         // Creating an  XYSeries for Income
 
-        XYSeries incomeSeries = new XYSeries("수입");
-
+        XYSeries incomeSeries = new XYSeries("가격추이");
 
         // Creating an  XYSeries for Expense
 
-        XYSeries expenseSeries = new XYSeries("지출");
+//        XYSeries expenseSeries = new XYSeries("지출");
 
 
         // Adding data to Income and Expense Series
@@ -69,7 +57,7 @@ public class LineChartActivity extends AppCompatActivity {
         for(int i=0;i<x.length;i++){
             incomeSeries.add(x[i], income[i]);
 
-            expenseSeries.add(x[i],expense[i]);
+//            expenseSeries.add(x[i],expense[i]);
 
         }
 
@@ -78,61 +66,44 @@ public class LineChartActivity extends AppCompatActivity {
 
         XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
 
-
         // Adding Income Series to the dataset
 
         dataset.addSeries(incomeSeries);
 
-
         // Adding Expense Series to dataset
 
-        dataset.addSeries(expenseSeries);
-
+//        dataset.addSeries(expenseSeries);
 
         // Creating XYSeriesRenderer to customize incomeSeries
 
         XYSeriesRenderer incomeRenderer = new XYSeriesRenderer();
-
-        incomeRenderer.setColor(Color.GREEN);
-
+        incomeRenderer.setColor(Color.RED);
+        incomeRenderer.setChartValuesTextSize(30);
         incomeRenderer.setPointStyle(PointStyle.CIRCLE);
-
         incomeRenderer.setFillPoints(true);
-
-        incomeRenderer.setLineWidth(2);
-
+        incomeRenderer.setLineWidth(5);
         incomeRenderer.setDisplayChartValues(true);
 
 
         // Creating XYSeriesRenderer to customize expenseSeries
 
-        XYSeriesRenderer expenseRenderer = new XYSeriesRenderer();
-
-        expenseRenderer.setColor(Color.RED);
-
-        expenseRenderer.setPointStyle(PointStyle.CIRCLE);
-
-        expenseRenderer.setFillPoints(true);
-
-        expenseRenderer.setLineWidth(2);
-
-        expenseRenderer.setDisplayChartValues(true);
+//        XYSeriesRenderer expenseRenderer = new XYSeriesRenderer();
+//        expenseRenderer.setColor(Color.RED);
+//        expenseRenderer.setPointStyle(PointStyle.CIRCLE);
+//        expenseRenderer.setFillPoints(true);
+//        expenseRenderer.setLineWidth(2);
+//        expenseRenderer.setDisplayChartValues(true);
 
 
 
         // Creating a XYMultipleSeriesRenderer to customize the whole chart
 
         XYMultipleSeriesRenderer multiRenderer = new XYMultipleSeriesRenderer();
-
         multiRenderer.setXLabels(0);
-
-        multiRenderer.setChartTitle("수입 vs 지출 Chart");
-
-        multiRenderer.setXTitle("Year 2017");
-
-        multiRenderer.setYTitle("Amount in Dollars");
-
-        multiRenderer.setZoomButtonsVisible(true);
+        multiRenderer.setChartTitle("   ----    상품가격추이    ----   ");
+        multiRenderer.setXTitle("날  짜");
+        multiRenderer.setYTitle("금  액");
+//        multiRenderer.setZoomButtonsVisible(true);
 
         for(int i=0;i<x.length;i++){
 
@@ -148,12 +119,10 @@ public class LineChartActivity extends AppCompatActivity {
 //         should be same
 
         multiRenderer.addSeriesRenderer(incomeRenderer);
-
-        multiRenderer.addSeriesRenderer(expenseRenderer);
+//        multiRenderer.addSeriesRenderer(expenseRenderer);
 
 
         // Creating an intent to plot line chart using dataset and multipleRenderer
-
         // Intent intent = ChartFactory.getLineChartIntent(getBaseContext(), dataset, multiRenderer);
 
 
@@ -173,9 +142,9 @@ public class LineChartActivity extends AppCompatActivity {
 
             multiRenderer.setSelectableBuffer(10);
 
-            layout.addView(mChartView, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT,
-
-                    LinearLayout.LayoutParams.FILL_PARENT));
+            layout.addView(mChartView,
+                    new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT,
+                            LinearLayout.LayoutParams.FILL_PARENT));
 
         } else {
 
