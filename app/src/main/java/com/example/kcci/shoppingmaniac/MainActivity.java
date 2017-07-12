@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -44,15 +45,17 @@ public class MainActivity extends AppCompatActivity {
      */
     private void initData(){
 
-        List<CardViewContent> albumList = new ArrayList<CardViewContent>();
+        List<CardViewContent> albumList = new ArrayList<>();
 
         for (int i =0; i<20; i ++){
 
-            CardViewContent album = new CardViewContent();
-            album.setName("어느 멋진 날");
-            album.setPrice("정용");
-            album.setImage(R.drawable.a);
-            albumList.add(album);
+            CardViewContent cardViewContent = new CardViewContent();
+            cardViewContent.setDiscountType("할인종류");
+            cardViewContent.setName("상품명");
+            cardViewContent.setPrice("원가");
+            cardViewContent.setDiscountedPrice("할인가");
+            cardViewContent.setImage(BitmapFactory.decodeResource(getResources(),R.drawable.a));
+            albumList.add(cardViewContent);
         }
         lecyclerView.setAdapter(new MyRecyclerAdapter(albumList,R.layout.row_album));
         lecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));

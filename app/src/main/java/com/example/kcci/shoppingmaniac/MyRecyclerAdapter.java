@@ -53,7 +53,11 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.Vi
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
 
         CardViewContent item = albumList.get(position);
-        viewHolder.textTitle.setText(item.getName());
+        viewHolder._discountType.setText(item.getDiscountType());
+        viewHolder._name.setText(item.getName());
+        viewHolder._price.setText(item.getPrice());
+        viewHolder._discountedPrice.setText(item.getDiscountedPrice());
+
         viewHolder.img.setBackgroundResource(R.drawable.a);
         viewHolder.itemView.setTag(item);
 
@@ -70,13 +74,19 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.Vi
     public static class ViewHolder extends RecyclerView.ViewHolder{
 
         public ImageView img;
-        public TextView textTitle;
+        private TextView _discountType;
+        private TextView _name;
+        private TextView _price;
+        private TextView _discountedPrice;
 
         public ViewHolder(View itemView){
             super(itemView);
 
             img = (ImageView) itemView.findViewById(R.id.img);
-            textTitle = (TextView) itemView.findViewById(R.id.textDiscountType);
+            _discountType = (TextView) itemView.findViewById(R.id.textDiscountType);
+            _name = (TextView) itemView.findViewById(R.id.textName);
+            _price = (TextView) itemView.findViewById(R.id.textPrice);
+            _discountedPrice = (TextView) itemView.findViewById(R.id.textDiscountedPrice);
         }
 
     }
