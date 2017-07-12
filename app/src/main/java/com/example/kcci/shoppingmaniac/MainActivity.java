@@ -10,14 +10,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    private RecyclerView lecyclerView;
+    private RecyclerView _recyclerView;
 
     public static String LOG_TAG = "MainActivity";
 
@@ -25,19 +30,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_client_main);
-//        setContentView(R.layout.row_album);
-        lecyclerView = (RecyclerView) findViewById(R.id.recyclerViewMain);
-
-//        lecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
+        _recyclerView = (RecyclerView) findViewById(R.id.recyclerViewMain);
         initData();
     }
 
     /**
      * 레이아웃 초기화
      */
+
     /*private void initLayout(){
 
-        lecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
+        _recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
     }*/
 
     /**
@@ -57,9 +60,9 @@ public class MainActivity extends AppCompatActivity {
             cardViewContent.setImage(BitmapFactory.decodeResource(getResources(),R.drawable.a));
             albumList.add(cardViewContent);
         }
-        lecyclerView.setAdapter(new MyRecyclerAdapter(albumList,R.layout.row_album));
-        lecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        lecyclerView.setItemAnimator(new DefaultItemAnimator());
+        _recyclerView.setAdapter(new MyRecyclerAdapter(albumList,R.layout.row_album));
+        _recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        _recyclerView.setItemAnimator(new DefaultItemAnimator());
 
     }
 
@@ -84,6 +87,104 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public int getItemCount() {
             return 0;
+        }
+    }
+    class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.ViewHolder> {
+
+        private List<CardViewContent> albumList;
+        private int itemLayout;
+
+        /**
+         * 생성자
+         * @param items
+         * @param itemLayout
+         */
+        MyRecyclerAdapter(List<CardViewContent> items , int itemLayout){
+
+            this.albumList = items;
+            this.itemLayout = itemLayout;
+        }
+
+        /**
+         * 레이아웃을 만들어서 Holer에 저장
+         * @param viewGroup
+         * @param viewType
+         * @return
+         */
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+
+            View view = LayoutInflater.from(viewGroup.getContext()).inflate(itemLayout,viewGroup,false);
+            return new ViewHolder(view);
+        }
+
+        /**
+         * listView getView 를 대체
+         * 넘겨 받은 데이터를 화면에 출력하는 역할
+         *
+         * @param viewHolder
+         * @param position
+         */
+        @Override
+        public void onBindViewHolder(ViewHolder viewHolder, int position) {
+
+            CardViewContent item = albumList.get(position);
+            viewHolder._discountType.setText(item.getDiscountType());
+            viewHolder._name.setText(item.getName());
+            viewHolder._price.setText(item.getPrice());
+            viewHolder._discountedPrice.setText(item.getDiscountedPrice());
+
+            viewHolder.img.setBackgroundResource(R.drawable.a);
+            viewHolder.itemView.setTag(item);
+
+            viewHolder._btnLineChart.setOnClickListener(new View.OnClickListener() {
+                public static final String LOG_TAG = "ViewHolder";
+
+                @Override
+                public void onClick(View view) {
+                    switch (view.getId()) {
+
+                        case R.id.btnLineChart:
+
+                            Log.i(LOG_TAG, "Line Chart Start...");
+
+                            Intent intent = new Intent(getApplicationContext(), LineChartActivity.class);
+                            startActivity(intent);
+
+//                break;
+                    }
+                }
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            return albumList.size();
+        }
+
+        /**
+         * 뷰 재활용을 위한 viewHolder
+         */
+        class ViewHolder extends RecyclerView.ViewHolder{
+
+            public ImageView img;
+            private TextView _discountType;
+            private TextView _name;
+            private TextView _price;
+            private TextView _discountedPrice;
+            Button _btnLineChart;
+
+            public ViewHolder(View itemView){
+                super(itemView);
+
+                img = (ImageView) itemView.findViewById(R.id.img);
+                _discountType = (TextView) itemView.findViewById(R.id.textDiscountType);
+                _name = (TextView) itemView.findViewById(R.id.textName);
+                _price = (TextView) itemView.findViewById(R.id.textPrice);
+                _discountedPrice = (TextView) itemView.findViewById(R.id.textDiscountedPrice);
+                _btnLineChart =  (Button) itemView.findViewById(R.id.btnLineChart);
+            }
+
         }
     }
 
