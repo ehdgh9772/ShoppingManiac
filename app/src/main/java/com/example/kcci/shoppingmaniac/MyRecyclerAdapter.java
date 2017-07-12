@@ -15,7 +15,7 @@ import java.util.List;
 
 public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.ViewHolder> {
 
-    private List<AlbumActivity> albumList;
+    private List<CardViewContent> albumList;
     private int itemLayout;
 
     /**
@@ -23,7 +23,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.Vi
      * @param items
      * @param itemLayout
      */
-    public MyRecyclerAdapter(List<AlbumActivity> items , int itemLayout){
+    public MyRecyclerAdapter(List<CardViewContent> items , int itemLayout){
 
         this.albumList = items;
         this.itemLayout = itemLayout;
@@ -52,9 +52,9 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.Vi
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
 
-        AlbumActivity item = albumList.get(position);
-        viewHolder.textTitle.setText(item.getTitle());
-        viewHolder.img.setBackgroundResource(item.getImage());
+        CardViewContent item = albumList.get(position);
+        viewHolder.textTitle.setText(item.getName());
+        viewHolder.img.setBackgroundResource(R.drawable.a);
         viewHolder.itemView.setTag(item);
 
     }
@@ -76,7 +76,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.Vi
             super(itemView);
 
             img = (ImageView) itemView.findViewById(R.id.img);
-            textTitle = (TextView) itemView.findViewById(R.id.textSaleType);
+            textTitle = (TextView) itemView.findViewById(R.id.textDiscountType);
         }
 
     }

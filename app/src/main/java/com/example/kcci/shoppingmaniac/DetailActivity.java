@@ -23,7 +23,7 @@ public class DetailActivity extends AppCompatActivity {
         CollapsingToolbarLayout collapsingToolbar =
                 (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         // Set title of Detail page
-        // collapsingToolbar.setTitle(getString(R.string.item_title));
+        // collapsingToolbar.setName(getString(R.string.item_title));
 
         int postion = getIntent().getIntExtra(EXTRA_POSITION, 0);
         Resources resources = getResources();
