@@ -66,29 +66,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder{
-        public ViewHolder(View itemView) {
-            super(itemView);
-
-        }
-    }
-
-    class ContentAdapter extends RecyclerView.Adapter<ViewHolder> {
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return null;
-        }
-
-        @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
-
-        }
-
-        @Override
-        public int getItemCount() {
-            return 0;
-        }
-    }
     class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.ViewHolder> {
 
         private List<CardViewContent> albumList;
