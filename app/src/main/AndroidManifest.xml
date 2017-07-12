@@ -18,13 +18,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".DetailActivity"
-            android:parentActivityName=".MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
-        </activity>
-        <activity
             android:name=".LineChartActivity"
             android:parentActivityName=".MainActivity">
             <meta-data

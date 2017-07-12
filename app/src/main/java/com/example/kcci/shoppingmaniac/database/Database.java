@@ -33,9 +33,15 @@ public class Database {
         Log.i(LOG, "requested");
     }
 
-    public void requestImage(int index, LoadCompleteListener loadCompleteListener) {
+    public void requestImageFromIndex(int index, LoadCompleteListener loadCompleteListener) {
         scrap(EXTRA_IMAGE,
                 "images/" + _discountInfoArray.get(index).getItemId() + ".png",
+                loadCompleteListener);
+    }
+
+    public void requestImage(int itemId, LoadCompleteListener loadCompleteListener) {
+        scrap(EXTRA_IMAGE,
+                "images/" + itemId + ".png",
                 loadCompleteListener);
     }
 

@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_client_main);
+        setContentView(R.layout.activity_main);
         _recyclerView = (RecyclerView) findViewById(R.id.recyclerViewMain);
         initData();
     }
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
             cardViewContent.setImage(BitmapFactory.decodeResource(getResources(),R.drawable.a));
             albumList.add(cardViewContent);
         }
-        _recyclerView.setAdapter(new MyRecyclerAdapter(albumList,R.layout.row_album));
+        _recyclerView.setAdapter(new MyRecyclerAdapter(albumList,R.layout.card_discount));
         _recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         _recyclerView.setItemAnimator(new DefaultItemAnimator());
 

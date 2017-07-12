@@ -67,7 +67,6 @@ public class LineChartActivity extends AppCompatActivity {
         // Adding data to Income and Expense Series
 
         for(int i=0;i<x.length;i++){
-
             incomeSeries.add(x[i], income[i]);
 
             expenseSeries.add(x[i],expense[i]);
@@ -118,6 +117,7 @@ public class LineChartActivity extends AppCompatActivity {
         expenseRenderer.setLineWidth(2);
 
         expenseRenderer.setDisplayChartValues(true);
+
 
 
         // Creating a XYMultipleSeriesRenderer to customize the whole chart
