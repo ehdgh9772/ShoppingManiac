@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.example.shoppingmanager.database.Database;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +21,14 @@ public class ListInquiry extends AppCompatActivity{
         LinearLayoutManager layoutManager=new LinearLayoutManager(getApplicationContext());
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
+
+        final Database database = new Database();
+        database.requestDiscountInfo(new Database.LoadCompleteListener() {
+            @Override
+            public void onLoadComplete() {
+                database.getDiscountInfoArray();
+            }
+        });
 
         List<Item> items=new ArrayList<>();
         Item[] item=new Item[5];
