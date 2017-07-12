@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View view) {
                         Intent intent=new Intent(MainActivity.this,ImageShooting.class);
                         startActivity(intent);
+
                         Toast.makeText(getApplicationContext(), "촬영 화면으로 이동", Toast.LENGTH_SHORT).show();
                     }
                 }

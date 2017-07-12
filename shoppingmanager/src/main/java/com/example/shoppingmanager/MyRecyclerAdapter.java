@@ -1,4 +1,4 @@
-package com.example.kcci.shoppingmaniac;
+package com.example.shoppingmanager;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,13 +9,8 @@ import android.widget.TextView;
 
 import java.util.List;
 
-/**
- * Created by CHJ on 2017-07-06.
- */
-
 public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.ViewHolder> {
-
-    private List<AlbumActivity> albumList;
+    private List<Item> albumList;
     private int itemLayout;
 
     /**
@@ -23,23 +18,22 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.Vi
      * @param items
      * @param itemLayout
      */
-    public MyRecyclerAdapter(List<AlbumActivity> items , int itemLayout){
-
+    public MyRecyclerAdapter(List<Item> items , int itemLayout){
         this.albumList = items;
         this.itemLayout = itemLayout;
     }
 
     /**
-     * 레이아웃을 만들어서 Holer에 저장
+     * 레이아웃을 만들어서 Holder에 저장
      * @param viewGroup
      * @param viewType
      * @return
      */
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(itemLayout,viewGroup,false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(itemLayout,viewGroup, false);
         return new ViewHolder(view);
+
     }
 
     /**
@@ -51,12 +45,10 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.Vi
      */
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
-
-        AlbumActivity item = albumList.get(position);
-        viewHolder.textTitle.setText(item.getTitle());
+        Item item = albumList.get(position);
+        //viewHolder.textTitle.setText(item.getTitle());
         viewHolder.img.setBackgroundResource(item.getImage());
         viewHolder.itemView.setTag(item);
-
     }
 
     @Override
@@ -75,8 +67,8 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.Vi
         public ViewHolder(View itemView){
             super(itemView);
 
-            img = (ImageView) itemView.findViewById(R.id.img);
-            textTitle = (TextView) itemView.findViewById(R.id.textSaleType);
+            //img = (ImageView) itemView.findViewById(R.id.img);
+            textTitle = (TextView) itemView.findViewById(R.id.textTitle);
         }
 
     }

@@ -33,15 +33,21 @@ public class Database {
         Log.i(LOG, "requested");
     }
 
-    public void requestImage(int index, LoadCompleteListener loadCompleteListener){
+    public void requestImageFromIndex(int index, LoadCompleteListener loadCompleteListener) {
         scrap(EXTRA_IMAGE,
-                "images/" + _discountInfoArray.get(index).itemId + ".png",
+                "images/" + _discountInfoArray.get(index).getItemId() + ".png",
                 loadCompleteListener);
     }
 
-    public void requestPriceHistory(int index, LoadCompleteListener loadCompleteListener){
+    public void requestImage(int itemId, LoadCompleteListener loadCompleteListener) {
+        scrap(EXTRA_IMAGE,
+                "images/" + itemId + ".png",
+                loadCompleteListener);
+    }
+
+    public void requestPriceHistory(int index, LoadCompleteListener loadCompleteListener) {
         scrap(EXTRA_JSON,
-                PRICE_HISTORY + "?itemid=" + _discountInfoArray.get(index).itemId,
+                PRICE_HISTORY + "?itemid=" + _discountInfoArray.get(index).getItemId(),
                 loadCompleteListener);
     }
 
@@ -56,16 +62,16 @@ public class Database {
             JSONArray jsArray = json.getJSONArray(DISCOUNT_INFO);
             _discountInfoArray = new ArrayList<>();
             for (int i = 0; i < jsArray.length(); i++) {
-                JSONObject c = jsArray.getJSONObject(i);
+                JSONObject jsonObj = jsArray.getJSONObject(i);
                 DiscountInfo discountInfo = new DiscountInfo();
-                discountInfo.itemId = c.getString("ItemId");
-                discountInfo.name = c.getString("Name");
-                discountInfo.discountType = c.getString("DiscountType");
-                discountInfo.price = c.getString("Price");
-                discountInfo.discountedPrice = c.getString("DiscountedPrice");
-                discountInfo.category = c.getString("Category");
-                discountInfo.startTime = c.getString("StartTime");
-                discountInfo.endTime = c.getString("EndTime");
+                discountInfo.setItemId(jsonObj.getString("ItemId"));
+                discountInfo.setName(jsonObj.getString("Name"));
+                discountInfo.setDiscountType(jsonObj.getString("DiscountType"));
+                discountInfo.setPrice(jsonObj.getString("Price"));
+                discountInfo.setDiscountedPrice(jsonObj.getString("DiscountedPrice"));
+                discountInfo.setCategory(jsonObj.getString("Category"));
+                discountInfo.setStartTime(jsonObj.getString("StartTime"));
+                discountInfo.setEndTime(jsonObj.getString("EndTime"));
 
                 _discountInfoArray.add(discountInfo);
                 Log.i("tag", "put on array");
@@ -101,7 +107,7 @@ public class Database {
 
     private ArrayList<Bitmap> _bitmapArray = new ArrayList<>();
 
-    public Bitmap getBitmap(int index){
+    public Bitmap getBitmap(int index) {
         return _bitmapArray.get(index);
     }
 
@@ -202,12 +208,10 @@ public class Database {
             }
         }
 
-        if(scrapType == EXTRA_JSON){
+        if (scrapType == EXTRA_JSON) {
             JSONScrapper g = new JSONScrapper();
             g.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, url);
-        }
-
-        else if(scrapType == EXTRA_IMAGE){
+        } else if (scrapType == EXTRA_IMAGE) {
             ImageScrapper i = new ImageScrapper();
             i.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, url);
         }
