@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <Button
-        android:id="@+id/imageShooting"
+        android:id="@+id/btn_searchItemId"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
@@ -17,7 +17,7 @@
         app:layout_constraintRight_toRightOf="parent"/>
 
     <TextView
-        android:id="@+id/itemNameTextView"
+        android:id="@+id/txv_eventName"
         android:layout_width="100dp"
         android:layout_height="50dp"
         android:layout_marginLeft="16dp"
@@ -27,21 +27,21 @@
         android:textColor="@android:color/black"
         android:textSize="20dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageShooting"/>
+        app:layout_constraintTop_toBottomOf="@+id/btn_searchItemId"/>
 
     <EditText
-        android:id="@+id/itemNameEditText"
+        android:id="@+id/edt_eventName"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:inputType="textPersonName"
-        app:layout_constraintBaseline_toBaselineOf="@+id/itemNameTextView"
-        app:layout_constraintLeft_toRightOf="@+id/itemNameTextView"
+        app:layout_constraintBaseline_toBaselineOf="@+id/txv_eventName"
+        app:layout_constraintLeft_toRightOf="@+id/txv_eventName"
         app:layout_constraintRight_toRightOf="parent"/>
 
     <TextView
-        android:id="@+id/itemPriceTextView"
+        android:id="@+id/txv_dcPrice"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginTop="25dp"
@@ -50,24 +50,24 @@
         android:textColor="@android:color/black"
         android:textSize="20dp"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="@+id/itemNameTextView"
-        app:layout_constraintRight_toRightOf="@+id/itemNameTextView"
-        app:layout_constraintTop_toBottomOf="@+id/itemNameTextView"/>
+        app:layout_constraintLeft_toLeftOf="@+id/txv_eventName"
+        app:layout_constraintRight_toRightOf="@+id/txv_eventName"
+        app:layout_constraintTop_toBottomOf="@+id/txv_eventName"/>
 
     <EditText
-        android:id="@+id/itemPriceEditText"
+        android:id="@+id/edt_dcPrice"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginLeft="0dp"
         android:inputType="textPersonName"
-        app:layout_constraintBaseline_toBaselineOf="@+id/itemPriceTextView"
+        app:layout_constraintBaseline_toBaselineOf="@+id/txv_dcPrice"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintLeft_toLeftOf="@+id/itemNameEditText"
-        app:layout_constraintRight_toRightOf="@+id/itemNameEditText"/>
+        app:layout_constraintLeft_toLeftOf="@+id/edt_eventName"
+        app:layout_constraintRight_toRightOf="@+id/edt_eventName"/>
 
 
     <TextView
-        android:id="@+id/itemIdTextView"
+        android:id="@+id/txv_startTime"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginTop="25dp"
@@ -76,21 +76,21 @@
         android:textColor="@android:color/black"
         android:textSize="20dp"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="@+id/itemPriceTextView"
-        app:layout_constraintRight_toRightOf="@+id/itemPriceTextView"
-        app:layout_constraintTop_toBottomOf="@+id/itemPriceTextView"/>
+        app:layout_constraintLeft_toLeftOf="@+id/txv_dcPrice"
+        app:layout_constraintRight_toRightOf="@+id/txv_dcPrice"
+        app:layout_constraintTop_toBottomOf="@+id/txv_dcPrice"/>
 
     <EditText
-        android:id="@+id/itemIdEditText"
+        android:id="@+id/edt_startTime"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:inputType="textPersonName"
-        app:layout_constraintBaseline_toBaselineOf="@+id/itemIdTextView"
-        app:layout_constraintLeft_toLeftOf="@+id/itemPriceEditText"
-        app:layout_constraintRight_toRightOf="@+id/itemPriceEditText"/>
+        app:layout_constraintBaseline_toBaselineOf="@+id/txv_startTime"
+        app:layout_constraintLeft_toLeftOf="@+id/edt_dcPrice"
+        app:layout_constraintRight_toRightOf="@+id/edt_dcPrice"/>
 
     <TextView
-        android:id="@+id/itemUnitTextView"
+        android:id="@+id/txv_endTime"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginTop="25dp"
@@ -99,18 +99,18 @@
         android:textColor="@android:color/black"
         android:textSize="20dp"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="@+id/itemIdTextView"
-        app:layout_constraintRight_toRightOf="@+id/itemIdTextView"
-        app:layout_constraintTop_toBottomOf="@+id/itemIdTextView"/>
+        app:layout_constraintLeft_toLeftOf="@+id/txv_startTime"
+        app:layout_constraintRight_toRightOf="@+id/txv_startTime"
+        app:layout_constraintTop_toBottomOf="@+id/txv_startTime"/>
 
     <EditText
         android:id="@+id/itemUnitEditText"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:inputType="textPersonName"
-        app:layout_constraintBaseline_toBaselineOf="@+id/itemUnitTextView"
-        app:layout_constraintLeft_toLeftOf="@+id/itemIdEditText"
-        app:layout_constraintRight_toRightOf="@+id/itemIdEditText"/>
+        app:layout_constraintBaseline_toBaselineOf="@+id/txv_endTime"
+        app:layout_constraintLeft_toLeftOf="@+id/edt_startTime"
+        app:layout_constraintRight_toRightOf="@+id/edt_startTime"/>
 
     <Button
         android:id="@+id/registration"

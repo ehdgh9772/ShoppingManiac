@@ -27,7 +27,7 @@ public class ItemRegistration extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_registration);
 
-        Button imageShooting = (Button) findViewById(R.id.imageShooting);
+        Button imageShooting = (Button) findViewById(R.id.btn_searchItemId);
         Button listInquiry = (Button) findViewById(R.id.listInquiry);
         Button registration = (Button) findViewById(R.id.registration);
 

@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Button itemRegisteration = (Button) findViewById(R.id.itemRegistration);
+        Button eventButton = (Button) findViewById(R.id.btn_eventRegistration);
         Button listInquiry = (Button) findViewById(R.id.listInquiry);
 
         itemRegisteration.setOnClickListener(
@@ -38,6 +39,14 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
         );
+
+        eventButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, EventRegistration.class);
+                startActivity(intent);
+            }
+        });
 
         listInquiry.setOnClickListener(
                 new View.OnClickListener() {
