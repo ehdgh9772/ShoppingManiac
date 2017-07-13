@@ -83,7 +83,7 @@
             android:id="@+id/btnLineChart"
             android:layout_width="358dp"
             android:layout_height="wrap_content"
-            android:text="LINE CHART"
+            android:text="선택하기"
             android:layout_marginTop="8dp"
             card_view:layout_constraintTop_toBottomOf="@+id/img"
             android:layout_marginRight="8dp"
