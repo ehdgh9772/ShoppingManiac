@@ -25,6 +25,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.kcci.shoppingmaniac.database.Database;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,6 +80,13 @@ public class MainActivity extends AppCompatActivity {
         _windowManager.addView(_PopupView, _params);      //윈도우에 뷰 넣기. permission 필요.
 
         _drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        final Database database = new Database();
+        database.requestItemByCategory(1, new Database.LoadCompleteListener() {
+            @Override
+            public void onLoadComplete() {
+                Log.i("i", database.getItemList().get(0).getName());
+            }
+        });
     }
 
     /**
