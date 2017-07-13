@@ -3,6 +3,7 @@
     package="com.example.shoppingmanager">
 
     <uses-feature android:name="android.hardware.camera" />
+
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.hardware.camera.autofocus" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -22,7 +23,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".ImageShooting" />
-        <activity android:name=".ListInquiry"></activity>
+        <activity android:name=".ListInquiry" />
+        <activity android:name=".ItemRegistration"></activity>
     </application>
 
 </manifest>
