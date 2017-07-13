@@ -79,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
         _windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);  //윈도우 매니저
         _windowManager.addView(_PopupView, _params);      //윈도우에 뷰 넣기. permission 필요.
 
-        _drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         final Database database = new Database();
         database.requestItemByCategory(1, new Database.LoadCompleteListener() {
             @Override
