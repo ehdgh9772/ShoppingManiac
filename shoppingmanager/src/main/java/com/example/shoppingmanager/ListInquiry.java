@@ -24,8 +24,6 @@ public class ListInquiry extends AppCompatActivity{
         RecyclerView recyclerView=(RecyclerView)findViewById(R.id.my_recycler_view);
         LinearLayoutManager layoutManager=new LinearLayoutManager(getApplicationContext());
 
-        ArrayList<Item> items=new ArrayList<>();
-
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
         List<CardViewContent> list = new ArrayList<>();
