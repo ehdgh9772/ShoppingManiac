@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.shoppingmanager.database.Database;
@@ -21,6 +22,7 @@ public class ListInquiry extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.recycler_view);
 
+        Button eventRegistration = (Button) findViewById(R.id.eventRegistration);
         RecyclerView recyclerView=(RecyclerView)findViewById(R.id.my_recycler_view);
         LinearLayoutManager layoutManager=new LinearLayoutManager(getApplicationContext());
 
@@ -37,6 +39,15 @@ public class ListInquiry extends AppCompatActivity{
                 database.getDiscountInfoList();
             }
         });
+
+        eventRegistration.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                }
+        );
     }
 
     private class ManagerRecyclerAdapter extends RecyclerView.Adapter<ManagerRecyclerAdapter.ViewHolder> {
