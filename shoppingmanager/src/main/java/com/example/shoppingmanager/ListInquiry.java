@@ -77,10 +77,7 @@ public class ListInquiry extends AppCompatActivity{
             public ViewHolder(View itemView){
                 super(itemView);
                 TextView textView = (TextView) findViewById(R.id.textDiscountType);
-
             }
         }
-
-
     }
 }
