@@ -1,8 +1,9 @@
 package com.example.shoppingmanager;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -23,7 +24,7 @@ public class ItemRegistration extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Intent intent=new Intent(ItemRegistration.this,ImageShooting.class);
+                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                         startActivity(intent);
 
                         Toast.makeText(getApplicationContext(), "촬영 화면으로 이동", Toast.LENGTH_SHORT).show();
