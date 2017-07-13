@@ -49,15 +49,11 @@ public class ListInquiry extends AppCompatActivity{
                 database.getDiscountInfoArray();
             }
         });
-
-
-
-
 //        for(int i=0;i<5;i++) items.add(item[i]);
 
         //recyclerView.setAdapter(new MyRecyclerAdapter(getApplicationContext(),albumList,R.layout.activity_list_inquiry));
-
     }
+
     private class ManagerRecyclerAdapter extends RecyclerView.Adapter<ManagerRecyclerAdapter.ViewHolder> {
 
         int _layoutId;
@@ -100,5 +96,6 @@ public class ListInquiry extends AppCompatActivity{
             }
 
         }
+
     }
 }
