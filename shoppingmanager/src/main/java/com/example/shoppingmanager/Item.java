@@ -7,6 +7,14 @@ public class Item {
     private String id;
     private String unit;
 
+    public Item(int a, String s, int i, String s1, String s2) {
+        image = a;
+        name = s;
+        price = i;
+        id = s1;
+        unit = s2;
+    }
+
     public int getImage() {
         return image;
     }

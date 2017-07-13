@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.shoppingmanager.database.Database;
 
@@ -22,6 +23,19 @@ public class ListInquiry extends AppCompatActivity{
 
         RecyclerView recyclerView=(RecyclerView)findViewById(R.id.my_recycler_view);
         LinearLayoutManager layoutManager=new LinearLayoutManager(getApplicationContext());
+
+        ArrayList<Item> items=new ArrayList<>();
+
+        items.add(new Item(R.drawable.a, "#1", 2000, "1", "2"));
+        items.add(new Item(R.drawable.a, "#1", 222, "17", "2"));
+        items.add(new Item(R.drawable.a, "#1", 333, "18", "2"));
+        items.add(new Item(R.drawable.a, "#1", 444, "17", "2"));
+        items.add(new Item(R.drawable.a, "#1", 555, "16", "2"));
+        items.add(new Item(R.drawable.a, "#1", 6666, "15", "2"));
+        items.add(new Item(R.drawable.a, "#1", 7777, "31", "2"));
+        items.add(new Item(R.drawable.a, "#1", 8888, "21", "2"));
+
+//        recyclerView.setAdapter(new MyRecyclerAdapter(items,R.layout.activity_list_inquiry));
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
         List<CardViewContent> list = new ArrayList<>();
@@ -36,15 +50,10 @@ public class ListInquiry extends AppCompatActivity{
             }
         });
 
-        List<Item> items=new ArrayList<>();
-        Item[] item=new Item[5];
-//        item[0]=new Item(R.drawable.a,"#1", 2000, "1", "1");
-//        item[1]=new Item(R.drawable.b,"#2");
-//        item[2]=new Item(R.drawable.c,"#3");
-//        item[3]=new Item(R.drawable.d,"#4");
-//        item[4]=new Item(R.drawable.e,"#5");
 
-        for(int i=0;i<5;i++) items.add(item[i]);
+
+
+//        for(int i=0;i<5;i++) items.add(item[i]);
 
         //recyclerView.setAdapter(new MyRecyclerAdapter(getApplicationContext(),albumList,R.layout.activity_list_inquiry));
 
@@ -86,7 +95,7 @@ public class ListInquiry extends AppCompatActivity{
 
             public ViewHolder(View itemView){
                 super(itemView);
-
+                TextView textView = (TextView) findViewById(R.id.textDiscountType);
 
             }
 
