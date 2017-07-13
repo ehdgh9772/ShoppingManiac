@@ -21,13 +21,22 @@ import java.util.Objects;
  */
 
 public class Database {
+
+    //region Final Values
     private final int EXTRA_JSON = 1;
     private final int EXTRA_IMAGE = 2;
-
     private final String DISCOUNT_INFO = "discountinfo";
     private final String PRICE_HISTORY = "pricehistory";
     private final String LOG = "Database";
+    //endregion
 
+    //region Fields
+    private ArrayList<DiscountInfo> _discountInfoArray;
+    private ArrayList<PriceHistory> _priceHistoryArray;
+    private ArrayList<Bitmap> _bitmapArray = new ArrayList<>();
+    //endregion
+
+    //region Requests
     public void requestDiscountInfo(LoadCompleteListener loadCompleteListener) {
         scrap(EXTRA_JSON, DISCOUNT_INFO, loadCompleteListener);
         Log.i(LOG, "requested");
@@ -45,18 +54,14 @@ public class Database {
                 loadCompleteListener);
     }
 
-    public void requestPriceHistory(int index, LoadCompleteListener loadCompleteListener) {
+    public void requestPriceHistory(ArrayList<DiscountInfo> itemArray, int index, LoadCompleteListener loadCompleteListener) {
         scrap(EXTRA_JSON,
-                PRICE_HISTORY + "?itemid=" + _discountInfoArray.get(index).getItemId(),
+                PRICE_HISTORY + "?itemid=" + itemArray.get(index).getItemId(),
                 loadCompleteListener);
     }
+    //endregion
 
-    private ArrayList<DiscountInfo> _discountInfoArray;
-
-    public ArrayList<DiscountInfo> getDiscountInfoArray() {
-        return _discountInfoArray;
-    }
-
+    //region Setter
     private void setDiscountInfoArray(JSONObject json) {
         try {
             JSONArray jsArray = json.getJSONArray(DISCOUNT_INFO);
@@ -81,21 +86,15 @@ public class Database {
         }
     }
 
-    private ArrayList<PriceHistory> _priceHistoryArray;
-
-    public ArrayList<PriceHistory> getPriceHistoryArray() {
-        return _priceHistoryArray;
-    }
-
     private void setPriceHistoryArray(JSONObject json) {
         try {
             JSONArray jsArray = json.getJSONArray(PRICE_HISTORY);
             _priceHistoryArray = new ArrayList<>();
             for (int i = 0; i < jsArray.length(); i++) {
-                JSONObject c = jsArray.getJSONObject(i);
+                JSONObject jsonObj = jsArray.getJSONObject(i);
                 PriceHistory priceHistory = new PriceHistory();
-                priceHistory.date = c.getString("Date");
-                priceHistory.price = c.getString("Price");
+                priceHistory.setDate(jsonObj.getString("Date"));
+                priceHistory.setPrice(jsonObj.getString("Price"));
 
                 _priceHistoryArray.add(priceHistory);
                 Log.i("tag", "put on array");
@@ -105,7 +104,21 @@ public class Database {
         }
     }
 
-    private ArrayList<Bitmap> _bitmapArray = new ArrayList<>();
+    public void setBitmap(Bitmap bitmap) {
+        _bitmapArray.add(bitmap);
+    }
+
+    //endregion
+
+    //region Getter
+
+    public ArrayList<DiscountInfo> getDiscountInfoArray() {
+        return _discountInfoArray;
+    }
+
+    public ArrayList<PriceHistory> getPriceHistoryArray() {
+        return _priceHistoryArray;
+    }
 
     public Bitmap getBitmap(int index) {
         return _bitmapArray.get(index);
@@ -115,9 +128,7 @@ public class Database {
         return _bitmapArray;
     }
 
-    public void setBitmap(Bitmap bitmap) {
-        _bitmapArray.add(bitmap);
-    }
+    //endregion
 
     //region LoadCompleteListener
     private LoadCompleteListener _loadCompleteListener;
@@ -132,6 +143,7 @@ public class Database {
     }
     //endregion
 
+    //region Scrapper
     private void scrap(int scrapType, final String url, final LoadCompleteListener loadCompleteListener) {
 
         final String protocol = "http://server.raystar.kro.kr:3030/";
@@ -216,4 +228,5 @@ public class Database {
             i.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, url);
         }
     }
+    //endregion
 }

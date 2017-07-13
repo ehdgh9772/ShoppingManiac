@@ -5,6 +5,24 @@ package com.example.kcci.shoppingmaniac.database;
  */
 
 public class PriceHistory {
-    public String price;
-    public String date;
+    private String price;
+    private String date;
+
+    //region Getter & Setter
+    public String getPrice() {
+        return price;
+    }
+
+    void setPrice(String price) {
+        this.price = price;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    void setDate(String date) {
+        this.date = date;
+    }
+    //endregion
 }

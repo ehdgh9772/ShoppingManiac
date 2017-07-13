@@ -5,24 +5,36 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.PixelFormat;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private RecyclerView _recyclerView;
+    private TextView _PopupView;                            //항상 보이게 할 뷰
+    private WindowManager.LayoutParams _params;  //layout params 객체. 뷰의 위치 및 크기
+    private WindowManager _windowManager;          //윈도우 매니저
+    private DrawerLayout _drawerLayout;
+    private View _drawerView;
 
     public static String LOG_TAG = "MainActivity";
 
@@ -30,27 +42,52 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        _recyclerView = (RecyclerView) findViewById(R.id.recyclerViewMain);
-        initData();
+        initLayout();
+        _PopupView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MainActivity.this, "Hi", Toast.LENGTH_SHORT).show();
+            }
+        });
+        viewDiscountInfo();
+        viewItemInfo();
     }
 
     /**
      * 레이아웃 초기화
      */
 
-    /*private void initLayout(){
+    private void initLayout(){
 
-        _recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
-    }*/
+        _recyclerView = (RecyclerView)findViewById(R.id.recyclerViewMain);
+
+        _PopupView = new TextView(this);                                         //뷰 생성
+        _PopupView.setText("...");                        //텍스트 설정
+        _PopupView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18); //텍스트 크기 18sp
+        _PopupView.setTextColor(Color.BLUE);                                  //글자 색상
+        _PopupView.setBackgroundColor(Color.argb(127, 0, 255, 255)); //텍스트뷰 배경 색
+        _params = new WindowManager.LayoutParams(
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.TYPE_PHONE,//항상 최 상위. 터치 이벤트 받을 수 있음.
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,  //포커스를 가지지 않음
+                PixelFormat.TRANSLUCENT);                                        //투명
+        _params.gravity = Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM;                   //왼쪽 상단에 위치하게 함.
+
+        _windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);  //윈도우 매니저
+        _windowManager.addView(_PopupView, _params);      //윈도우에 뷰 넣기. permission 필요.
+
+        _drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+    }
 
     /**
-     * 데이터 초기화
+     * Discount 정보
      */
-    private void initData(){
+    private void viewDiscountInfo(){
 
-        List<CardViewContent> albumList = new ArrayList<>();
+        List<CardViewContent> DiscountList = new ArrayList<>();
 
-        for (int i =0; i<20; i ++){
+        for (int i =0; i<10; i ++){
 
             CardViewContent cardViewContent = new CardViewContent();
             cardViewContent.setDiscountType("할인종류");
@@ -58,15 +95,125 @@ public class MainActivity extends AppCompatActivity {
             cardViewContent.setPrice("원가");
             cardViewContent.setDiscountedPrice("할인가");
             cardViewContent.setImage(BitmapFactory.decodeResource(getResources(),R.drawable.a));
-            albumList.add(cardViewContent);
+            DiscountList.add(cardViewContent);
         }
-        _recyclerView.setAdapter(new MyRecyclerAdapter(albumList,R.layout.card_discount));
+        _recyclerView.setAdapter(new DiscountRecyclerAdapter(DiscountList,R.layout.card_discount));
         _recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         _recyclerView.setItemAnimator(new DefaultItemAnimator());
-
     }
 
-    class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.ViewHolder> {
+    private void viewItemInfo(){
+
+        List<CardViewContent> ItenList = new ArrayList<>();
+
+        for (int i =0; i<10; i ++){
+
+            CardViewContent cardViewContent = new CardViewContent();
+            cardViewContent.setName("상품명");
+            cardViewContent.setPrice("원가");
+            cardViewContent.setImage(BitmapFactory.decodeResource(getResources(),R.drawable.a));
+            ItenList.add(cardViewContent);
+        }
+        _recyclerView.setAdapter(new ItemRecyclerAdapter(ItenList,R.layout.card_item));
+        _recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        _recyclerView.setItemAnimator(new DefaultItemAnimator());
+    }
+
+    class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapter.ViewHolder> {
+
+        private List<CardViewContent> itemList;
+        private int itemLayout;
+
+        /**
+         * 생성자
+         * @param items
+         * @param itemLayout
+         */
+        ItemRecyclerAdapter(List<CardViewContent> items , int itemLayout){
+
+            this.itemList = items;
+            this.itemLayout = itemLayout;
+        }
+
+        /**
+         * 레이아웃을 만들어서 Holer에 저장
+         * @param viewGroup
+         * @param viewType
+         * @return
+         */
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+
+            View view = LayoutInflater.from(viewGroup.getContext()).inflate(itemLayout,viewGroup,false);
+            return new ViewHolder(view);
+        }
+
+
+        /**
+         * listView getView 를 대체
+         * 넘겨 받은 데이터를 화면에 출력하는 역할
+         *
+         * @param viewHolder
+         * @param position
+         */
+        @Override
+        public void onBindViewHolder(ViewHolder viewHolder, int position) {
+
+            CardViewContent item = itemList.get(position);
+            viewHolder._name.setText(item.getName());
+            viewHolder._price.setText(item.getPrice());
+
+            viewHolder.img.setBackgroundResource(R.drawable.a);
+            viewHolder.itemView.setTag(item);
+
+            viewHolder._btnLineChart.setOnClickListener(new View.OnClickListener() {
+                public static final String LOG_TAG = "ViewHolder";
+
+                @Override
+                public void onClick(View view) {
+                    switch (view.getId()) {
+
+                        case R.id.btnLineChart:
+
+                            Log.i(LOG_TAG, "Line Chart Start...");
+
+                            Intent intent = new Intent(getApplicationContext(), LineChartActivity.class);
+                            startActivity(intent);
+
+//                break;
+                    }
+                }
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            return itemList.size();
+        }
+
+        /**
+         * 뷰 재활용을 위한 viewHolder
+         */
+        class ViewHolder extends RecyclerView.ViewHolder{
+
+            public ImageView img;
+            private TextView _name;
+            private TextView _price;
+            Button _btnLineChart;
+
+            public ViewHolder(View itemView){
+                super(itemView);
+
+                img = (ImageView) itemView.findViewById(R.id.img);
+                _name = (TextView) itemView.findViewById(R.id.textName);
+                _price = (TextView) itemView.findViewById(R.id.textPrice);
+                _btnLineChart =  (Button) itemView.findViewById(R.id.btnLineChart);
+            }
+
+        }
+    }
+
+    class DiscountRecyclerAdapter extends RecyclerView.Adapter<DiscountRecyclerAdapter.ViewHolder> {
 
         private List<CardViewContent> albumList;
         private int itemLayout;
@@ -76,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
          * @param items
          * @param itemLayout
          */
-        MyRecyclerAdapter(List<CardViewContent> items , int itemLayout){
+        DiscountRecyclerAdapter(List<CardViewContent> items , int itemLayout){
 
             this.albumList = items;
             this.itemLayout = itemLayout;

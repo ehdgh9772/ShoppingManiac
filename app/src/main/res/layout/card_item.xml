@@ -35,35 +35,8 @@
                 android:id="@+id/guideline1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                card_view:layout_constraintGuide_percent="0.3"/>
-
-            <android.support.constraint.Guideline
-                android:id="@+id/guideline2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 card_view:layout_constraintGuide_percent="0.5"/>
-
-            <TextView
-                android:id="@+id/textDiscountType"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/textPrice"
-                android:layout_marginBottom="4dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:text="특가"
-                android:textStyle="bold"
-                android:textSize="20dp"
-                android:gravity="center"
-                card_view:layout_constraintBottom_toTopOf="@+id/guideline2"
-                card_view:layout_constraintHorizontal_bias="0.0"
-                card_view:layout_constraintLeft_toLeftOf="parent"
-                card_view:layout_constraintRight_toLeftOf="@+id/guideline1"
-                card_view:layout_constraintTop_toTopOf="parent"/>
 
             <TextView
                 android:id="@+id/textName"
@@ -71,18 +44,17 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
                 android:layout_marginEnd="8dp"
-                android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:text="양배추"
                 android:textStyle="bold"
-                android:textSize="20dp"
-                card_view:layout_constraintBottom_toTopOf="@+id/guideline2"
-                card_view:layout_constraintHorizontal_bias="0.0"
-                card_view:layout_constraintLeft_toLeftOf="@+id/guideline1"
+                android:textSize="26dp"
+                card_view:layout_constraintBottom_toTopOf="@+id/guideline1"
                 card_view:layout_constraintRight_toRightOf="parent"
-                card_view:layout_constraintTop_toTopOf="parent"/>
+                card_view:layout_constraintTop_toTopOf="parent"
+                android:layout_marginLeft="8dp"
+                card_view:layout_constraintLeft_toLeftOf="parent"/>
 
             <TextView
                 android:id="@+id/textPrice"
@@ -91,18 +63,19 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
                 android:layout_marginBottom="8dp"
-                android:layout_marginLeft="0dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="4dp"
                 android:text="1200won"
                 android:textStyle="bold"
-                android:textSize="20dp"
+                android:textSize="26dp"
                 android:gravity="center"
                 card_view:layout_constraintBottom_toBottomOf="parent"
-                card_view:layout_constraintLeft_toLeftOf="@+id/textDiscountType"
-                card_view:layout_constraintTop_toTopOf="@+id/guideline2"
-                android:layout_marginRight="8dp"
-                card_view:layout_constraintRight_toRightOf="parent"/>
+                card_view:layout_constraintTop_toTopOf="@+id/guideline1"
+                android:layout_marginRight="7dp"
+                card_view:layout_constraintRight_toRightOf="parent"
+                card_view:layout_constraintVertical_bias="0.357"
+                android:layout_marginLeft="8dp"
+                card_view:layout_constraintLeft_toLeftOf="parent"/>
 
         </android.support.constraint.ConstraintLayout>
 
