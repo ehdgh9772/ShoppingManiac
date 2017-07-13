@@ -1,4 +1,4 @@
-package com.example.kcci.shoppingmaniac.database;
+package com.example.shoppingmanager.database;
 
 /**
  * Created by koo on 17. 7. 10.

@@ -20,9 +20,9 @@
             android:id="@+id/chart_line"
             android:layout_width="fill_parent"
 
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="horizontal"/>
+            android:layout_height="300dp"
+            android:layout_weight="0.88"
+            android:orientation="horizontal" />
 
 
     </LinearLayout>
