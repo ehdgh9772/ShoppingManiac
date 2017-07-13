@@ -19,10 +19,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button imageShooting = (Button) findViewById(R.id.itemRegistration);
+        Button itemRegisteration = (Button) findViewById(R.id.itemRegistration);
         Button listInquiry = (Button) findViewById(R.id.listInquiry);
 
-        imageShooting.setOnClickListener(
+        itemRegisteration.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
