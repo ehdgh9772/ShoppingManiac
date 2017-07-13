@@ -34,7 +34,7 @@ public class ListInquiry extends AppCompatActivity{
         database.requestDiscountInfo(new Database.LoadCompleteListener() {
             @Override
             public void onLoadComplete() {
-                database.getDiscountInfoArray();
+                database.getDiscountInfoList();
             }
         });
     }

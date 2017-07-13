@@ -45,5 +45,12 @@ public class MainActivity extends AppCompatActivity {
                 }
         );
 
+        Database database = new Database();
+        database.insertDiscountInfo("", "", "", "", "", new Database.LoadCompleteListener() {
+            @Override
+            public void onLoadComplete() {
+                Toast.makeText(MainActivity.this, "", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
