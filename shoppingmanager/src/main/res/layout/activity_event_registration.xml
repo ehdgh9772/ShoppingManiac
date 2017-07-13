@@ -1,9 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.example.shoppingmanager.EventRegistration">
+    android:layout_height="match_parent">
 
-</android.support.constraint.ConstraintLayout>
+    <TextView
+        android:id="@+id/itemNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignTop="@+id/itemNameEditText"
+        android:layout_marginLeft="33dp"
+        android:layout_marginStart="33dp"
+        android:layout_toLeftOf="@+id/itemNameEditText"
+        android:layout_toStartOf="@+id/itemNameEditText"
+        android:gravity="center_vertical"
+        android:text="아이디"
+        android:textColor="@android:color/black"
+        android:textSize="20dp" />
+
+    <EditText
+        android:id="@+id/itemNameEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginEnd="41dp"
+        android:layout_marginRight="40dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:layout_marginTop="51dp"
+        android:layout_below="@+id/imageShooting"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:id="@+id/itemPriceTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_alignLeft="@+id/itemNameTextView"
+        android:layout_alignStart="@+id/itemNameTextView"
+        android:layout_alignTop="@+id/itemPriceEditText"
+        android:layout_toLeftOf="@+id/itemPriceEditText"
+        android:gravity="center_vertical"
+        android:text="할인 금액"
+        android:textColor="@android:color/black"
+        android:textSize="20dp" />
+
+    <EditText
+        android:id="@+id/itemPriceEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_below="@+id/itemNameEditText"
+        android:layout_marginTop="20dp"
+        android:layout_toEndOf="@+id/itemNameTextView"
+        android:layout_toRightOf="@+id/itemNameTextView"
+        android:ems="10"
+        android:inputType="textPersonName" />
+
+    <TextView
+        android:id="@+id/itemIdTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_alignLeft="@+id/itemPriceTextView"
+        android:layout_alignStart="@+id/itemPriceTextView"
+        android:layout_below="@+id/itemPriceTextView"
+        android:layout_marginTop="28dp"
+        android:gravity="center_vertical"
+        android:text="이벤트 시작일"
+        android:textColor="@android:color/black"
+        android:textSize="20dp"
+        android:layout_toStartOf="@+id/itemIdEditText" />
+
+    <EditText
+        android:id="@+id/itemIdEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_above="@+id/itemUnitTextView"
+        android:layout_toEndOf="@+id/itemPriceTextView"
+        android:ems="10"
+        android:inputType="textPersonName" />
+
+    <TextView
+        android:id="@+id/itemUnitTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_alignLeft="@+id/itemIdTextView"
+        android:layout_alignStart="@+id/itemIdTextView"
+        android:layout_below="@+id/itemIdTextView"
+        android:layout_marginTop="22dp"
+        android:layout_toLeftOf="@+id/itemUnitEditText"
+        android:layout_toStartOf="@+id/itemUnitEditText"
+        android:gravity="center_vertical"
+        android:text="이벤트 종료일"
+        android:textColor="@android:color/black"
+        android:textSize="20dp" />
+
+    <EditText
+        android:id="@+id/itemUnitEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_alignTop="@+id/itemUnitTextView"
+        android:layout_toEndOf="@+id/itemIdTextView"
+        android:layout_toRightOf="@+id/itemIdTextView"
+        android:ems="10"
+        android:inputType="textPersonName" />
+
+    <Button
+        android:id="@+id/registration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentStart="true"
+        android:text="등록하기" />
+</RelativeLayout>

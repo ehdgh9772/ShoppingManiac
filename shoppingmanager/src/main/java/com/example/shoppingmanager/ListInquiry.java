@@ -22,7 +22,7 @@ public class ListInquiry extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.recycler_view);
 
-        Button eventRegistration = (Button) findViewById(R.id.eventRegistration);
+        //Button eventRegistration = (Button) findViewById(R.id.eventRegistration);
         RecyclerView recyclerView=(RecyclerView)findViewById(R.id.my_recycler_view);
         LinearLayoutManager layoutManager=new LinearLayoutManager(getApplicationContext());
 
@@ -40,14 +40,14 @@ public class ListInquiry extends AppCompatActivity{
             }
         });
 
-        eventRegistration.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                    }
-                }
-        );
+//        eventRegistration.setOnClickListener(
+//                new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//
+//                    }
+//                }
+//        );
     }
 
     private class ManagerRecyclerAdapter extends RecyclerView.Adapter<ManagerRecyclerAdapter.ViewHolder> {
@@ -69,7 +69,6 @@ public class ListInquiry extends AppCompatActivity{
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
-
             CardViewContent item = _itemList.get(position);
         }
 
