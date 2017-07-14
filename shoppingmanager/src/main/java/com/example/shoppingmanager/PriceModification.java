@@ -16,7 +16,7 @@ public class PriceModification extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_price_modification);
 
-        EditText itemid = (EditText) findViewById(R.id.edt_itemId);
+        EditText itemId = (EditText) findViewById(R.id.edt_itemId);
         EditText selectedDate = (EditText) findViewById(R.id.edt_selectedDate);
         EditText registrationPrice = (EditText) findViewById(R.id.edt_registrationPrice);
         Button searchItemIdButton = (Button) findViewById(R.id.btn_searchItemId);
@@ -32,21 +32,22 @@ public class PriceModification extends AppCompatActivity {
             }
         });
 
+        final String item = itemId.getText().toString();
         final String date = selectedDate.getText().toString();
         final String price = registrationPrice.getText().toString();
 
 
-//        commitButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                database.insertDiscountInfo(itemid, date, price,
-//                        new Database.LoadCompleteListener() {
-//                            @Override
-//                            public void onLoadComplete() {
-//
-//                            }
-//                        });
-//            }
-//        });
+        commitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                database.insertPrice(item, date, price,
+                        new Database.LoadCompleteListener() {
+                            @Override
+                            public void onLoadComplete() {
+
+                            }
+                        });
+            }
+        });
     }
 }
