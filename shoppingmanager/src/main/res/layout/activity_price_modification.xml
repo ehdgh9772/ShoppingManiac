@@ -22,7 +22,7 @@
         app:layout_constraintBottom_toTopOf="@+id/guideline6"/>
 
     <TextView
-        android:id="@+id/txv_selectedDate"
+        android:id="@+id/txv_itemId"
         android:layout_width="100dp"
         android:layout_height="40dp"
         android:layout_marginLeft="16dp"
@@ -35,17 +35,40 @@
         app:layout_constraintTop_toBottomOf="@+id/imageView"/>
 
     <EditText
-        android:id="@+id/edt_selectedDate"
+        android:id="@+id/edt_itemId"
         android:layout_width="0dp"
         android:layout_height="40dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:inputType="textPersonName"
-        app:layout_constraintBaseline_toBaselineOf="@+id/txv_selectedDate"
-        app:layout_constraintLeft_toRightOf="@+id/txv_selectedDate"
+        app:layout_constraintBaseline_toBaselineOf="@+id/txv_itemId"
+        app:layout_constraintLeft_toRightOf="@+id/txv_itemId"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintHorizontal_bias="0.0" />
 
+
+    <TextView
+        android:id="@+id/txv_selectedDate"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="25dp"
+        android:gravity="center_vertical"
+        android:text="등록 가격"
+        android:textColor="@android:color/black"
+        android:textSize="20dp"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="@+id/txv_itemId"
+        app:layout_constraintRight_toRightOf="@+id/txv_itemId"
+        app:layout_constraintTop_toBottomOf="@+id/txv_itemId"/>
+
+    <EditText
+        android:id="@+id/edt_selectedDate"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:inputType="textPersonName"
+        app:layout_constraintBaseline_toBaselineOf="@+id/txv_selectedDate"
+        app:layout_constraintLeft_toLeftOf="@+id/edt_itemId"
+        app:layout_constraintRight_toRightOf="@+id/edt_itemId"/>
 
     <TextView
         android:id="@+id/txv_registrationPrice"
