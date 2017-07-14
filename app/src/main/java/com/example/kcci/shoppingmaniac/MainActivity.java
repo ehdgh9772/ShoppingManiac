@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
     protected RECOBeaconManager mRecoManager;
     protected ArrayList<RECOBeaconRegion> mRegions;
     private long mScanPeriod = 1*1000L;
-    private long mSleepPeriod = 10*1000L;
+    private long mSleepPeriod = 3*1000L;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,9 +108,6 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         btnImgDrawerView = findViewById(R.id.btnDrawer);
         btnImgDrawerView.bringToFront();
 
-        mRecoManager.setMonitoringListener(this);
-        mRecoManager.setScanPeriod(mScanPeriod);
-        mRecoManager.setSleepPeriod(mSleepPeriod);
     }
 
 
@@ -122,7 +119,12 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
                 SCAN_RECO_ONLY,
                 ENABLE_BACKGROUND_RANGING_TIMEOUT
         );
-        mRegions = this.generateBeaconRegion();
+        mRegions = generateBeaconRegion();
+
+        mRecoManager.setMonitoringListener(this);
+        mRecoManager.setScanPeriod(mScanPeriod);
+        mRecoManager.setSleepPeriod(mSleepPeriod);
+
         mRecoManager.bind(this);
 
     }
