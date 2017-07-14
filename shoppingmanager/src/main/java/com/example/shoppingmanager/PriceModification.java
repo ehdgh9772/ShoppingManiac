@@ -36,7 +36,6 @@ public class PriceModification extends AppCompatActivity {
         final String date = selectedDate.getText().toString();
         final String price = registrationPrice.getText().toString();
 
-
         commitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
