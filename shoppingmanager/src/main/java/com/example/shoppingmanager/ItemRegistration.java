@@ -31,7 +31,7 @@ public class ItemRegistration extends AppCompatActivity {
 
         Button imageShooting = (Button) findViewById(R.id.btn_searchItemId);
         Button listInquiry = (Button) findViewById(R.id.listInquiry);
-        Button registration = (Button) findViewById(R.id.registration);
+        Button registration = (Button) findViewById(R.id.btn_commitItem);
         Database database = new Database();
 
         imageShooting.setOnClickListener(

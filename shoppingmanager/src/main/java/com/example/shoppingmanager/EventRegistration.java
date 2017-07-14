@@ -24,7 +24,7 @@ public class EventRegistration extends AppCompatActivity {
         EditText endTimeText = (EditText) findViewById(R.id.edt_endTime);
         EditText discountTypeText = (EditText) findViewById(R.id.edt_dcType);
         Button searchItemIdButton = (Button) findViewById(R.id.btn_searchItemId);
-        Button commitButton = (Button) findViewById(R.id.btn_evRegis);
+        Button commitButton = (Button) findViewById(R.id.btn_commitEvent);
 
         final Database database = new Database();
 

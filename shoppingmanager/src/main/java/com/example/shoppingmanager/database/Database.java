@@ -118,9 +118,10 @@ public class Database {
                     setDiscountInfoList(parseToJSON(str));
                 else if (Objects.equals(url, GET_PRICE_HISTORY))
                     setPriceHistoryList(parseToJSON(str));
-                else if (Objects.equals(url, GET_ITEM_BY_CATEGORY)
-                        || Objects.equals(url, GET_ALL_ITEM))
-                    setItemArray(parseToJSON(str));
+                else if (Objects.equals(url, GET_ITEM_BY_CATEGORY))
+                    setItemArray(parseToJSON(str), GET_ITEM_BY_CATEGORY);
+                else if (Objects.equals(url, GET_ALL_ITEM))
+                    setItemArray(parseToJSON(str), GET_ALL_ITEM);
                 else if (Objects.equals(url, INSERT_DISCOUNT_INFO))
                     Log.i(LOG, "Insert Done!");
 
@@ -223,9 +224,9 @@ public class Database {
         }
     }
 
-    private void setItemArray(JSONObject json) {
+    private void setItemArray(JSONObject json, String getType) {
         try {
-            JSONArray jsArray = json.getJSONArray(GET_ITEM_BY_CATEGORY);
+            JSONArray jsArray = json.getJSONArray(getType);
             _itemList = new ArrayList<>();
             for (int i = 0; i < jsArray.length(); i++) {
                 JSONObject jsonObj = jsArray.getJSONObject(i);
