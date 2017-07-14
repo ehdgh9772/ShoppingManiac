@@ -28,11 +28,11 @@
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
         android:gravity="center_vertical"
-        android:text="이름"
+        android:text="할인가격"
         android:textColor="@android:color/black"
         android:textSize="20dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"/>
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
     <EditText
         android:id="@+id/edt_eventName"
@@ -51,13 +51,13 @@
         android:layout_height="40dp"
         android:layout_marginTop="25dp"
         android:gravity="center_vertical"
-        android:text="할인가격"
+        android:text="시작 날짜"
         android:textColor="@android:color/black"
         android:textSize="20dp"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="@+id/txv_eventName"
         app:layout_constraintRight_toRightOf="@+id/txv_eventName"
-        app:layout_constraintTop_toBottomOf="@+id/txv_eventName"/>
+        app:layout_constraintTop_toBottomOf="@+id/txv_eventName" />
 
     <EditText
         android:id="@+id/edt_dcPrice"
@@ -77,13 +77,13 @@
         android:layout_height="40dp"
         android:layout_marginTop="25dp"
         android:gravity="center_vertical"
-        android:text="시작 날짜"
+        android:text="종료날짜"
         android:textColor="@android:color/black"
         android:textSize="20dp"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="@+id/txv_dcPrice"
         app:layout_constraintRight_toRightOf="@+id/txv_dcPrice"
-        app:layout_constraintTop_toBottomOf="@+id/txv_dcPrice"/>
+        app:layout_constraintTop_toBottomOf="@+id/txv_dcPrice" />
 
     <EditText
         android:id="@+id/edt_startTime"
@@ -100,13 +100,13 @@
         android:layout_height="40dp"
         android:layout_marginTop="25dp"
         android:gravity="center_vertical"
-        android:text="종료 날짜"
+        android:text="할인 종류"
         android:textColor="@android:color/black"
         android:textSize="20dp"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="@+id/txv_startTime"
         app:layout_constraintRight_toRightOf="@+id/txv_startTime"
-        app:layout_constraintTop_toBottomOf="@+id/txv_startTime"/>
+        app:layout_constraintTop_toBottomOf="@+id/txv_startTime" />
 
     <EditText
         android:id="@+id/edt_endTime"
@@ -116,29 +116,6 @@
         app:layout_constraintBaseline_toBaselineOf="@+id/txv_endTime"
         app:layout_constraintLeft_toLeftOf="@+id/edt_startTime"
         app:layout_constraintRight_toRightOf="@+id/edt_startTime"/>
-
-    <TextView
-        android:id="@+id/txv_dcType"
-        android:layout_width="0dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="25dp"
-        android:gravity="center_vertical"
-        android:text="이벤트 종류"
-        android:textColor="@android:color/black"
-        android:textSize="20dp"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="@+id/txv_endTime"
-        app:layout_constraintRight_toRightOf="@+id/txv_endTime"
-        app:layout_constraintTop_toBottomOf="@+id/txv_endTime"/>
-
-    <EditText
-        android:id="@+id/edt_dcType"
-        android:layout_width="0dp"
-        android:layout_height="40dp"
-        android:inputType="textPersonName"
-        app:layout_constraintBaseline_toBaselineOf="@+id/txv_dcType"
-        app:layout_constraintLeft_toLeftOf="@+id/edt_endTime"
-        app:layout_constraintRight_toRightOf="@+id/edt_endTime"/>
 
     <Button
         android:id="@+id/registration"
