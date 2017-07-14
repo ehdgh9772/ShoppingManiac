@@ -193,7 +193,7 @@ public class Database {
         for (int i = 0; i < args.length; i++) {
             if(args.length - 1 == i)
                 url += "arg" + i + "=" + args[i];
-
+            else
             url += "arg" + i + "=" + args[i] + "&";
         }
 
