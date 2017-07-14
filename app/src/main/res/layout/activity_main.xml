@@ -29,15 +29,6 @@
                 android:text="You are in"
                 android:textSize="20dp"/>
 
-            <EditText
-                android:id="@+id/editText3"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:ems="10"
-                android:inputType="textPersonName"
-                android:text="Name"/>
-
         </LinearLayout>
 
         <android.support.v7.widget.RecyclerView

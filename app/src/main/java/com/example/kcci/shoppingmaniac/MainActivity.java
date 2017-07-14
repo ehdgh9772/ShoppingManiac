@@ -89,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 
         initLayout();
 //        scanBeacon();
+
         btnImgDrawerView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -118,6 +119,11 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 
         btnImgDrawerView = findViewById(R.id.btnDrawer);
         btnImgDrawerView.bringToFront();
+
+        slideLayout.setVisibility(View.INVISIBLE);
+        slideLayout.bringToFront();
+
+//        slideLayout.
 
     }
 
@@ -199,13 +205,13 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
      */
     private void popDrawerView() {
         if (isPageSlided) {
+            Log.i(LOG_TAG, "slide down");
             slideLayout.startAnimation(animGrowFromBottom);
 //            ArrayList<> getSpottedBeacon();
 //            if ()
 //            generateConerIcons();
         } else {
-            Log.i(LOG_TAG, "slide animation is on");
-            slideLayout.setVisibility(View.VISIBLE);
+            Log.i(LOG_TAG, "slide up");
             slideLayout.startAnimation(animSetToBottom);
         }
     }
@@ -610,6 +616,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         @Override
         public void onAnimationEnd(Animation animation) {
             if (isPageSlided) slideLayout.setVisibility(View.INVISIBLE);
+            else slideLayout.setVisibility(View.VISIBLE);
             isPageSlided = !isPageSlided;
             Log.i(LOG_TAG, "animation terminated isPageSlided is : " + isPageSlided);
         }
