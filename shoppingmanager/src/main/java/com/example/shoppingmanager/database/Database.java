@@ -191,8 +191,12 @@ public class Database {
         if (args.length > 0)
             url += "?";
         for (int i = 0; i < args.length; i++) {
-            url += "arg" + i + "=" + args[i];
+            if(args.length - 1 == i)
+                url += "arg" + i + "=" + args[i];
+
+            url += "arg" + i + "=" + args[i] + "&";
         }
+
         return url;
     }
     //endregion
