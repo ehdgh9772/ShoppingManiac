@@ -39,10 +39,12 @@ import com.perples.recosdk.RECOMonitoringListener;
 import com.perples.recosdk.RECOServiceConnectListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements RECOServiceConnectListener, RECOMonitoringListener {
+public class MainActivity extends AppCompatActivity implements RECOServiceConnectListener, RECOMonitoringListener{
 
     public static String LOG_TAG = "MainActivity";
 
@@ -61,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
     Animation animSetToBottom;
     LinearLayout slideLayout;
 
-    public static final String RECO_UUID = "24DDF411-8CF1-440C-87CD-E368DAF9C93E";
+    public static final String RECO_UUID = "24ddf411-8cf1-440c-87cd-e368daf9c93e";
     public static final boolean SCAN_RECO_ONLY = true;
     public static final boolean ENABLE_BACKGROUND_RANGING_TIMEOUT = true;
     public static final boolean DISCONTINUOUS_SCAN = false;
@@ -71,9 +73,15 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
     private BluetoothAdapter mBluetoothAdapter;
 
     protected RECOBeaconManager mRecoManager;
-    protected ArrayList<RECOBeaconRegion> mRegions;
-    private long mScanPeriod = 1*1000L;
+        protected ArrayList<RECOBeaconRegion> mRegions;
+//    protected RECOBeaconRegion mRegion;
+    protected Collection<RECOBeacon> prevScannedBeacons;
+    private HashMap<Integer, String> regionNameFromMinor;
+    private long mScanPeriod = 800L;
     private long mSleepPeriod = 3*1000L;
+
+    private TextView drawerTxt;
+    private TextView txtVSpotName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +116,8 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         btnImgDrawerView = findViewById(R.id.btnDrawer);
         btnImgDrawerView.bringToFront();
 
+        drawerTxt = (TextView) findViewById(R.id.txtVNoSpotted);
+        txtVSpotName = (TextView) findViewById(R.id.txtVSpotName);
     }
 
 
@@ -121,7 +131,16 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         );
         mRegions = generateBeaconRegion();
 
+        regionNameFromMinor = new HashMap<>();
+        regionNameFromMinor.put(111, "entrance");
+        regionNameFromMinor.put(112, "grocery");
+        regionNameFromMinor.put(113, "meat");
+        regionNameFromMinor.put(114, "appliance");
+
+//        mRegion = new RECOBeaconRegion(RECO_UUID, 11, "whagok");
+
         mRecoManager.setMonitoringListener(this);
+//        mRecoManager.setRangingListener(this);
         mRecoManager.setScanPeriod(mScanPeriod);
         mRecoManager.setSleepPeriod(mSleepPeriod);
 
@@ -173,14 +192,14 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 
 
     private ArrayList<RECOBeaconRegion> generateBeaconRegion() {
-        ArrayList<RECOBeaconRegion> regions = new ArrayList<>();
 
-        regions.add(new RECOBeaconRegion(RECO_UUID, 11, 111, "entrance"));
-        regions.add(new RECOBeaconRegion(RECO_UUID, 11, 112, "grocery"));
-        regions.add(new RECOBeaconRegion(RECO_UUID, 11, 113, "meat"));
-        regions.add(new RECOBeaconRegion(RECO_UUID, 11, 114, "appliance"));
-
-        return regions;
+        return new ArrayList<>(Arrays.asList(
+//                new RECOBeaconRegion(RECO_UUID, 11, 111, "entrance"),
+//                new RECOBeaconRegion(RECO_UUID, 11, 112, "grocery"),
+//                new RECOBeaconRegion(RECO_UUID, 11, 113, "meat"),
+//                new RECOBeaconRegion(RECO_UUID, 11, 114, "appliance")
+                new RECOBeaconRegion(RECO_UUID, 11, "whagok")
+        ));
     }
 
     /**
@@ -290,13 +309,17 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
     protected void onDestroy() {
         super.onDestroy();
         this.stop(mRegions);
+//        this.stop(mRegion);
         this.unbind();
     }
 
 
-    protected void stop(ArrayList<RECOBeaconRegion> regions) {
+        protected void stop(ArrayList<RECOBeaconRegion> regions) {
+//    protected void stop(RECOBeaconRegion region) {
+
         for(RECOBeaconRegion region : regions) {
             try {
+//                mRecoManager.stopRangingBeaconsInRegion(region);
                 mRecoManager.stopMonitoringForRegion(region);
             } catch (RemoteException e) {
                 Log.i("RecoMonitoringActivity", "Remote Exception");
@@ -306,6 +329,11 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
                 e.printStackTrace();
             }
         }
+//        try {
+//            mRecoManager.stopMonitoringForRegion(region);
+//        } catch (RemoteException e) {
+//            e.printStackTrace();
+//        }
     }
 
     private void unbind() {
@@ -317,17 +345,29 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         }
     }
 
-
     @Override
     public void didEnterRegion(RECOBeaconRegion recoBeaconRegion, Collection<RECOBeacon> collection) {
         ////////비콘 범위 진입 시 콜백
-        TextView drawerTxt = (TextView) findViewById(R.id.txtVNoSpotted);
-        drawerTxt.setText(recoBeaconRegion.getUniqueIdentifier());
+
+        if (collection.isEmpty()) { drawerTxt.setText(R.string.no_scanned_beacon); return; }
+        if (!collection.equals(prevScannedBeacons)) {
+            StringBuilder stringBuilder = new StringBuilder();
+            for (RECOBeacon bk : collection) {
+                stringBuilder.append(regionNameFromMinor.get(bk.getMinor())).append("\n");
+                int rssi = bk.getRssi();
+                Log.i(LOG_TAG, String.valueOf(rssi));
+            }
+//            Log.i(LOG_TAG, stringBuilder.toString());
+            drawerTxt.setText(stringBuilder.toString());
+            txtVSpotName.setText(stringBuilder.toString());
+            prevScannedBeacons = collection;
+        }
     }
 
     @Override
     public void didExitRegion(RECOBeaconRegion recoBeaconRegion) {
-
+        ////////비콘 범위 벗어날 시 콜백
+        drawerTxt.append("\nleaved from " + recoBeaconRegion.getUniqueIdentifier());
     }
 
     @Override
@@ -341,6 +381,11 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
     public void monitoringDidFailForRegion(RECOBeaconRegion recoBeaconRegion, RECOErrorCode recoErrorCode) {
 
     }
@@ -348,6 +393,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
     @Override
     public void onServiceConnect() {
         this.start(mRegions);
+//        this.start(mRegion);
     }
 
     @Override
@@ -355,11 +401,13 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 
     }
 
-    private void start(ArrayList<RECOBeaconRegion> mRegions) {
+        private void start(ArrayList<RECOBeaconRegion> mRegions) {
+//    private void start(RECOBeaconRegion mRegion) {
         for(RECOBeaconRegion region : mRegions) {
             try {
 //                region.setRegionExpirationTimeMillis(60*1000L);
                 mRecoManager.startMonitoringForRegion(region);
+//                mRecoManager.startRangingBeaconsInRegion(region);
             } catch (RemoteException e) {
                 Log.i("RECOMonitoringActivity", "Remote Exception");
                 e.printStackTrace();
@@ -368,8 +416,24 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
                 e.printStackTrace();
             }
         }
+//        try {
+//            mRecoManager.startMonitoringForRegion(mRegion);
+//        } catch (RemoteException e) {
+//            e.printStackTrace();
+//        }
     }
-
+//
+//    @Override
+//    public void didRangeBeaconsInRegion(Collection<RECOBeacon> collection, RECOBeaconRegion recoBeaconRegion) {
+//                ////////비콘 범위 안 일 때 콜백
+//        TextView drawerTxt = (TextView) findViewById(R.id.txtVNoSpotted);
+//        drawerTxt.append("\n" + recoBeaconRegion.getUniqueIdentifier());
+//    }
+//
+//    @Override
+//    public void rangingBeaconsDidFailForRegion(RECOBeaconRegion recoBeaconRegion, RECOErrorCode recoErrorCode) {
+//
+//    }
 
 
     class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapter.ViewHolder> {
@@ -528,7 +592,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
                             Intent intent = new Intent(getApplicationContext(), LineChartActivity.class);
                             startActivity(intent);
 
-//                break;
+                            break;
                     }
                 }
             });
