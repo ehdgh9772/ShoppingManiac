@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         setContentView(R.layout.activity_main);
 
         initLayout();
-        scanBeacon();
+//        scanBeacon();
         btnImgDrawerView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
