@@ -22,7 +22,7 @@
         app:layout_constraintBottom_toTopOf="@+id/guideline6"/>
 
     <TextView
-        android:id="@+id/txv_eventName"
+        android:id="@+id/txv_dcPrice"
         android:layout_width="100dp"
         android:layout_height="40dp"
         android:layout_marginLeft="16dp"
@@ -35,40 +35,16 @@
         app:layout_constraintTop_toBottomOf="@+id/imageView"/>
 
     <EditText
-        android:id="@+id/edt_eventName"
+        android:id="@+id/edt_dcPrice"
         android:layout_width="0dp"
         android:layout_height="40dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:inputType="textPersonName"
-        app:layout_constraintBaseline_toBaselineOf="@+id/txv_eventName"
-        app:layout_constraintLeft_toRightOf="@+id/txv_eventName"
-        app:layout_constraintRight_toRightOf="parent"/>
-
-    <TextView
-        android:id="@+id/txv_dcPrice"
-        android:layout_width="0dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="25dp"
-        android:gravity="center_vertical"
-        android:text="할인가격"
-        android:textColor="@android:color/black"
-        android:textSize="20dp"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="@+id/txv_eventName"
-        app:layout_constraintRight_toRightOf="@+id/txv_eventName"
-        app:layout_constraintTop_toBottomOf="@+id/txv_eventName"/>
-
-    <EditText
-        android:id="@+id/edt_dcPrice"
-        android:layout_width="0dp"
-        android:layout_height="40dp"
-        android:layout_marginLeft="0dp"
-        android:inputType="textPersonName"
         app:layout_constraintBaseline_toBaselineOf="@+id/txv_dcPrice"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintLeft_toLeftOf="@+id/edt_eventName"
-        app:layout_constraintRight_toRightOf="@+id/edt_eventName"/>
+        app:layout_constraintLeft_toRightOf="@+id/txv_dcPrice"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintHorizontal_bias="0.0" />
 
 
     <TextView
