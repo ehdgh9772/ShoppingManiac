@@ -3,6 +3,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.kcci.shoppingmaniac">
 
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-feature android:required="true" android:name="android.hardware.bluetooth_le"/>
+
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -27,6 +33,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
+
+        <service android:name="com.perples.recosdk.RECOBeaconService" />
+        <!--<service android:name=".RecoBackgroundMonitoringService" />-->
+        <!--<service android:name=".RecoBackgroundRangingService"/>-->
 
     </application>
 

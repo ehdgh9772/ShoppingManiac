@@ -1,76 +1,91 @@
 package com.example.kcci.shoppingmaniac;
 
+import android.Manifest;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.PixelFormat;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.RemoteException;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.perples.recosdk.RECOBeacon;
+import com.perples.recosdk.RECOBeaconManager;
+import com.perples.recosdk.RECOBeaconRegion;
+import com.perples.recosdk.RECOBeaconRegionState;
+import com.perples.recosdk.RECOErrorCode;
+import com.perples.recosdk.RECOMonitoringListener;
+import com.perples.recosdk.RECOServiceConnectListener;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements RECOServiceConnectListener, RECOMonitoringListener {
+
+    public static String LOG_TAG = "MainActivity";
+
     private RecyclerView _recyclerView;
     private View btnImgDrawerView;                            //항상 보이게 할 뷰
     private WindowManager.LayoutParams _params;  //layout params 객체. 뷰의 위치 및 크기
     private WindowManager _windowManager;          //윈도우 매니저
     private DrawerLayout _drawerLayout;
     private View _drawerView;
+    private View _rootLayout;
     boolean isPageSlided = false;
 
-    Animation translateBottomAnimaion;
-    Animation translateTopAnimaion;
+    public static final int DRAWER_COLUMS = 3;
+    public static final int DRAWER_ROWS = 3;
+    Animation animGrowFromBottom;
+    Animation animSetToBottom;
     LinearLayout slideLayout;
 
-    public static String LOG_TAG = "MainActivity";
+    public static final String RECO_UUID = "24DDF411-8CF1-440C-87CD-E368DAF9C93E";
+    public static final boolean SCAN_RECO_ONLY = true;
+    public static final boolean ENABLE_BACKGROUND_RANGING_TIMEOUT = true;
+    public static final boolean DISCONTINUOUS_SCAN = false;
+    private static final int REQUEST_ENABLE_BT = 1;
+    private static final int REQUEST_LOCATION = 10;
+    private BluetoothManager mBluetoothManager;
+    private BluetoothAdapter mBluetoothAdapter;
+
+    protected RECOBeaconManager mRecoManager;
+    protected ArrayList<RECOBeaconRegion> mRegions;
+    private long mScanPeriod = 1*1000L;
+    private long mSleepPeriod = 10*1000L;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        slideLayout = (LinearLayout) findViewById(R.id.hiddenLayout);
-        _recyclerView = (RecyclerView)findViewById(R.id.recyclerViewMain);
-
-
-
-
-
         initLayout();
-
+        scanBeacon();
         btnImgDrawerView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) { popDrawerView(); }});
 
-
-                if(isPageSlided) {
-                    slideLayout.startAnimation(translateBottomAnimaion);
-                } else {
-                    Log.i(LOG_TAG, "slide animation is on");
-                    slideLayout.setVisibility(View.VISIBLE);
-                    slideLayout.startAnimation(translateTopAnimaion);
-                }
-            }
-        });
         viewDiscountInfo();
         viewItemInfo();
     }
@@ -80,16 +95,129 @@ public class MainActivity extends AppCompatActivity {
      */
 
     private void initLayout() {
-        translateBottomAnimaion = AnimationUtils.loadAnimation(this, R.anim.translate_from_bottom);
-        translateTopAnimaion = AnimationUtils.loadAnimation(this, R.anim.translate_to_bottom);
+
+        slideLayout = (LinearLayout) findViewById(R.id.hiddenLayout);
+        _recyclerView = (RecyclerView)findViewById(R.id.recyclerViewMain);
+        animGrowFromBottom = AnimationUtils.loadAnimation(this, R.anim.translate_from_bottom);
+        animSetToBottom = AnimationUtils.loadAnimation(this, R.anim.translate_to_bottom);
 
         SlidingPageAnimationListener animationListener = new SlidingPageAnimationListener();
-        translateBottomAnimaion.setAnimationListener(animationListener);
-        translateTopAnimaion.setAnimationListener(animationListener);
+        animGrowFromBottom.setAnimationListener(animationListener);
+        animSetToBottom.setAnimationListener(animationListener);
 
         btnImgDrawerView = findViewById(R.id.btnDrawer);
         btnImgDrawerView.bringToFront();
+
+        mRecoManager.setMonitoringListener(this);
+        mRecoManager.setScanPeriod(mScanPeriod);
+        mRecoManager.setSleepPeriod(mSleepPeriod);
     }
+
+
+    private void scanBeacon() {
+
+        getAuthBT();
+        mRecoManager = RECOBeaconManager.getInstance(
+                getApplicationContext(),
+                SCAN_RECO_ONLY,
+                ENABLE_BACKGROUND_RANGING_TIMEOUT
+        );
+        mRegions = this.generateBeaconRegion();
+        mRecoManager.bind(this);
+
+    }
+
+
+    private void getAuthBT() {
+
+        //If a user device turns off bluetooth, request to turn it on.
+        //사용자가 블루투스를 켜도록 요청합니다.
+        mBluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+        mBluetoothAdapter = mBluetoothManager.getAdapter();
+
+        if(mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
+            Intent enableBTIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBTIntent, REQUEST_ENABLE_BT);
+        }
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if(ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                Log.i("MainActivity", "The location permission (ACCESS_COARSE_LOCATION or ACCESS_FINE_LOCATION) is not granted.");
+                this.requestLocationPermission();
+            } else {
+                Log.i("MainActivity", "The location permission (ACCESS_COARSE_LOCATION or ACCESS_FINE_LOCATION) is already granted.");
+            }
+        }
+    }
+
+    private void requestLocationPermission() {
+        if(!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION);
+            return;
+        }
+        _rootLayout = findViewById(R.id.frameLayout);
+
+        Snackbar.make(_rootLayout, "location_permission_rationale", Snackbar.LENGTH_INDEFINITE)
+                .setAction("ok", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ActivityCompat.requestPermissions(
+                                MainActivity.this,
+                                new String[]{ Manifest.permission.ACCESS_COARSE_LOCATION },
+                                REQUEST_LOCATION
+                        );
+                    }
+                }).show();
+    }
+
+
+    private ArrayList<RECOBeaconRegion> generateBeaconRegion() {
+        ArrayList<RECOBeaconRegion> regions = new ArrayList<>();
+
+        regions.add(new RECOBeaconRegion(RECO_UUID, 11, 111, "entrance"));
+        regions.add(new RECOBeaconRegion(RECO_UUID, 11, 112, "grocery"));
+        regions.add(new RECOBeaconRegion(RECO_UUID, 11, 113, "meat"));
+        regions.add(new RECOBeaconRegion(RECO_UUID, 11, 114, "appliance"));
+
+        return regions;
+    }
+
+    /**
+     * 하단 감지된 비콘 메뉴 생성 및 보이기
+     */
+    private void popDrawerView() {
+        if(isPageSlided) {
+            slideLayout.startAnimation(animGrowFromBottom);
+//            ArrayList<> getSpottedBeacon();
+//            if ()
+//            generateConerIcons();
+        } else {
+            Log.i(LOG_TAG, "slide animation is on");
+            slideLayout.setVisibility(View.VISIBLE);
+            slideLayout.startAnimation(animSetToBottom);
+        }
+    }
+
+//    public dddd getSpottedBeacon() {
+//
+//    }
+//
+//    private void generateConerIcons(int detectedBeaconsAmount ) {
+//        if ( detectedBeaconsAmount / DRAWER_ROWS == 0 ) return;
+//        LinearLayout _targetLayout = (LinearLayout) findViewById(R.id.hiddenLayout);
+//        LinearLayout _rowLayout = new LinearLayout(this);
+//        ImageView _btnConerIcon = new ImageView(this);
+//
+//        _rowLayout.setOrientation(LinearLayout.VERTICAL);
+//        _btnConerIcon.
+//
+//        for (int i = 2;  i < DRAWER_COLUMS; i++) {
+//            if (i * i > detectedBeaconsAmount) {
+//                break;
+//            } else {
+//            _targetLayout.
+//            }
+//        }
+//    }
 
     /**
      * Discount 정보
@@ -129,6 +257,118 @@ public class MainActivity extends AppCompatActivity {
         _recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         _recyclerView.setItemAnimator(new DefaultItemAnimator());
     }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch(requestCode) {
+            case REQUEST_LOCATION : {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Snackbar.make(_rootLayout, "location_permission_granted", Snackbar.LENGTH_LONG)
+                            .show();
+                } else {
+                    Snackbar.make(_rootLayout, "location_permission_not_granted", Snackbar
+                            .LENGTH_LONG).show();
+                }
+            } default : break; }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_ENABLE_BT && resultCode == Activity.RESULT_CANCELED) {
+            //If the requestDiscountInfo to turn on bluetooth is denied, the app will be finished.
+            //사용자가 블루투스 요청을 허용하지 않았을 경우, 어플리케이션은 종료됩니다.
+            finish();
+            return;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        this.stop(mRegions);
+        this.unbind();
+    }
+
+
+    protected void stop(ArrayList<RECOBeaconRegion> regions) {
+        for(RECOBeaconRegion region : regions) {
+            try {
+                mRecoManager.stopMonitoringForRegion(region);
+            } catch (RemoteException e) {
+                Log.i("RecoMonitoringActivity", "Remote Exception");
+                e.printStackTrace();
+            } catch (NullPointerException e) {
+                Log.i("RecoMonitoringActivity", "Null Pointer Exception");
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void unbind() {
+        try {
+            mRecoManager.unbind();
+        } catch (RemoteException e) {
+            Log.i("RecoMonitoringActivity", "Remote Exception");
+            e.printStackTrace();
+        }
+    }
+
+
+    @Override
+    public void didEnterRegion(RECOBeaconRegion recoBeaconRegion, Collection<RECOBeacon> collection) {
+        ////////비콘 범위 진입 시 콜백
+        TextView drawerTxt = (TextView) findViewById(R.id.txtVNoSpotted);
+        drawerTxt.setText(recoBeaconRegion.getUniqueIdentifier());
+    }
+
+    @Override
+    public void didExitRegion(RECOBeaconRegion recoBeaconRegion) {
+
+    }
+
+    @Override
+    public void didStartMonitoringForRegion(RECOBeaconRegion recoBeaconRegion) {
+
+    }
+
+    @Override
+    public void didDetermineStateForRegion(RECOBeaconRegionState recoBeaconRegionState, RECOBeaconRegion recoBeaconRegion) {
+
+    }
+
+    @Override
+    public void monitoringDidFailForRegion(RECOBeaconRegion recoBeaconRegion, RECOErrorCode recoErrorCode) {
+
+    }
+
+    @Override
+    public void onServiceConnect() {
+        this.start(mRegions);
+    }
+
+    @Override
+    public void onServiceFail(RECOErrorCode recoErrorCode) {
+
+    }
+
+    private void start(ArrayList<RECOBeaconRegion> mRegions) {
+        for(RECOBeaconRegion region : mRegions) {
+            try {
+//                region.setRegionExpirationTimeMillis(60*1000L);
+                mRecoManager.startMonitoringForRegion(region);
+            } catch (RemoteException e) {
+                Log.i("RECOMonitoringActivity", "Remote Exception");
+                e.printStackTrace();
+            } catch (NullPointerException e) {
+                Log.i("RecoMonitoringActivity", "Null Pointer Exception");
+                e.printStackTrace();
+            }
+        }
+    }
+
+
 
     class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapter.ViewHolder> {
 
@@ -178,7 +418,7 @@ public class MainActivity extends AppCompatActivity {
             viewHolder.itemView.setTag(item);
 
             viewHolder._btnLineChart.setOnClickListener(new View.OnClickListener() {
-                public static final String LOG_TAG = "ViewHolder";
+                public static final String LOG_TAG = "SpottedBeacons";
 
                 @Override
                 public void onClick(View view) {
@@ -273,7 +513,7 @@ public class MainActivity extends AppCompatActivity {
             viewHolder.itemView.setTag(item);
 
             viewHolder._btnLineChart.setOnClickListener(new View.OnClickListener() {
-                public static final String LOG_TAG = "ViewHolder";
+                public static final String LOG_TAG = "SpottedBeacons";
 
                 @Override
                 public void onClick(View view) {
@@ -340,43 +580,6 @@ public class MainActivity extends AppCompatActivity {
         public void onAnimationRepeat(Animation animation) {
 
         }
-    }
-
-    //This is a default proximity uuid of the RECO
-    public static final String RECO_UUID = "24DDF411-8CF1-440C-87CD-E368DAF9C93E";
-
-
-    public static final boolean SCAN_RECO_ONLY = true;
-
-
-    public static final boolean ENABLE_BACKGROUND_RANGING_TIMEOUT = true;
-
-
-    public static final boolean DISCONTINUOUS_SCAN = false;
-
-    private static final int REQUEST_ENABLE_BT = 1;
-    private static final int REQUEST_LOCATION = 10;
-
-    private BluetoothManager mBluetoothManager;
-    private BluetoothAdapter mBluetoothAdapter;
-
-    private View mLayout;
-
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_ENABLE_BT && resultCode == Activity.RESULT_CANCELED) {
-            //If the requestDiscountInfo to turn on bluetooth is denied, the app will be finished.
-            //사용자가 블루투스 요청을 허용하지 않았을 경우, 어플리케이션은 종료됩니다.
-            finish();
-            return;
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
     }
 
 }

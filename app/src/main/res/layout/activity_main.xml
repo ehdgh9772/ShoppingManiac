@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/drawer_layout"
+    android:id="@+id/frameLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -64,14 +64,8 @@
         android:layout_height="200dp"
         android:layout_gravity="bottom"
         android:background="@color/medium_grey"
-        android:orientation="horizontal"
-        android:visibility="gone">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="weoifjweiofjsdiofjsioefjo\niefjeiofjweiofjwefwef\n"
-            android:textSize="30dp"/>
+        android:orientation="vertical"
+        android:visibility="visible">
 
         <!--<android.support.v7.app.AlertController.RecycleListView-->
         <!--android:layout_width="wrap_content"-->
@@ -79,6 +73,15 @@
         <!---->
         <!--</android.support.v7.app.AlertController.RecycleListView>-->
 
+
+        <TextView
+            android:id="@+id/txtVNoSpotted"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="감지된 상품코너가 없습니다"/>
 
     </LinearLayout>
 
