@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.LinearLayout;
 
+import com.example.kcci.shoppingmaniac.database.Database;
+
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
 import org.achartengine.chart.PointStyle;
@@ -12,6 +14,8 @@ import org.achartengine.model.XYMultipleSeriesDataset;
 import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
+
+import static com.example.kcci.shoppingmaniac.MainActivity.EXTRA_ID;
 
 /**
  * Created by CHJ on 2017-07-07.
@@ -33,8 +37,17 @@ public class LineChartActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_line_chart);
+        String id = getIntent().getStringExtra(EXTRA_ID);
 
-        drawChart();
+        Database database = new Database();
+        database.requestPriceHistory(id, new Database.LoadCompleteListener() {
+            @Override
+            public void onLoadComplete() {
+//                database.get
+                drawChart();
+            }
+        });
+
 
     }
 
@@ -83,6 +96,7 @@ public class LineChartActivity extends AppCompatActivity {
         incomeRenderer.setFillPoints(true);
         incomeRenderer.setLineWidth(5);
         incomeRenderer.setDisplayChartValues(true);
+        incomeRenderer.setAnnotationsTextSize(15);
 
 
         // Creating XYSeriesRenderer to customize expenseSeries

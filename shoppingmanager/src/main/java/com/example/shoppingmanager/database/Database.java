@@ -84,11 +84,11 @@ public class Database {
     }
 
     public void insertItem(String name, String categoryId, String unit, LoadCompleteListener loadCompleteListener) {
-        scrap(TYPE_NONE, INSERT_ITEM, loadCompleteListener);
+        scrap(TYPE_NONE, INSERT_ITEM, loadCompleteListener, categoryId, unit);
     }
 
     public void insertPrice(String itemId, String date, String price, LoadCompleteListener loadCompleteListener) {
-        scrap(TYPE_NONE, INSERT_PRICE, loadCompleteListener);
+        scrap(TYPE_NONE, INSERT_PRICE, loadCompleteListener, itemId, date, price);
     }
 
     //endregion

@@ -1,10 +1,13 @@
 package com.example.kcci.shoppingmaniac.database;
 
+import android.graphics.Bitmap;
+
 /**
  * Created by koo on 17. 7. 6.
  */
 
 public class DiscountInfo {
+    private Bitmap _image;
     private String _itemId;
     private String _name;
     private String _discountType;
@@ -77,6 +80,14 @@ public class DiscountInfo {
 
     void setEndTime(String endTime) {
         this._endTime = endTime;
+    }
+
+    public Bitmap getImage() {
+        return _image;
+    }
+
+    public void setImage(Bitmap image) {
+        _image = image;
     }
     //endregion
 }
