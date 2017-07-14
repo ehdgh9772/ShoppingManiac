@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.Toast;
 import android.Manifest;
 
+import com.example.shoppingmanager.database.Database;
+
 import java.util.ArrayList;
 import java.util.List;
 
