@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:weightSum="1">
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:weightSum="1">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -43,8 +46,44 @@
             android:layout_height="match_parent"/>
     </LinearLayout>
 
-    <include
-        layout="@layout/activity_drawer">
-    </include>
 
-</android.support.v4.widget.DrawerLayout>
+    <!--layout to hide-->
+    <ImageView
+        android:id="@+id/btnDrawer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:scaleX="2"
+        android:scaleY="1.5"
+        app:srcCompat="@drawable/btn_drawer"
+        />
+
+    <LinearLayout
+        android:id="@+id/hiddenLayout"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_gravity="bottom"
+        android:background="@color/medium_grey"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="weoifjweiofjsdiofjsioefjo\niefjeiofjweiofjwefwef\n"
+            android:textSize="30dp"/>
+
+        <!--<android.support.v7.app.AlertController.RecycleListView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="match_parent">-->
+        <!---->
+        <!--</android.support.v7.app.AlertController.RecycleListView>-->
+
+
+    </LinearLayout>
+
+    <!--<include-->
+        <!--layout="@layout/activity_drawer">-->
+    <!--</include>-->
+
+</FrameLayout>
