@@ -10,6 +10,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.shoppingmanager.database.Database;
+
 import java.io.FileInputStream;
 import java.net.URL;
 import java.text.BreakIterator;
@@ -30,6 +32,7 @@ public class ItemRegistration extends AppCompatActivity {
         Button imageShooting = (Button) findViewById(R.id.btn_searchItemId);
         Button listInquiry = (Button) findViewById(R.id.listInquiry);
         Button registration = (Button) findViewById(R.id.registration);
+        Database database = new Database();
 
         imageShooting.setOnClickListener(
                 new View.OnClickListener() {
