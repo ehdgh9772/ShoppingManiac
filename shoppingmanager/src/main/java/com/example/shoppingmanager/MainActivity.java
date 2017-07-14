@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
         Button itemRegisteration = (Button) findViewById(R.id.itemRegistration);
         Button eventButton = (Button) findViewById(R.id.btn_eventRegistration);
         Button listInquiry = (Button) findViewById(R.id.listInquiry);
+        Button priceModification = (Button) findViewById(R.id.priceModification);
 
         itemRegisteration.setOnClickListener(
                 new View.OnClickListener() {
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, EventRegistration.class);
                 startActivity(intent);
+                Toast.makeText(getApplicationContext(), "이벤트 등록화면으로 이동", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -59,6 +61,17 @@ public class MainActivity extends AppCompatActivity {
                 }
         );
         checkPermissions();
+
+        priceModification.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(MainActivity.this, PriceModification.class);
+                        startActivity(intent);
+                        Toast.makeText(getApplicationContext(), "가격수정 화면으로 이동", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
     }
 
     private boolean checkPermissions() {
