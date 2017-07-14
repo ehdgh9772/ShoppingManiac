@@ -14,7 +14,7 @@ import com.example.shoppingmanager.database.Database;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListInquiry extends AppCompatActivity{
+public class SearchItem extends AppCompatActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +40,7 @@ public class ListInquiry extends AppCompatActivity{
         recyclerView.setLayoutManager(layoutManager);
         List<CardViewContent> list = new ArrayList<>();
         list.add(new CardViewContent());
-        recyclerView.setAdapter(new ManagerRecyclerAdapter(list, R.layout.card_discount));
+        recyclerView.setAdapter(new ManagerRecyclerAdapter(list, R.layout.card_item));
 
         final Database database = new Database();
         database.requestDiscountInfo(new Database.LoadCompleteListener() {

@@ -5,78 +5,78 @@ package com.example.kcci.shoppingmaniac.database;
  */
 
 public class DiscountInfo {
-    private String itemId;
-    private String name;
-    private String discountType;
-    private String price;
-    private String discountedPrice;
-    private String category;
-    private String startTime;
-    private String endTime;
+    private String _itemId;
+    private String _name;
+    private String _discountType;
+    private String _price;
+    private String _discountedPrice;
+    private String _category;
+    private String _startTime;
+    private String _endTime;
 
     //region getter & setter
     public String getItemId() {
-        return itemId;
+        return _itemId;
     }
 
     void setItemId(String itemId) {
-        this.itemId = itemId;
+        this._itemId = itemId;
     }
 
     public String getName() {
-        return name;
+        return _name;
     }
 
     void setName(String name) {
-        this.name = name;
+        this._name = name;
     }
 
     public String getDiscountType() {
-        return discountType;
+        return _discountType;
     }
 
     void setDiscountType(String discountType) {
-        this.discountType = discountType;
+        this._discountType = discountType;
     }
 
     public String getPrice() {
-        return price;
+        return _price;
     }
 
     void setPrice(String price) {
-        this.price = price;
+        this._price = price;
     }
 
     public String getDiscountedPrice() {
-        return discountedPrice;
+        return _discountedPrice;
     }
 
     void setDiscountedPrice(String discountedPrice) {
-        this.discountedPrice = discountedPrice;
+        this._discountedPrice = discountedPrice;
     }
 
     public String getCategory() {
-        return category;
+        return _category;
     }
 
     void setCategory(String category) {
-        this.category = category;
+        this._category = category;
     }
 
     public String getStartTime() {
-        return startTime;
+        return _startTime;
     }
 
     void setStartTime(String startTime) {
-        this.startTime = startTime;
+        this._startTime = startTime;
     }
 
     public String getEndTime() {
-        return endTime;
+        return _endTime;
     }
 
     void setEndTime(String endTime) {
-        this.endTime = endTime;
+        this._endTime = endTime;
     }
     //endregion
 }

@@ -5,6 +5,8 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -12,18 +14,16 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.GestureDetector;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,12 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        translateBottomAnimaion = AnimationUtils.loadAnimation(this, R.anim.translate_from_bottom);
-        translateTopAnimaion = AnimationUtils.loadAnimation(this, R.anim.translate_to_bottom);
 
-        SlidingPageAnimationListener animationListener = new SlidingPageAnimationListener();
-        translateBottomAnimaion.setAnimationListener(animationListener);
-        translateTopAnimaion.setAnimationListener(animationListener);
 
         initLayout();
 
@@ -76,9 +71,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
         viewDiscountInfo();
-
         viewItemInfo();
     }
 
@@ -87,6 +80,13 @@ public class MainActivity extends AppCompatActivity {
      */
 
     private void initLayout() {
+        translateBottomAnimaion = AnimationUtils.loadAnimation(this, R.anim.translate_from_bottom);
+        translateTopAnimaion = AnimationUtils.loadAnimation(this, R.anim.translate_to_bottom);
+
+        SlidingPageAnimationListener animationListener = new SlidingPageAnimationListener();
+        translateBottomAnimaion.setAnimationListener(animationListener);
+        translateTopAnimaion.setAnimationListener(animationListener);
+
         btnImgDrawerView = findViewById(R.id.btnDrawer);
         btnImgDrawerView.bringToFront();
     }
@@ -379,36 +379,5 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    private class MyGestureDetector implements GestureDetector.OnGestureListener {
-        @Override
-        public boolean onDown(MotionEvent e) {
-            return false;
-        }
-
-        @Override
-        public void onShowPress(MotionEvent e) {
-
-        }
-
-        @Override
-        public boolean onSingleTapUp(MotionEvent e) {
-            return false;
-        }
-
-        @Override
-        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            return false;
-        }
-
-        @Override
-        public void onLongPress(MotionEvent e) {
-
-        }
-
-        @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            return false;
-        }
-    }
 }
 
