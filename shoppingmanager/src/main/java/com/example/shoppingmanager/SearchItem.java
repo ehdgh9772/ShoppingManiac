@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SearchItem extends AppCompatActivity {
+    //todo 적절한 클래스명으로 변경
 
     List<Item> _list;
     RecyclerView recyclerView;

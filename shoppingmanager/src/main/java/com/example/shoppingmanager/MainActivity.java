@@ -72,6 +72,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
         );
+
+        //todo 비콘 관리 액티비티 추가 및 버튼생성
     }
 
     private boolean checkPermissions() {

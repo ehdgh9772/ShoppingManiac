@@ -16,7 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ListInquiry extends AppCompatActivity{
-
+//todo 할인정보 카드뷰에 해당하는 이름으로 변경, 내용을 SearchItem클래스 참고해서 작성(SearchItem도 클래스명 설계 잘못됨)
+//todo CardViewContent 클래스 삭제 예정. 정보를 DiscountInfo 클래스로부터 받아오도록 작성
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

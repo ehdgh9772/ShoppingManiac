@@ -53,7 +53,7 @@ public class EventRegistration extends AppCompatActivity {
                     }
                 });
             }
-        });
+        });//todo 커밋 완성하기
     }
 
     @Override
