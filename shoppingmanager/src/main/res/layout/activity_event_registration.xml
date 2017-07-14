@@ -141,7 +141,7 @@
         app:layout_constraintRight_toRightOf="@+id/edt_endTime"/>
 
     <Button
-        android:id="@+id/registration"
+        android:id="@+id/btn_commitEvent"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"

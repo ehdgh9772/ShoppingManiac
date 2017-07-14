@@ -1,3 +1,4 @@
+/*
 package com.example.shoppingmanager;
 
 public class Item {
@@ -55,3 +56,4 @@ public class Item {
         this.unit = unit;
     }
 }
+*/

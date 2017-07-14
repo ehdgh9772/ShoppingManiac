@@ -30,6 +30,7 @@ public class Database {
     private final String GET_PRICE_HISTORY = "GetPriceHistory";
     private final String GET_ITEM_BY_CATEGORY = "GetItemByCategory";
     private final String INSERT_DISCOUNT_INFO = "InsertDiscountInfo";
+    private final String GET_ALL_ITEM = "GetAllItem";
     private final String LOG = "Database";
     //endregion
 
@@ -72,6 +73,10 @@ public class Database {
         scrap(TYPE_NONE, INSERT_DISCOUNT_INFO, loadCompleteListener, ItemId,
                 DiscountedPrice, StartTime, EndTime, DiscountType);
     }
+
+    public void requestAllItem(LoadCompleteListener loadCompleteListener) {
+        scrap(TYPE_JSON, GET_ALL_ITEM, loadCompleteListener);
+    }
     //endregion
 
     //region Scrapper
@@ -113,7 +118,8 @@ public class Database {
                     setDiscountInfoList(parseToJSON(str));
                 else if (Objects.equals(url, GET_PRICE_HISTORY))
                     setPriceHistoryList(parseToJSON(str));
-                else if (Objects.equals(url, GET_ITEM_BY_CATEGORY))
+                else if (Objects.equals(url, GET_ITEM_BY_CATEGORY)
+                        || Objects.equals(url, GET_ALL_ITEM))
                     setItemArray(parseToJSON(str));
                 else if (Objects.equals(url, INSERT_DISCOUNT_INFO))
                     Log.i(LOG, "Insert Done!");
