@@ -23,14 +23,19 @@ import java.util.Objects;
 public class Database {
 
     //region Final Values
+    public static final String MEAT = "1";
+    public static final String VEGETABLE = "2";
+    public static final String HOME_APPLIENCE = "3";
     private final int TYPE_NONE = 0;
     private final int TYPE_JSON = 1;
     private final int TYPE_IMAGE = 2;
     private final String GET_DISCOUNT_INFO = "GetDiscountInfo";
     private final String GET_PRICE_HISTORY = "GetPriceHistory";
     private final String GET_ITEM_BY_CATEGORY = "GetItemByCategory";
-    private final String INSERT_DISCOUNT_INFO = "InsertDiscountInfo";
     private final String GET_ALL_ITEM = "GetAllItem";
+    private final String INSERT_DISCOUNT_INFO = "InsertDiscountInfo";
+    private final String INSERT_ITEM = "InsertItem";
+    private final String INSERT_PRICE = "InsertPrice";
     private final String LOG = "Database";
     //endregion
 
@@ -68,15 +73,24 @@ public class Database {
         scrap(TYPE_JSON, GET_ITEM_BY_CATEGORY, loadCompleteListener, String.valueOf(category));
     }
 
+    public void requestAllItem(LoadCompleteListener loadCompleteListener) {
+        scrap(TYPE_JSON, GET_ALL_ITEM, loadCompleteListener);
+    }
+
     public void insertDiscountInfo(String ItemId, String DiscountedPrice, String StartTime, String EndTime,
                                    String DiscountType, LoadCompleteListener loadCompleteListener) {
         scrap(TYPE_NONE, INSERT_DISCOUNT_INFO, loadCompleteListener, ItemId,
                 DiscountedPrice, StartTime, EndTime, DiscountType);
     }
 
-    public void requestAllItem(LoadCompleteListener loadCompleteListener) {
-        scrap(TYPE_JSON, GET_ALL_ITEM, loadCompleteListener);
+    public void insertItem(String name, String categoryId, String unit, LoadCompleteListener loadCompleteListener) {
+        scrap(TYPE_NONE, INSERT_ITEM, loadCompleteListener);
     }
+
+    public void insertPrice(String itemId, String date, String price, LoadCompleteListener loadCompleteListener) {
+        scrap(TYPE_NONE, INSERT_PRICE, loadCompleteListener);
+    }
+
     //endregion
 
     //region Scrapper
@@ -122,7 +136,9 @@ public class Database {
                     setItemArray(parseToJSON(str), GET_ITEM_BY_CATEGORY);
                 else if (Objects.equals(url, GET_ALL_ITEM))
                     setItemArray(parseToJSON(str), GET_ALL_ITEM);
-                else if (Objects.equals(url, INSERT_DISCOUNT_INFO))
+                else if (Objects.equals(url, INSERT_DISCOUNT_INFO)
+                        || Objects.equals(url, INSERT_ITEM)
+                        || Objects.equals(url, INSERT_PRICE))
                     Log.i(LOG, "Insert Done!");
 
                 loadCompleteListener.onLoadComplete();
