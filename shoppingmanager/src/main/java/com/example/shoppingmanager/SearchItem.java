@@ -7,49 +7,43 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.shoppingmanager.database.Database;
+import com.example.shoppingmanager.database.Item;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchItem extends AppCompatActivity{
+public class SearchItem extends AppCompatActivity {
+    //todo 적절한 클래스명으로 변경
+
+    List<Item> _list;
+    RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.recycler_view);
 
-        RecyclerView recyclerView=(RecyclerView)findViewById(R.id.my_recycler_view);
-        LinearLayoutManager layoutManager=new LinearLayoutManager(getApplicationContext());
+        _list = new ArrayList<>();
 
-        ArrayList<Item> items=new ArrayList<>();
-
-        items.add(new Item(R.drawable.a, "#1", 2000, "1", "2"));
-        items.add(new Item(R.drawable.a, "#1", 222, "17", "2"));
-        items.add(new Item(R.drawable.a, "#1", 333, "18", "2"));
-        items.add(new Item(R.drawable.a, "#1", 444, "17", "2"));
-        items.add(new Item(R.drawable.a, "#1", 555, "16", "2"));
-        items.add(new Item(R.drawable.a, "#1", 6666, "15", "2"));
-        items.add(new Item(R.drawable.a, "#1", 7777, "31", "2"));
-        items.add(new Item(R.drawable.a, "#1", 8888, "21", "2"));
-
-//        recyclerView.setAdapter(new MyRecyclerAdapter(items,R.layout.activity_list_inquiry));
+        recyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
-        List<CardViewContent> list = new ArrayList<>();
-        list.add(new CardViewContent());
-        recyclerView.setAdapter(new ManagerRecyclerAdapter(list, R.layout.card_item));
 
         final Database database = new Database();
-        database.requestDiscountInfo(new Database.LoadCompleteListener() {
+        database.requestAllItem(new Database.LoadCompleteListener() {
             @Override
             public void onLoadComplete() {
-                database.getDiscountInfoList();
+                _list = database.getItemList();
+                recyclerView.setAdapter(new ManagerRecyclerAdapter(_list, R.layout.card_item));
             }
         });
-//        for(int i=0;i<5;i++) items.add(item[i]);
+
+//        for(int i=0;i<5;i++) _items.add(item[i]);
 
         //recyclerView.setAdapter(new MyRecyclerAdapter(getApplicationContext(),albumList,R.layout.activity_list_inquiry));
     }
@@ -57,9 +51,9 @@ public class SearchItem extends AppCompatActivity{
     private class ManagerRecyclerAdapter extends RecyclerView.Adapter<ManagerRecyclerAdapter.ViewHolder> {
 
         int _layoutId;
-        List<CardViewContent> _itemList;
+        List<Item> _itemList;
 
-        public ManagerRecyclerAdapter(List<CardViewContent> itemList, int layoutId) {
+        public ManagerRecyclerAdapter(List<Item> itemList, int layoutId) {
             super();
             _layoutId = layoutId;
             _itemList = itemList;
@@ -67,32 +61,36 @@ public class SearchItem extends AppCompatActivity{
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(_layoutId,parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(_layoutId, parent, false);
             return new ViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
 
-            CardViewContent item = _itemList.get(position);
+            Item item = _itemList.get(position);
+            holder._itemName.setText(item.getName());
+            holder._itemPrice.setText(item.getPrice());
         }
 
         @Override
         public int getItemCount() {
             return _itemList.size();
         }
+
         /**
          * 뷰 재활용을 위한 viewHolder
          */
-        class ViewHolder extends RecyclerView.ViewHolder{
+        class ViewHolder extends RecyclerView.ViewHolder {
 
-//        public ImageView img;
-//        public TextView textTitle;
+            public ImageView _img;
+            public TextView _itemName;
+            public TextView _itemPrice;
 
-            public ViewHolder(View itemView){
+            public ViewHolder(View itemView) {
                 super(itemView);
-                TextView textView = (TextView) findViewById(R.id.textDiscountType);
-
+                _itemName = (TextView) itemView.findViewById(R.id.txv_card_itemName);
+                _itemPrice = (TextView) itemView.findViewById(R.id.txv_card_itemPrice);
             }
 
         }

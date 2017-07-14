@@ -10,12 +10,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.shoppingmanager.database.Database;
+import com.example.shoppingmanager.database.Item;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ListInquiry extends AppCompatActivity{
-
+//todo 할인정보 카드뷰에 해당하는 이름으로 변경, 내용을 SearchItem클래스 참고해서 작성(SearchItem도 클래스명 설계 잘못됨)
+//todo CardViewContent 클래스 삭제 예정. 정보를 DiscountInfo 클래스로부터 받아오도록 작성
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,16 +28,9 @@ public class ListInquiry extends AppCompatActivity{
 
         ArrayList<Item> items=new ArrayList<>();
 
-        items.add(new Item(R.drawable.a, "#1", 2000, "1", "2"));
-        items.add(new Item(R.drawable.a, "#1", 222, "17", "2"));
-        items.add(new Item(R.drawable.a, "#1", 333, "18", "2"));
-        items.add(new Item(R.drawable.a, "#1", 444, "17", "2"));
-        items.add(new Item(R.drawable.a, "#1", 555, "16", "2"));
-        items.add(new Item(R.drawable.a, "#1", 6666, "15", "2"));
-        items.add(new Item(R.drawable.a, "#1", 7777, "31", "2"));
-        items.add(new Item(R.drawable.a, "#1", 8888, "21", "2"));
+        items.add(new Item());
 
-//        recyclerView.setAdapter(new MyRecyclerAdapter(items,R.layout.activity_list_inquiry));
+//        recyclerView.setAdapter(new MyRecyclerAdapter(_items,R.layout.activity_list_inquiry));
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
         List<CardViewContent> list = new ArrayList<>();
@@ -49,7 +44,7 @@ public class ListInquiry extends AppCompatActivity{
                 database.getDiscountInfoList();
             }
         });
-//        for(int i=0;i<5;i++) items.add(item[i]);
+//        for(int i=0;i<5;i++) _items.add(item[i]);
 
         //recyclerView.setAdapter(new MyRecyclerAdapter(getApplicationContext(),albumList,R.layout.activity_list_inquiry));
     }

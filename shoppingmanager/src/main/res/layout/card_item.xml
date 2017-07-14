@@ -13,7 +13,7 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:id="@+id/img"
+            android:id="@+id/img_card_item"
             android:layout_width="100dp"
             android:layout_height="100dp"
             card_view:srcCompat="@drawable/a"
@@ -26,10 +26,10 @@
         <android.support.constraint.ConstraintLayout
             android:layout_width="0dp"
             android:layout_height="0dp"
-            card_view:layout_constraintTop_toTopOf="@+id/img"
-            card_view:layout_constraintLeft_toRightOf="@+id/img"
+            card_view:layout_constraintTop_toTopOf="@+id/img_card_item"
+            card_view:layout_constraintLeft_toRightOf="@+id/img_card_item"
             card_view:layout_constraintRight_toRightOf="parent"
-            card_view:layout_constraintBottom_toBottomOf="@+id/img">
+            card_view:layout_constraintBottom_toBottomOf="@+id/img_card_item">
 
             <android.support.constraint.Guideline
                 android:id="@+id/guideline1"
@@ -39,25 +39,25 @@
                 card_view:layout_constraintGuide_percent="0.5"/>
 
             <TextView
-                android:id="@+id/textName"
+                android:id="@+id/txv_card_itemName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
                 android:layout_marginEnd="8dp"
+                android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:text="양배추"
-                android:textStyle="bold"
                 android:textSize="26dp"
+                android:textStyle="bold"
                 card_view:layout_constraintBottom_toTopOf="@+id/guideline1"
+                card_view:layout_constraintLeft_toLeftOf="parent"
                 card_view:layout_constraintRight_toRightOf="parent"
-                card_view:layout_constraintTop_toTopOf="parent"
-                android:layout_marginLeft="8dp"
-                card_view:layout_constraintLeft_toLeftOf="parent"/>
+                card_view:layout_constraintTop_toTopOf="parent"/>
 
             <TextView
-                android:id="@+id/textPrice"
+                android:id="@+id/txv_card_itemPrice"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
@@ -85,7 +85,7 @@
             android:layout_height="wrap_content"
             android:text="선택하기"
             android:layout_marginTop="8dp"
-            card_view:layout_constraintTop_toBottomOf="@+id/img"
+            card_view:layout_constraintTop_toBottomOf="@+id/img_card_item"
             android:layout_marginRight="8dp"
             card_view:layout_constraintRight_toRightOf="parent"
             android:layout_marginLeft="8dp"
