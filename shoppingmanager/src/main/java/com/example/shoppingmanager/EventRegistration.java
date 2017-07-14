@@ -10,14 +10,12 @@ import android.widget.EditText;
 import com.example.shoppingmanager.database.Database;
 
 public class EventRegistration extends AppCompatActivity {
-
     String itemId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_registration);
-
 
         EditText discountedPriceText = (EditText) findViewById(R.id.edt_dcPrice);
         EditText startTimeText = (EditText) findViewById(R.id.edt_startTime);
@@ -41,7 +39,6 @@ public class EventRegistration extends AppCompatActivity {
         final String endTime = endTimeText.getText().toString();
         final String discountType = discountTypeText.getText().toString();
 
-
         commitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,6 +59,4 @@ public class EventRegistration extends AppCompatActivity {
         System.out.println(data.getData());
         itemId = data.getDataString();
     }
-
-
 }
