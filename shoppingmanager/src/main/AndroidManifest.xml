@@ -31,7 +31,7 @@
         <activity android:name=".ListInquiry" />
         <activity android:name=".ItemRegistration" />
         <activity android:name=".SearchItem" />
-        <activity android:name=".EventRegistration"></activity>
+        <activity android:name=".EventRegistration" />
         <activity android:name=".PriceModification"></activity>
     </application>
 
