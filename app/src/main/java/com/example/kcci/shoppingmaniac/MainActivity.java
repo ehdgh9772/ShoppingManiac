@@ -7,7 +7,7 @@ import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.BitmapFactory;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.RemoteException;
@@ -30,6 +30,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.kcci.shoppingmaniac.database.Database;
+import com.example.kcci.shoppingmaniac.database.DiscountInfo;
 import com.perples.recosdk.RECOBeacon;
 import com.perples.recosdk.RECOBeaconManager;
 import com.perples.recosdk.RECOBeaconRegion;
@@ -45,6 +47,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements RECOServiceConnectListener, RECOMonitoringListener {
 
     public static String LOG_TAG = "MainActivity";
+    public static final String EXTRA_ID = "itemId";
 
     private RecyclerView _recyclerView;
     private View btnImgDrawerView;                            //항상 보이게 할 뷰
@@ -72,8 +75,12 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 
     protected RECOBeaconManager mRecoManager;
     protected ArrayList<RECOBeaconRegion> mRegions;
-    private long mScanPeriod = 1*1000L;
-    private long mSleepPeriod = 3*1000L;
+    private long mScanPeriod = 1 * 1000L;
+    private long mSleepPeriod = 3 * 1000L;
+
+    ArrayList<DiscountInfo> _discountInfoList;
+    ArrayList<Bitmap> _images;
+    ArrayList<String> _itemIdList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,10 +91,14 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         scanBeacon();
         btnImgDrawerView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) { popDrawerView(); }});
+            public void onClick(View v) {
+                popDrawerView();
+            }
+        });
 
         viewDiscountInfo();
-        viewItemInfo();
+
+//        viewItemInfo();
     }
 
     /**
@@ -97,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
     private void initLayout() {
 
         slideLayout = (LinearLayout) findViewById(R.id.hiddenLayout);
-        _recyclerView = (RecyclerView)findViewById(R.id.recyclerViewMain);
+        _recyclerView = (RecyclerView) findViewById(R.id.recyclerViewMain);
         animGrowFromBottom = AnimationUtils.loadAnimation(this, R.anim.translate_from_bottom);
         animSetToBottom = AnimationUtils.loadAnimation(this, R.anim.translate_to_bottom);
 
@@ -110,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 
     }
 
-
+    //region Beacon
     private void scanBeacon() {
 
         getAuthBT();
@@ -137,12 +148,12 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         mBluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = mBluetoothManager.getAdapter();
 
-        if(mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
+        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
             Intent enableBTIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBTIntent, REQUEST_ENABLE_BT);
         }
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if(ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 Log.i("MainActivity", "The location permission (ACCESS_COARSE_LOCATION or ACCESS_FINE_LOCATION) is not granted.");
                 this.requestLocationPermission();
             } else {
@@ -152,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
     }
 
     private void requestLocationPermission() {
-        if(!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+        if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION);
             return;
         }
@@ -164,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
                     public void onClick(View v) {
                         ActivityCompat.requestPermissions(
                                 MainActivity.this,
-                                new String[]{ Manifest.permission.ACCESS_COARSE_LOCATION },
+                                new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
                                 REQUEST_LOCATION
                         );
                     }
@@ -187,7 +198,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
      * 하단 감지된 비콘 메뉴 생성 및 보이기
      */
     private void popDrawerView() {
-        if(isPageSlided) {
+        if (isPageSlided) {
             slideLayout.startAnimation(animGrowFromBottom);
 //            ArrayList<> getSpottedBeacon();
 //            if ()
@@ -199,7 +210,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         }
     }
 
-//    public dddd getSpottedBeacon() {
+    //    public dddd getSpottedBeacon() {
 //
 //    }
 //
@@ -220,51 +231,12 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 //            }
 //        }
 //    }
-
-    /**
-     * Discount 정보
-     */
-    private void viewDiscountInfo(){
-
-        List<CardViewContent> DiscountList = new ArrayList<>();
-
-        for (int i =0; i<10; i ++){
-
-            CardViewContent cardViewContent = new CardViewContent();
-            cardViewContent.setDiscountType("할인종류");
-            cardViewContent.setName("상품명");
-            cardViewContent.setPrice("원가");
-            cardViewContent.setDiscountedPrice("할인가");
-            cardViewContent.setImage(BitmapFactory.decodeResource(getResources(),R.drawable.a));
-            DiscountList.add(cardViewContent);
-        }
-        _recyclerView.setAdapter(new DiscountRecyclerAdapter(DiscountList,R.layout.card_discount));
-        _recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        _recyclerView.setItemAnimator(new DefaultItemAnimator());
-    }
-
-    private void viewItemInfo(){
-
-        List<CardViewContent> ItenList = new ArrayList<>();
-
-        for (int i =0; i<10; i ++){
-
-            CardViewContent cardViewContent = new CardViewContent();
-            cardViewContent.setName("상품명");
-            cardViewContent.setPrice("원가");
-            cardViewContent.setImage(BitmapFactory.decodeResource(getResources(),R.drawable.a));
-            ItenList.add(cardViewContent);
-        }
-        _recyclerView.setAdapter(new ItemRecyclerAdapter(ItenList,R.layout.card_item));
-        _recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        _recyclerView.setItemAnimator(new DefaultItemAnimator());
-    }
-
-
+    //endregion
+    //region activity
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        switch(requestCode) {
-            case REQUEST_LOCATION : {
+        switch (requestCode) {
+            case REQUEST_LOCATION: {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Snackbar.make(_rootLayout, "location_permission_granted", Snackbar.LENGTH_LONG)
                             .show();
@@ -272,7 +244,10 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
                     Snackbar.make(_rootLayout, "location_permission_not_granted", Snackbar
                             .LENGTH_LONG).show();
                 }
-            } default : break; }
+            }
+            default:
+                break;
+        }
     }
 
     @Override
@@ -295,7 +270,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 
 
     protected void stop(ArrayList<RECOBeaconRegion> regions) {
-        for(RECOBeaconRegion region : regions) {
+        for (RECOBeaconRegion region : regions) {
             try {
                 mRecoManager.stopMonitoringForRegion(region);
             } catch (RemoteException e) {
@@ -317,7 +292,8 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         }
     }
 
-
+    //endregion
+    //region beacon2
     @Override
     public void didEnterRegion(RECOBeaconRegion recoBeaconRegion, Collection<RECOBeacon> collection) {
         ////////비콘 범위 진입 시 콜백
@@ -356,7 +332,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
     }
 
     private void start(ArrayList<RECOBeaconRegion> mRegions) {
-        for(RECOBeaconRegion region : mRegions) {
+        for (RECOBeaconRegion region : mRegions) {
             try {
 //                region.setRegionExpirationTimeMillis(60*1000L);
                 mRecoManager.startMonitoringForRegion(region);
@@ -369,27 +345,77 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
             }
         }
     }
+    //endregion
 
+    /**
+     * Discount 정보
+     */
+    private void viewDiscountInfo() {
+        final Database database = new Database();
+        database.requestDiscountInfo(new Database.LoadCompleteListener() {
+            @Override
+            public void onLoadComplete() {
+                _itemIdList = new ArrayList<>();
+                _discountInfoList = database.getDiscountInfoList();
+                for (int i = 0; i < _discountInfoList.size(); i++) {
+                    _itemIdList.add(_discountInfoList.get(i).getItemId());
+                }
 
+                database.requestImage(_itemIdList, new Database.LoadCompleteListener() {
+                    @Override
+                    public void onLoadComplete() {
+                        _images = new ArrayList<>();
+                        for (int i = 0; i < _discountInfoList.size(); i++) {
+                            _images.add(database.getBitmap(i));
+                        }
+                        _recyclerView.setAdapter(new DiscountRecyclerAdapter(_discountInfoList, _images, R.layout.card_discount));
+                        _recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                        _recyclerView.setItemAnimator(new DefaultItemAnimator());
+                    }
+                });
+            }
+        });
 
-    class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapter.ViewHolder> {
+    }
 
-        private List<CardViewContent> itemList;
-        private int itemLayout;
+    private void viewItemInfo() {
+
+        List<DiscountInfo> ItemList = new ArrayList<>();
+
+        for (int i = 0; i < 10; i++) {
+
+            DiscountInfo discountInfo = new DiscountInfo();
+
+            ItemList.add(discountInfo);
+        }
+        _recyclerView.setAdapter(new ItemRecyclerAdapter(ItemList, R.layout.card_item));
+        _recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        _recyclerView.setItemAnimator(new DefaultItemAnimator());
+    }
+
+    //region DiscountAdapter
+    class DiscountRecyclerAdapter extends RecyclerView.Adapter<DiscountRecyclerAdapter.ViewHolder> {
+
+        private List<DiscountInfo> _discountInfoList;
+        private List<Bitmap> _imageList;
+        private int _layout;
 
         /**
          * 생성자
-         * @param items
-         * @param itemLayout
+         *
+         * @param discountInfoList
+         * @param layout
          */
-        ItemRecyclerAdapter(List<CardViewContent> items , int itemLayout){
+        DiscountRecyclerAdapter(List<DiscountInfo> discountInfoList, List<Bitmap> imageList, int layout) {
 
-            this.itemList = items;
-            this.itemLayout = itemLayout;
+            _discountInfoList = discountInfoList;
+            _imageList = imageList;
+            _layout = layout;
         }
 
         /**
          * 레이아웃을 만들어서 Holer에 저장
+         *
          * @param viewGroup
          * @param viewType
          * @return
@@ -397,7 +423,114 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
 
-            View view = LayoutInflater.from(viewGroup.getContext()).inflate(itemLayout,viewGroup,false);
+            View view = LayoutInflater.from(viewGroup.getContext()).inflate(_layout, viewGroup, false);
+            return new ViewHolder(view);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return super.getItemId(position);
+        }
+
+        /**
+         * listView getView 를 대체
+         * 넘겨 받은 데이터를 화면에 출력하는 역할
+         *
+         * @param viewHolder
+         * @param position
+         */
+        @Override
+        public void onBindViewHolder(ViewHolder viewHolder, int position) {
+
+            final DiscountInfo item = _discountInfoList.get(position);
+            viewHolder._discountType.setText(item.getDiscountType());
+            viewHolder._name.setText(item.getName());
+            viewHolder._price.setText(item.getPrice());
+            viewHolder._discountedPrice.setText(item.getDiscountedPrice());
+            viewHolder._img.setImageBitmap(_imageList.get(position));
+            viewHolder.itemView.setTag(item);
+
+            viewHolder._btnLineChart.setOnClickListener(new View.OnClickListener() {
+                public static final String LOG_TAG = "SpottedBeacons";
+
+                @Override
+                public void onClick(View view) {
+                    switch (view.getId()) {
+
+                        case R.id.btnLineChart:
+
+                            Log.i(LOG_TAG, "Line Chart Start...");
+
+                            Intent intent = new Intent(getApplicationContext(), LineChartActivity.class);
+                            intent.putExtra(EXTRA_ID, item.getItemId());
+                            startActivity(intent);
+
+//                break;
+                    }
+                }
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            return _discountInfoList.size();
+        }
+
+        /**
+         * 뷰 재활용을 위한 viewHolder
+         */
+        class ViewHolder extends RecyclerView.ViewHolder {
+
+            private ImageView _img;
+            private TextView _discountType;
+            private TextView _name;
+            private TextView _price;
+            private TextView _discountedPrice;
+            private Button _btnLineChart;
+
+            public ViewHolder(View itemView) {
+                super(itemView);
+
+                _img = (ImageView) itemView.findViewById(R.id.img);
+                _discountType = (TextView) itemView.findViewById(R.id.textDiscountType);
+                _name = (TextView) itemView.findViewById(R.id.textName);
+                _price = (TextView) itemView.findViewById(R.id.textPrice);
+                _discountedPrice = (TextView) itemView.findViewById(R.id.textDiscountedPrice);
+                _btnLineChart = (Button) itemView.findViewById(R.id.btnLineChart);
+            }
+
+        }
+    }
+
+    //endregion
+    //region ItemAdapter
+    class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapter.ViewHolder> {
+
+        private List<DiscountInfo> itemList;
+        private int itemLayout;
+
+        /**
+         * 생성자
+         *
+         * @param items
+         * @param itemLayout
+         */
+        ItemRecyclerAdapter(List<DiscountInfo> items, int itemLayout) {
+
+            this.itemList = items;
+            this.itemLayout = itemLayout;
+        }
+
+        /**
+         * 레이아웃을 만들어서 Holer에 저장
+         *
+         * @param viewGroup
+         * @param viewType
+         * @return
+         */
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+            View view = LayoutInflater.from(viewGroup.getContext()).inflate(itemLayout, viewGroup, false);
             return new ViewHolder(view);
         }
 
@@ -412,11 +545,12 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         @Override
         public void onBindViewHolder(ViewHolder viewHolder, int position) {
 
-            CardViewContent item = itemList.get(position);
+            DiscountInfo item = itemList.get(position);
             viewHolder._name.setText(item.getName());
             viewHolder._price.setText(item.getPrice());
 
-            viewHolder.img.setBackgroundResource(R.drawable.a);
+            viewHolder._img.setBackgroundResource(R.drawable.a);
+
             viewHolder.itemView.setTag(item);
 
             viewHolder._btnLineChart.setOnClickListener(new View.OnClickListener() {
@@ -447,125 +581,27 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         /**
          * 뷰 재활용을 위한 viewHolder
          */
-        class ViewHolder extends RecyclerView.ViewHolder{
+        class ViewHolder extends RecyclerView.ViewHolder {
 
-            public ImageView img;
+            public ImageView _img;
             private TextView _name;
             private TextView _price;
             Button _btnLineChart;
 
-            public ViewHolder(View itemView){
+            public ViewHolder(View itemView) {
                 super(itemView);
 
-                img = (ImageView) itemView.findViewById(R.id.img);
+                _img = (ImageView) itemView.findViewById(R.id.img);
                 _name = (TextView) itemView.findViewById(R.id.textName);
                 _price = (TextView) itemView.findViewById(R.id.textPrice);
-                _btnLineChart =  (Button) itemView.findViewById(R.id.btnLineChart);
+                _btnLineChart = (Button) itemView.findViewById(R.id.btnLineChart);
             }
 
         }
     }
+    //endregion
 
-    class DiscountRecyclerAdapter extends RecyclerView.Adapter<DiscountRecyclerAdapter.ViewHolder> {
-
-        private List<CardViewContent> albumList;
-        private int itemLayout;
-
-        /**
-         * 생성자
-         * @param items
-         * @param itemLayout
-         */
-        DiscountRecyclerAdapter(List<CardViewContent> items , int itemLayout){
-
-            this.albumList = items;
-            this.itemLayout = itemLayout;
-        }
-
-        /**
-         * 레이아웃을 만들어서 Holer에 저장
-         * @param viewGroup
-         * @param viewType
-         * @return
-         */
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-
-            View view = LayoutInflater.from(viewGroup.getContext()).inflate(itemLayout,viewGroup,false);
-            return new ViewHolder(view);
-        }
-
-        /**
-         * listView getView 를 대체
-         * 넘겨 받은 데이터를 화면에 출력하는 역할
-         *
-         * @param viewHolder
-         * @param position
-         */
-        @Override
-        public void onBindViewHolder(ViewHolder viewHolder, int position) {
-
-            CardViewContent item = albumList.get(position);
-            viewHolder._discountType.setText(item.getDiscountType());
-            viewHolder._name.setText(item.getName());
-            viewHolder._price.setText(item.getPrice());
-            viewHolder._discountedPrice.setText(item.getDiscountedPrice());
-
-            viewHolder.img.setBackgroundResource(R.drawable.a);
-            viewHolder.itemView.setTag(item);
-
-            viewHolder._btnLineChart.setOnClickListener(new View.OnClickListener() {
-                public static final String LOG_TAG = "SpottedBeacons";
-
-                @Override
-                public void onClick(View view) {
-                    switch (view.getId()) {
-
-                        case R.id.btnLineChart:
-
-                            Log.i(LOG_TAG, "Line Chart Start...");
-
-                            Intent intent = new Intent(getApplicationContext(), LineChartActivity.class);
-                            startActivity(intent);
-
-//                break;
-                    }
-                }
-            });
-        }
-
-        @Override
-        public int getItemCount() {
-            return albumList.size();
-        }
-
-        /**
-         * 뷰 재활용을 위한 viewHolder
-         */
-        class ViewHolder extends RecyclerView.ViewHolder{
-
-            public ImageView img;
-            private TextView _discountType;
-            private TextView _name;
-            private TextView _price;
-            private TextView _discountedPrice;
-            Button _btnLineChart;
-
-            public ViewHolder(View itemView){
-                super(itemView);
-
-                img = (ImageView) itemView.findViewById(R.id.img);
-                _discountType = (TextView) itemView.findViewById(R.id.textDiscountType);
-                _name = (TextView) itemView.findViewById(R.id.textName);
-                _price = (TextView) itemView.findViewById(R.id.textPrice);
-                _discountedPrice = (TextView) itemView.findViewById(R.id.textDiscountedPrice);
-                _btnLineChart =  (Button) itemView.findViewById(R.id.btnLineChart);
-            }
-
-        }
-    }
-
-    private class SlidingPageAnimationListener implements Animation.AnimationListener{
+    private class SlidingPageAnimationListener implements Animation.AnimationListener {
         @Override
         public void onAnimationStart(Animation animation) {
 
@@ -573,7 +609,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 
         @Override
         public void onAnimationEnd(Animation animation) {
-            if(isPageSlided)  slideLayout.setVisibility(View.INVISIBLE);
+            if (isPageSlided) slideLayout.setVisibility(View.INVISIBLE);
             isPageSlided = !isPageSlided;
             Log.i(LOG_TAG, "animation terminated isPageSlided is : " + isPageSlided);
         }
