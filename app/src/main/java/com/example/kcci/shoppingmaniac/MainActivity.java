@@ -47,56 +47,49 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements RECOServiceConnectListener, RECOMonitoringListener {
 
     //region field
-    public static String LOG_TAG = "MainActivity";
-    public static final String EXTRA_ID = "itemId";
-
-    private RecyclerView _recyclerView;
-    private View btnImgDrawerView;                            //항상 보이게 할 뷰
-    private WindowManager.LayoutParams _params;  //layout params 객체. 뷰의 위치 및 크기
-    private WindowManager _windowManager;          //윈도우 매니저
-    private DrawerLayout _drawerLayout;
-    private View _drawerView;
-    private View _rootLayout;
-    boolean isPageSlided = false;
-
-    public static final int DRAWER_COLUMS = 3;
-    public static final int DRAWER_ROWS = 3;
-    Animation animGrowFromBottom;
-    Animation animSetToBottom;
-    ConstraintLayout drawerLayout;
-    ViewGroup beaconListLayout;
-
     public static final String RECO_UUID = "24DDF411-8CF1-440C-87CD-E368DAF9C93E";
     public static final boolean SCAN_RECO_ONLY = true;
     public static final boolean ENABLE_BACKGROUND_RANGING_TIMEOUT = true;
     public static final boolean DISCONTINUOUS_SCAN = false;
     private static final int REQUEST_ENABLE_BT = 1;
     private static final int REQUEST_LOCATION = 10;
-    private BluetoothManager mBluetoothManager;
-    private BluetoothAdapter mBluetoothAdapter;
-
-    protected RECOBeaconManager mRecoManager;
-    protected ArrayList<RECOBeaconRegion> mRegions;
+    public static final String EXTRA_ID = "itemId";
     private long mScanPeriod = 1 * 1000L;
     private long mSleepPeriod = 3 * 1000L;
+
+    public static String LOG_TAG = "MainActivity";
+
+    boolean isPageSlided = false;
+
+    ConstraintLayout _constraintDrawer;
+    private RecyclerView _beaconRecyclerView;
+    private RecyclerView _recyclerView;
+    private View _openDrawerButton;                            //항상 보이게 할 뷰
+    private View _rootLayout;
+
+    Animation _animGrowFromBottom;
+    Animation _animSetToBottom;
+
+    private BluetoothManager mBluetoothManager;
+    private BluetoothAdapter mBluetoothAdapter;
+    protected RECOBeaconManager mRecoManager;
+    protected ArrayList<RECOBeaconRegion> mRegions;
 
     ArrayList<DiscountInfo> _discountInfoList;
     ArrayList<Bitmap> _images;
     ArrayList<String> _itemIdList;
-    private RecyclerView itemRecyclerView;
-    //endregion
-
     ArrayList<Integer> _beaconList;
+
+    //endregion
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        initLayout();
-//        scanBeacon();
+        initialize();
 
-        btnImgDrawerView.setOnClickListener(new View.OnClickListener() {
+        _openDrawerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 popDrawerView();
@@ -108,6 +101,28 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 //        viewItemInfo();
     }
 
+    //region Initialize
+    private void initialize() {
+        initLayout();
+        setAnimation();
+        addTest();
+//        scanBeacon();
+    }
+
+    private void addTest() {
+        ImageView imageView = new ImageView(getApplicationContext());
+        imageView.setImageResource(R.drawable.a);
+
+        Button button = (Button) findViewById(R.id.changeList);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                _beaconList.add(1);
+                _beaconRecyclerView.setAdapter(new BeaconRecyclerAdapter(_beaconList, R.layout.each_beacon));
+            }
+        });
+    }
+
     /**
      * 레이아웃 초기화
      */
@@ -115,61 +130,45 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
     private void initLayout() {
 
         _beaconList = new ArrayList<>();
-        _beaconList.add(1);
-        _beaconList.add(1);
-        _beaconList.add(1);
-        _beaconList.add(1);
 
-        _recyclerView = (RecyclerView) findViewById(R.id.recyclerViewMain);
-        animGrowFromBottom = AnimationUtils.loadAnimation(this, R.anim.translate_from_bottom);
-        animSetToBottom = AnimationUtils.loadAnimation(this, R.anim.translate_to_bottom);
-        drawerLayout = (ConstraintLayout) findViewById(R.id.drawerLayout);
+        _recyclerView = (RecyclerView) findViewById(R.id.recy_main_Item);
+        _constraintDrawer = (ConstraintLayout) findViewById(R.id.cons_main_drawer);
 
-        ImageView imageView = new ImageView(getApplicationContext());
-        imageView.setImageResource(R.drawable.a);
+        _beaconRecyclerView = (RecyclerView) findViewById(R.id.recy_main_drawer);
+        _beaconRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        _beaconRecyclerView.setAdapter(new BeaconRecyclerAdapter(_beaconList, R.layout.each_beacon));
 
-        itemRecyclerView = (RecyclerView) findViewById(R.id.itemRecyclerView);
-        itemRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        itemRecyclerView.setAdapter(new BeaconRecyclerAdapter(_beaconList, R.layout.each_beacon));
+        _constraintDrawer.setVisibility(View.INVISIBLE);
+        _constraintDrawer.bringToFront();
 
-        drawerLayout.setVisibility(View.INVISIBLE);
-        drawerLayout.bringToFront();
+        _openDrawerButton = findViewById(R.id.btn_main_drawer);
+        _openDrawerButton.bringToFront();
 
-        btnImgDrawerView = findViewById(R.id.btnDrawer);
-        btnImgDrawerView.bringToFront();
-
-        SlidingPageAnimationListener animationListener = new SlidingPageAnimationListener();
-        animGrowFromBottom.setAnimationListener(animationListener);
-        animSetToBottom.setAnimationListener(animationListener);
-
-        Button button = (Button) findViewById(R.id.changeList);
-
-
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                _beaconList.remove(3);
-                _beaconList.remove(2);
-                itemRecyclerView.setAdapter(new BeaconRecyclerAdapter(_beaconList, R.layout.each_beacon));
-            }
-        });
     }
+
+    private void setAnimation() {
+        SlidingPageAnimationListener animationListener = new SlidingPageAnimationListener();
+        _animGrowFromBottom = AnimationUtils.loadAnimation(this, R.anim.translate_from_bottom);
+        _animSetToBottom = AnimationUtils.loadAnimation(this, R.anim.translate_to_bottom);
+        _animGrowFromBottom.setAnimationListener(animationListener);
+        _animSetToBottom.setAnimationListener(animationListener);
+    }
+    //endregion
 
     private void popDrawerView() {
         if (isPageSlided) {
             Log.i(LOG_TAG, "slide down");
-            drawerLayout.startAnimation(animGrowFromBottom);
-            drawerLayout.setVisibility(View.INVISIBLE);
+            _constraintDrawer.startAnimation(_animGrowFromBottom);
+            _constraintDrawer.setVisibility(View.INVISIBLE);
 //            ArrayList<> getSpottedBeacon();
 //            if ()
 //            generateCornerIcons();
         } else {
             Log.i(LOG_TAG, "slide up");
-            drawerLayout.startAnimation(animSetToBottom);
-            drawerLayout.setVisibility(View.VISIBLE);
+            _constraintDrawer.startAnimation(_animSetToBottom);
+            _constraintDrawer.setVisibility(View.VISIBLE);
         }
     }
-
 
     private class SlidingPageAnimationListener implements Animation.AnimationListener {
         @Override
@@ -234,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION);
             return;
         }
-        _rootLayout = findViewById(R.id.frameLayout);
+        _rootLayout = findViewById(R.id.cons_main_frame);
 
         Snackbar.make(_rootLayout, "location_permission_rationale", Snackbar.LENGTH_INDEFINITE)
                 .setAction("ok", new View.OnClickListener() {
@@ -287,6 +286,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 //        }
 //    }
     //endregion
+
     //region activity
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -348,6 +348,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
     }
 
     //endregion
+
     //region beacon2
     @Override
     public void didEnterRegion(RECOBeaconRegion recoBeaconRegion, Collection<RECOBeacon> collection) {
@@ -401,6 +402,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         }
     }
     //endregion
+
     //region viewToScreen
 
     /**
@@ -514,7 +516,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
                 public void onClick(View view) {
                     switch (view.getId()) {
 
-                        case R.id.btnLineChart:
+                        case R.id.btn_item_lineChart:
 
                             Log.i(LOG_TAG, "Line Chart Start...");
 
@@ -548,12 +550,12 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
             public ViewHolder(View itemView) {
                 super(itemView);
 
-                _img = (ImageView) itemView.findViewById(R.id.img);
-                _discountType = (TextView) itemView.findViewById(R.id.textDiscountType);
-                _name = (TextView) itemView.findViewById(R.id.textName);
-                _price = (TextView) itemView.findViewById(R.id.textPrice);
-                _discountedPrice = (TextView) itemView.findViewById(R.id.textDiscountedPrice);
-                _btnLineChart = (Button) itemView.findViewById(R.id.btnLineChart);
+                _img = (ImageView) itemView.findViewById(R.id.img_discount);
+                _discountType = (TextView) itemView.findViewById(R.id.txv_discount_dcType);
+                _name = (TextView) itemView.findViewById(R.id.txv_discount_Name);
+                _price = (TextView) itemView.findViewById(R.id.txv_item_price);
+                _discountedPrice = (TextView) itemView.findViewById(R.id.txv_discount_dcPrice);
+                _btnLineChart = (Button) itemView.findViewById(R.id.btn_discount_lineChart);
             }
 
         }
@@ -615,7 +617,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
                 public void onClick(View view) {
                     switch (view.getId()) {
 
-                        case R.id.btnLineChart:
+                        case R.id.btn_item_lineChart:
 
                             Log.i(LOG_TAG, "Line Chart Start...");
 
@@ -646,10 +648,10 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
             public ViewHolder(View itemView) {
                 super(itemView);
 
-                _img = (ImageView) itemView.findViewById(R.id.img);
-                _name = (TextView) itemView.findViewById(R.id.textName);
-                _price = (TextView) itemView.findViewById(R.id.textPrice);
-                _btnLineChart = (Button) itemView.findViewById(R.id.btnLineChart);
+                _img = (ImageView) itemView.findViewById(R.id.img_discount);
+                _name = (TextView) itemView.findViewById(R.id.txv_item_Name);
+                _price = (TextView) itemView.findViewById(R.id.txv_item_price);
+                _btnLineChart = (Button) itemView.findViewById(R.id.btn_item_lineChart);
             }
 
         }
@@ -713,7 +715,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 
             public ViewHolder(View itemView) {
                 super(itemView);
-                _img = (ImageView) itemView.findViewById(R.id.beaconImage);
+                _img = (ImageView) itemView.findViewById(R.id.imv_beacon_image);
             }
         }
     }

@@ -15,6 +15,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by koo on 17. 7. 6.
@@ -144,7 +145,7 @@ public class Database {
             protected void onPostExecute(String str) {              //Stored Procedure 추가시 이 부분에 추가
                 Log.i(LOG, "Posting");
 
-                if (str != null) {
+                try {
                     if (Objects.equals(url, GET_DISCOUNT_INFO))
                         setDiscountInfoList(parseToJSON(str));
                     else if (Objects.equals(url, GET_PRICE_HISTORY))
@@ -160,6 +161,8 @@ public class Database {
 
                     if (loadCompleteListener != null)
                         loadCompleteListener.onLoadComplete();
+                } catch (Exception e) {
+                    e.getMessage();
                 }
             }
 
