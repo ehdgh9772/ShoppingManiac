@@ -60,10 +60,9 @@ public class Database {
 
     public void requestImage(ArrayList<String> itemIdList, LoadCompleteListener loadCompleteListener) {
         for (int i = 0; i < itemIdList.size(); i++) {
-            if (i == itemIdList.size() - 1){
+            if (i == itemIdList.size() - 1) {
                 requestImage(itemIdList.get(i), loadCompleteListener);
-            }
-            else{
+            } else {
                 requestImage(itemIdList.get(i), null);
             }
         }
@@ -145,21 +144,23 @@ public class Database {
             protected void onPostExecute(String str) {              //Stored Procedure 추가시 이 부분에 추가
                 Log.i(LOG, "Posting");
 
-                if (Objects.equals(url, GET_DISCOUNT_INFO))
-                    setDiscountInfoList(parseToJSON(str));
-                else if (Objects.equals(url, GET_PRICE_HISTORY))
-                    setPriceHistoryList(parseToJSON(str));
-                else if (Objects.equals(url, GET_ITEM_BY_CATEGORY))
-                    setItemArray(parseToJSON(str), GET_ITEM_BY_CATEGORY);
-                else if (Objects.equals(url, GET_ALL_ITEM))
-                    setItemArray(parseToJSON(str), GET_ALL_ITEM);
-                else if (Objects.equals(url, INSERT_DISCOUNT_INFO)
-                        || Objects.equals(url, INSERT_ITEM)
-                        || Objects.equals(url, INSERT_PRICE))
-                    Log.i(LOG, "Insert Done!");
+                if (str != null) {
+                    if (Objects.equals(url, GET_DISCOUNT_INFO))
+                        setDiscountInfoList(parseToJSON(str));
+                    else if (Objects.equals(url, GET_PRICE_HISTORY))
+                        setPriceHistoryList(parseToJSON(str));
+                    else if (Objects.equals(url, GET_ITEM_BY_CATEGORY))
+                        setItemArray(parseToJSON(str), GET_ITEM_BY_CATEGORY);
+                    else if (Objects.equals(url, GET_ALL_ITEM))
+                        setItemArray(parseToJSON(str), GET_ALL_ITEM);
+                    else if (Objects.equals(url, INSERT_DISCOUNT_INFO)
+                            || Objects.equals(url, INSERT_ITEM)
+                            || Objects.equals(url, INSERT_PRICE))
+                        Log.i(LOG, "Insert Done!");
 
-                if (loadCompleteListener != null && str != null)
-                    loadCompleteListener.onLoadComplete();
+                    if (loadCompleteListener != null)
+                        loadCompleteListener.onLoadComplete();
+                }
             }
 
             private JSONObject parseToJSON(String result) {

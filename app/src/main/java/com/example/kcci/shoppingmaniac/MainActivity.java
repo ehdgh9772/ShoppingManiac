@@ -142,6 +142,17 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         animGrowFromBottom.setAnimationListener(animationListener);
         animSetToBottom.setAnimationListener(animationListener);
 
+        Button button = (Button) findViewById(R.id.changeList);
+
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                _beaconList.remove(3);
+                _beaconList.remove(2);
+                itemRecyclerView.setAdapter(new BeaconRecyclerAdapter(_beaconList, R.layout.each_beacon));
+            }
+        });
     }
 
     private void popDrawerView() {
@@ -156,6 +167,24 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
             Log.i(LOG_TAG, "slide up");
             drawerLayout.startAnimation(animSetToBottom);
             drawerLayout.setVisibility(View.VISIBLE);
+        }
+    }
+
+
+    private class SlidingPageAnimationListener implements Animation.AnimationListener {
+        @Override
+        public void onAnimationStart(Animation animation) {
+        }
+
+        @Override
+        public void onAnimationEnd(Animation animation) {
+            isPageSlided = !isPageSlided;
+            Log.i(LOG_TAG, "animation terminated isPageSlided is : " + isPageSlided);
+        }
+
+        @Override
+        public void onAnimationRepeat(Animation animation) {
+
         }
     }
 
@@ -420,7 +449,8 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
     }
 
     //endregion
-    //region DiscountAdapter
+
+    //region RecyclerViewAdapters
     class DiscountRecyclerAdapter extends RecyclerView.Adapter<DiscountRecyclerAdapter.ViewHolder> {
 
         private List<DiscountInfo> _discountInfoList;
@@ -528,8 +558,6 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 
         }
     }
-
-    //endregion
 
     class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapter.ViewHolder> {
 
@@ -689,24 +717,6 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
             }
         }
     }
-
-    private class SlidingPageAnimationListener implements Animation.AnimationListener {
-        @Override
-        public void onAnimationStart(Animation animation) {
-        }
-
-        @Override
-        public void onAnimationEnd(Animation animation) {
-            isPageSlided = !isPageSlided;
-            Log.i(LOG_TAG, "animation terminated isPageSlided is : " + isPageSlided);
-        }
-
-        @Override
-        public void onAnimationRepeat(Animation animation) {
-
-        }
-    }
-
-
+    //endregion
 }
 
