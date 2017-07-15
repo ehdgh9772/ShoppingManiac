@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
     ArrayList<DiscountInfo> _discountInfoList;
     ArrayList<Bitmap> _images;
     ArrayList<String> _itemIdList;
-    ArrayList<Integer> _beaconList;
+    ArrayList<String> _beaconList;
 
     //endregion
 
@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                _beaconList.add(1);
+                _beaconList.add(Database.MEAT);
                 _beaconRecyclerView.setAdapter(new BeaconRecyclerAdapter(_beaconList, R.layout.each_beacon));
             }
         });
@@ -659,17 +659,18 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 
     class BeaconRecyclerAdapter extends RecyclerView.Adapter<BeaconRecyclerAdapter.ViewHolder> {
 
-        private List<Integer> itemList;
+        private List<String> _beacons;
         private int _layout;
 
         /**
          * 생성자
          *
-         * @param items
+         * @param beacons
+         * @param layout
          */
-        BeaconRecyclerAdapter(List<Integer> items, int layout) {
+        BeaconRecyclerAdapter(List<String> beacons, int layout) {
 
-            this.itemList = items;
+            _beacons = beacons;
             _layout = layout;
         }
 
@@ -703,7 +704,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 
         @Override
         public int getItemCount() {
-            return itemList.size();
+            return _beacons.size();
         }
 
         /**
