@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/hiddenLayout"
+    android:layout_width="match_parent"
+    android:layout_height="150dp"
+    android:background="@color/button_grey">
+
+    <TextView
+        android:id="@+id/txtVNoSpotted"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="감지된 상품코너가 없습니다"/>
+
+</LinearLayout>

@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.RemoteException;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -19,6 +20,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +45,7 @@ import com.perples.recosdk.RECOServiceConnectListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.zip.Inflater;
 
 public class MainActivity extends AppCompatActivity implements RECOServiceConnectListener, RECOMonitoringListener {
 
@@ -108,6 +111,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 
     private void initLayout() {
 
+        ConstraintLayout mainFrame = (ConstraintLayout) findViewById(R.id.frameLayout);
         slideLayout = (LinearLayout) findViewById(R.id.hiddenLayout);
         _recyclerView = (RecyclerView) findViewById(R.id.recyclerViewMain);
         animGrowFromBottom = AnimationUtils.loadAnimation(this, R.anim.translate_from_bottom);
@@ -120,8 +124,28 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         btnImgDrawerView = findViewById(R.id.btnDrawer);
         btnImgDrawerView.bringToFront();
 
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        slideLayout = (LinearLayout) inflater.inflate(R.layout.main_drawer, null);
+        DrawerLayout.LayoutParams drawerParams =
+                new DrawerLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 100, Gravity.BOTTOM);
+
+        mainFrame.addView(slideLayout, drawerParams);
+
         slideLayout.setVisibility(View.INVISIBLE);
         slideLayout.bringToFront();
+        slideLayout.setClickable(true);
+
+
+
+        ImageView imageView = new ImageView(getApplicationContext());
+        imageView.setImageResource(R.drawable.a);
+
+        DrawerLayout.LayoutParams imageParams = new DrawerLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        slideLayout.setPadding(16, 16, 16, 16);
+        slideLayout.addView(imageView, imageParams);
+
+
 
 //        slideLayout.
 
@@ -381,7 +405,6 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
                 });
             }
         });
-
     }
 
     private void viewItemInfo() {
@@ -616,7 +639,9 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         @Override
         public void onAnimationEnd(Animation animation) {
             if (isPageSlided) slideLayout.setVisibility(View.INVISIBLE);
-            else slideLayout.setVisibility(View.VISIBLE);
+            else {
+                slideLayout.setVisibility(View.VISIBLE);
+            }
             isPageSlided = !isPageSlided;
             Log.i(LOG_TAG, "animation terminated isPageSlided is : " + isPageSlided);
         }
