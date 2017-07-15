@@ -138,12 +138,13 @@ public class Database {
                     return sb.toString().trim();
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
-                    return "{}";
+                    return null;
                 }
             }
 
             protected void onPostExecute(String str) {              //Stored Procedure 추가시 이 부분에 추가
                 Log.i(LOG, "Posting");
+
                 if (Objects.equals(url, GET_DISCOUNT_INFO))
                     setDiscountInfoList(parseToJSON(str));
                 else if (Objects.equals(url, GET_PRICE_HISTORY))
@@ -157,7 +158,7 @@ public class Database {
                         || Objects.equals(url, INSERT_PRICE))
                     Log.i(LOG, "Insert Done!");
 
-                if (loadCompleteListener != null)
+                if (loadCompleteListener != null && str != null)
                     loadCompleteListener.onLoadComplete();
             }
 

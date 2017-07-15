@@ -141,7 +141,8 @@ public class Database {
                         || Objects.equals(url, INSERT_PRICE))
                     Log.i(LOG, "Insert Done!");
 
-                loadCompleteListener.onLoadComplete();
+                if (loadCompleteListener != null && str != null)
+                    loadCompleteListener.onLoadComplete();
             }
 
             private JSONObject parseToJSON(String result) {
