@@ -1,4 +1,5 @@
 
 <resources>
     <dimen name="drawer_height">150dp</dimen>
+    <dimen name="beacon_view_holder_padding">8dp</dimen>
 </resources>

@@ -20,7 +20,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +28,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.kcci.shoppingmaniac.database.Database;
@@ -45,10 +43,10 @@ import com.perples.recosdk.RECOServiceConnectListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.zip.Inflater;
 
 public class MainActivity extends AppCompatActivity implements RECOServiceConnectListener, RECOMonitoringListener {
 
+    //region field
     public static String LOG_TAG = "MainActivity";
     public static final String EXTRA_ID = "itemId";
 
@@ -65,8 +63,8 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
     public static final int DRAWER_ROWS = 3;
     Animation animGrowFromBottom;
     Animation animSetToBottom;
-    ConstraintLayout slideLayout;
-    LinearLayout beaconListLayout;
+    ConstraintLayout drawerLayout;
+    ViewGroup beaconListLayout;
 
     public static final String RECO_UUID = "24DDF411-8CF1-440C-87CD-E368DAF9C93E";
     public static final boolean SCAN_RECO_ONLY = true;
@@ -85,6 +83,10 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
     ArrayList<DiscountInfo> _discountInfoList;
     ArrayList<Bitmap> _images;
     ArrayList<String> _itemIdList;
+    private RecyclerView itemRecyclerView;
+    //endregion
+
+    ArrayList<Integer> _beaconList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,44 +114,49 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 
     private void initLayout() {
 
-        ConstraintLayout mainFrame = (ConstraintLayout) findViewById(R.id.frameLayout);
-        slideLayout = (ConstraintLayout) findViewById(R.id.hiddenLayout);
+        _beaconList = new ArrayList<>();
+        _beaconList.add(1);
+        _beaconList.add(1);
+        _beaconList.add(1);
+        _beaconList.add(1);
+
         _recyclerView = (RecyclerView) findViewById(R.id.recyclerViewMain);
         animGrowFromBottom = AnimationUtils.loadAnimation(this, R.anim.translate_from_bottom);
         animSetToBottom = AnimationUtils.loadAnimation(this, R.anim.translate_to_bottom);
+        drawerLayout = (ConstraintLayout) findViewById(R.id.drawerLayout);
+
+        ImageView imageView = new ImageView(getApplicationContext());
+        imageView.setImageResource(R.drawable.a);
+
+        itemRecyclerView = (RecyclerView) findViewById(R.id.itemRecyclerView);
+        itemRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        itemRecyclerView.setAdapter(new BeaconRecyclerAdapter(_beaconList, R.layout.each_beacon));
+
+        drawerLayout.setVisibility(View.INVISIBLE);
+        drawerLayout.bringToFront();
+
+        btnImgDrawerView = findViewById(R.id.btnDrawer);
+        btnImgDrawerView.bringToFront();
 
         SlidingPageAnimationListener animationListener = new SlidingPageAnimationListener();
         animGrowFromBottom.setAnimationListener(animationListener);
         animSetToBottom.setAnimationListener(animationListener);
 
-        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        slideLayout = (ConstraintLayout) inflater.inflate(R.layout.main_drawer, null);
-        slideLayout.getLayoutParams();
-        ConstraintLayout.LayoutParams drawerParams =
-                new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) getResources().getDimension(R.dimen.drawer_height));
-        drawerParams.bottomToBottom = R.id.frameLayout;
-        mainFrame.addView(slideLayout, drawerParams);
+    }
 
-        slideLayout.setVisibility(View.INVISIBLE);
-        slideLayout.bringToFront();
-        slideLayout.setClickable(true);
-        slideLayout.setPadding(16, 16, 16, 16);
-
-        ImageView imageView = new ImageView(getApplicationContext());
-        imageView.setImageResource(R.drawable.a);
-
-        DrawerLayout.LayoutParams imageParams = new DrawerLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-
-        beaconListLayout = (LinearLayout) findViewById(R.id.beaconListLayout);
-        beaconListLayout.addView(imageView, imageParams);
-
-        btnImgDrawerView = findViewById(R.id.btnDrawer);
-        btnImgDrawerView.bringToFront();
-
-
-//        slideLayout.
-
+    private void popDrawerView() {
+        if (isPageSlided) {
+            Log.i(LOG_TAG, "slide down");
+            drawerLayout.startAnimation(animGrowFromBottom);
+            drawerLayout.setVisibility(View.INVISIBLE);
+//            ArrayList<> getSpottedBeacon();
+//            if ()
+//            generateCornerIcons();
+        } else {
+            Log.i(LOG_TAG, "slide up");
+            drawerLayout.startAnimation(animSetToBottom);
+            drawerLayout.setVisibility(View.VISIBLE);
+        }
     }
 
     //region Beacon
@@ -228,18 +235,6 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
     /**
      * 하단 감지된 비콘 메뉴 생성 및 보이기
      */
-    private void popDrawerView() {
-        if (isPageSlided) {
-            Log.i(LOG_TAG, "slide down");
-            slideLayout.startAnimation(animGrowFromBottom);
-//            ArrayList<> getSpottedBeacon();
-//            if ()
-//            generateConerIcons();
-        } else {
-            Log.i(LOG_TAG, "slide up");
-            slideLayout.startAnimation(animSetToBottom);
-        }
-    }
 
     //    public dddd getSpottedBeacon() {
 //
@@ -328,8 +323,8 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
     @Override
     public void didEnterRegion(RECOBeaconRegion recoBeaconRegion, Collection<RECOBeacon> collection) {
         ////////비콘 범위 진입 시 콜백
-        TextView drawerTxt = (TextView) findViewById(R.id.txtVNoSpotted);
-        drawerTxt.setText(recoBeaconRegion.getUniqueIdentifier());
+//        TextView drawerTxt = (TextView) findViewById(R.id.txtVNoSpotted);
+//        drawerTxt.setText(recoBeaconRegion.getUniqueIdentifier());
     }
 
     @Override
@@ -377,6 +372,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         }
     }
     //endregion
+    //region viewToScreen
 
     /**
      * Discount 정보
@@ -423,6 +419,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         _recyclerView.setItemAnimator(new DefaultItemAnimator());
     }
 
+    //endregion
     //region DiscountAdapter
     class DiscountRecyclerAdapter extends RecyclerView.Adapter<DiscountRecyclerAdapter.ViewHolder> {
 
@@ -533,7 +530,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
     }
 
     //endregion
-    //region ItemAdapter
+
     class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapter.ViewHolder> {
 
         private List<DiscountInfo> itemList;
@@ -629,20 +626,77 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 
         }
     }
-    //endregion
+
+    class BeaconRecyclerAdapter extends RecyclerView.Adapter<BeaconRecyclerAdapter.ViewHolder> {
+
+        private List<Integer> itemList;
+        private int _layout;
+
+        /**
+         * 생성자
+         *
+         * @param items
+         */
+        BeaconRecyclerAdapter(List<Integer> items, int layout) {
+
+            this.itemList = items;
+            _layout = layout;
+        }
+
+        /**
+         * 레이아웃을 만들어서 Holer에 저장
+         *
+         * @param viewGroup
+         * @param viewType
+         * @return
+         */
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+            View view = LayoutInflater.from(viewGroup.getContext()).inflate(_layout, viewGroup, false);
+            int paddingSize = (int) getResources().getDimension(R.dimen.beacon_view_holder_padding);
+            view.setPadding(paddingSize, paddingSize, paddingSize, paddingSize);
+            return new ViewHolder(view);
+        }
+
+
+        /**
+         * listView getView 를 대체
+         * 넘겨 받은 데이터를 화면에 출력하는 역할
+         *
+         * @param viewHolder
+         * @param position
+         */
+        @Override
+        public void onBindViewHolder(ViewHolder viewHolder, int position) {
+            viewHolder._img.setImageResource(R.drawable.b);
+        }
+
+        @Override
+        public int getItemCount() {
+            return itemList.size();
+        }
+
+        /**
+         * 뷰 재활용을 위한 viewHolder
+         */
+        class ViewHolder extends RecyclerView.ViewHolder {
+
+            public ImageView _img;
+
+            public ViewHolder(View itemView) {
+                super(itemView);
+                _img = (ImageView) itemView.findViewById(R.id.beaconImage);
+            }
+        }
+    }
 
     private class SlidingPageAnimationListener implements Animation.AnimationListener {
         @Override
         public void onAnimationStart(Animation animation) {
-
         }
 
         @Override
         public void onAnimationEnd(Animation animation) {
-            if (isPageSlided) slideLayout.setVisibility(View.INVISIBLE);
-            else {
-                slideLayout.setVisibility(View.VISIBLE);
-            }
             isPageSlided = !isPageSlided;
             Log.i(LOG_TAG, "animation terminated isPageSlided is : " + isPageSlided);
         }
@@ -652,6 +706,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 
         }
     }
+
 
 }
 
