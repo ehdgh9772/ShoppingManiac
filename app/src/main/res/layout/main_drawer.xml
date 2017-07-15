@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/hiddenLayout"
     android:layout_width="match_parent"
     android:layout_height="150dp"
     android:background="@color/button_grey">
 
-    <TextView
-        android:id="@+id/txtVNoSpotted"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:text="감지된 상품코너가 없습니다"/>
+    <HorizontalScrollView
+        android:layout_width="368dp"
+        android:layout_height="134dp"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="8dp">
 
-</LinearLayout>
+        <Button
+            android:id="@+id/button6"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Button"/>
+    </HorizontalScrollView>
+</android.support.constraint.ConstraintLayout>

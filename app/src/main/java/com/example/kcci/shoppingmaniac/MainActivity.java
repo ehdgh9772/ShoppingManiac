@@ -65,7 +65,8 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
     public static final int DRAWER_ROWS = 3;
     Animation animGrowFromBottom;
     Animation animSetToBottom;
-    LinearLayout slideLayout;
+    ConstraintLayout slideLayout;
+    LinearLayout beaconListLayout;
 
     public static final String RECO_UUID = "24DDF411-8CF1-440C-87CD-E368DAF9C93E";
     public static final boolean SCAN_RECO_ONLY = true;
@@ -112,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
     private void initLayout() {
 
         ConstraintLayout mainFrame = (ConstraintLayout) findViewById(R.id.frameLayout);
-        slideLayout = (LinearLayout) findViewById(R.id.hiddenLayout);
+        slideLayout = (ConstraintLayout) findViewById(R.id.hiddenLayout);
         _recyclerView = (RecyclerView) findViewById(R.id.recyclerViewMain);
         animGrowFromBottom = AnimationUtils.loadAnimation(this, R.anim.translate_from_bottom);
         animSetToBottom = AnimationUtils.loadAnimation(this, R.anim.translate_to_bottom);
@@ -121,30 +122,30 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         animGrowFromBottom.setAnimationListener(animationListener);
         animSetToBottom.setAnimationListener(animationListener);
 
-        btnImgDrawerView = findViewById(R.id.btnDrawer);
-        btnImgDrawerView.bringToFront();
-
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        slideLayout = (LinearLayout) inflater.inflate(R.layout.main_drawer, null);
-        DrawerLayout.LayoutParams drawerParams =
-                new DrawerLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 100, Gravity.BOTTOM);
-
+        slideLayout = (ConstraintLayout) inflater.inflate(R.layout.main_drawer, null);
+        slideLayout.getLayoutParams();
+        ConstraintLayout.LayoutParams drawerParams =
+                new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) getResources().getDimension(R.dimen.drawer_height));
+        drawerParams.bottomToBottom = R.id.frameLayout;
         mainFrame.addView(slideLayout, drawerParams);
 
         slideLayout.setVisibility(View.INVISIBLE);
         slideLayout.bringToFront();
         slideLayout.setClickable(true);
-
-
+        slideLayout.setPadding(16, 16, 16, 16);
 
         ImageView imageView = new ImageView(getApplicationContext());
         imageView.setImageResource(R.drawable.a);
 
         DrawerLayout.LayoutParams imageParams = new DrawerLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        slideLayout.setPadding(16, 16, 16, 16);
-        slideLayout.addView(imageView, imageParams);
 
+        beaconListLayout = (LinearLayout) findViewById(R.id.beaconListLayout);
+        beaconListLayout.addView(imageView, imageParams);
+
+        btnImgDrawerView = findViewById(R.id.btnDrawer);
+        btnImgDrawerView.bringToFront();
 
 
 //        slideLayout.
@@ -291,27 +292,27 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        this.stop(mRegions);
-        this.unbind();
-    }
+//    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//        this.stop(mRegions);
+//        this.unbind();
+//    }
 
 
-    protected void stop(ArrayList<RECOBeaconRegion> regions) {
-        for (RECOBeaconRegion region : regions) {
-            try {
-                mRecoManager.stopMonitoringForRegion(region);
-            } catch (RemoteException e) {
-                Log.i("RecoMonitoringActivity", "Remote Exception");
-                e.printStackTrace();
-            } catch (NullPointerException e) {
-                Log.i("RecoMonitoringActivity", "Null Pointer Exception");
-                e.printStackTrace();
-            }
-        }
-    }
+//    protected void stop(ArrayList<RECOBeaconRegion> regions) {
+//        for (RECOBeaconRegion region : regions) {
+//            try {
+//                mRecoManager.stopMonitoringForRegion(region);
+//            } catch (RemoteException e) {
+//                Log.i("RecoMonitoringActivity", "Remote Exception");
+//                e.printStackTrace();
+//            } catch (NullPointerException e) {
+//                Log.i("RecoMonitoringActivity", "Null Pointer Exception");
+//                e.printStackTrace();
+//            }
+//        }
+//    }
 
     private void unbind() {
         try {
