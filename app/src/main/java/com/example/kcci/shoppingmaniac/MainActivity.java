@@ -1,12 +1,14 @@
 package com.example.kcci.shoppingmaniac;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothManager;
+import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -24,33 +26,28 @@ import android.widget.TextView;
 import com.example.kcci.shoppingmaniac.database.Database;
 import com.example.kcci.shoppingmaniac.database.DiscountInfo;
 import com.example.kcci.shoppingmaniac.database.Item;
+import com.perples.recosdk.RECOBeacon;
+import com.perples.recosdk.RECOBeaconManager;
+import com.perples.recosdk.RECOBeaconRegion;
+import com.perples.recosdk.RECOErrorCode;
+import com.perples.recosdk.RECORangingListener;
+import com.perples.recosdk.RECOServiceConnectListener;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
-import static com.example.kcci.shoppingmaniac.Beacon.REQUEST_ENABLE_BT;
-import static com.example.kcci.shoppingmaniac.Beacon.REQUEST_LOCATION;
 import static com.example.kcci.shoppingmaniac.R.drawable.b;
 
 public class MainActivity extends AppCompatActivity
-//        implements RECOServiceConnectListener,
-//        RECORangingListener
+        implements RECOServiceConnectListener, RECORangingListener
 {
 
-
     //region field
-    public static String LOG_TAG = "MainActivity";
 
-//    public static final String RECO_UUID = "24DDF411-8CF1-440C-87CD-E368DAF9C93E";
-//    public static final boolean SCAN_RECO_ONLY = true;
-//    public static final boolean ENABLE_BACKGROUND_RANGING_TIMEOUT = true;
-//    public static final boolean DISCONTINUOUS_SCAN = false;
-//    private static final int REQUEST_ENABLE_BT = 1;
-//    private static final int REQUEST_LOCATION = 10;
+    public static String LOG_TAG = "MainActivity";
     public static final String EXTRA_ID = "itemId";
-//    private long mScanPeriod = 1 * 1000L;
-//    private long mSleepPeriod = 3 * 1000L;
-//    private long rangePeriod = 10 * 1000L;
 
     ConstraintLayout _constraintDrawer;
     private RecyclerView _beaconRecyclerView;
@@ -63,20 +60,25 @@ public class MainActivity extends AppCompatActivity
     Animation _animGrowFromBottom;
     Animation _animSetToBottom;
 
-//    private BluetoothManager mBluetoothManager;
-//    private BluetoothAdapter mBluetoothAdapter;
-//    protected RECOBeaconManager mRecoManager;
-//    //    protected ArrayList<RECOBeaconRegion> mRegions;
-//    protected RECOBeaconRegion region;
-//    private HashMap<Integer, String> regionMap;
-//    private int beaconRssiCritical = -85;
-
     ArrayList<DiscountInfo> _discountInfoList;
     ArrayList<Bitmap> _images;
     ArrayList<String> _itemIdList;
     ArrayList<String> _beaconList;
 
-    Beacon beacon;
+    static final String RECO_UUID = "24DDF411-8CF1-440C-87CD-E368DAF9C93E";
+    static final boolean SCAN_RECO_ONLY = true;
+    static final boolean ENABLE_BACKGROUND_RANGING_TIMEOUT = true;
+    static final boolean DISCONTINUOUS_SCAN = false;
+    static final int REQUEST_ENABLE_BT = 1;
+    static final int REQUEST_LOCATION = 10;
+
+    private BluetoothManager mBluetoothManager;
+    private BluetoothAdapter mBluetoothAdapter;
+    protected RECOBeaconManager mRecoManager;
+    protected RECOBeaconRegion region;
+    private HashMap<Integer, String> regionMap;
+    private int beaconRssiCritical = -85;
+
 
     //endregion
 
@@ -85,7 +87,14 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        initialize();
+//        initialize();
+
+        initLayout();
+
+        connectBeacons();
+
+        setAnimation();
+        addTest();
 
         viewDiscountInfo();
 
@@ -93,13 +102,16 @@ public class MainActivity extends AppCompatActivity
     }
 
     //region Initialize
-    private void initialize() {
-        initLayout();
-        setAnimation();
-        addTest();
-        beacon.scanBeacon();
-    }
+//    private void initialize() {
+//        initLayout();
+//        setAnimation();
+//        addTest();
+//        beaconManager.scanBeacon();
+//    }
 
+
+
+    //region initialize layout , test and drawerView animation
     /**
      * 레이아웃 초기화
      */
@@ -131,16 +143,8 @@ public class MainActivity extends AppCompatActivity
         _txtVSpottedConer = (TextView) findViewById(R.id.txtVSpottedConer);
         _rootLayout = findViewById(R.id.cons_main_frame);
 
-        beacon = new Beacon(MainActivity.this, _txtVSpottedConer, _rootLayout);
+//        beaconManager = new BeaconManager(MainActivity.this, _txtVSpottedConer, _rootLayout);
 
-    }
-
-    private void setAnimation() {
-        SlidingPageAnimationListener animationListener = new SlidingPageAnimationListener();
-        _animGrowFromBottom = AnimationUtils.loadAnimation(this, R.anim.translate_from_bottom);
-        _animSetToBottom = AnimationUtils.loadAnimation(this, R.anim.translate_to_bottom);
-        _animGrowFromBottom.setAnimationListener(animationListener);
-        _animSetToBottom.setAnimationListener(animationListener);
     }
 
     private void addTest() {
@@ -155,16 +159,12 @@ public class MainActivity extends AppCompatActivity
             }
         });
     }
-    //endregion
 
     private void popDrawerView() {
         if (isPageSlided) {
             Log.i(LOG_TAG, "slide down");
             _constraintDrawer.startAnimation(_animGrowFromBottom);
             _constraintDrawer.setVisibility(View.INVISIBLE);
-//            ArrayList<> getSpottedBeacon();
-//            if ()
-//            generateCornerIcons();
         } else {
             Log.i(LOG_TAG, "slide up");
             _constraintDrawer.startAnimation(_animSetToBottom);
@@ -172,7 +172,13 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
+    private void setAnimation() {
+        SlidingPageAnimationListener animationListener = new SlidingPageAnimationListener();
+        _animGrowFromBottom = AnimationUtils.loadAnimation(this, R.anim.translate_from_bottom);
+        _animSetToBottom = AnimationUtils.loadAnimation(this, R.anim.translate_to_bottom);
+        _animGrowFromBottom.setAnimationListener(animationListener);
+        _animSetToBottom.setAnimationListener(animationListener);
+    }
 
     private class SlidingPageAnimationListener implements Animation.AnimationListener {
         @Override
@@ -190,206 +196,126 @@ public class MainActivity extends AppCompatActivity
 
         }
     }
-
-//    //region Beacon
-//    private void scanBeacon() {
-//
-//        getAuthBT();
-//        mRecoManager = RECOBeaconManager.getInstance(
-//                getApplicationContext(),
-//                SCAN_RECO_ONLY,
-//                ENABLE_BACKGROUND_RANGING_TIMEOUT
-//        );
-////        mRegions = generateBeaconRegion();
-////        region.setRegionExpirationTimeMillis(rangePeriod);
-//
-////        region = new RECOBeaconRegion(RECO_UUID, 11, "KCCI Mart");
-////        regionMap = new HashMap<>();
-////        regionMap.put(111, "entrance");
-////        regionMap.put(112, "grocery");
-////        regionMap.put(113, "meat");
-////        regionMap.put(114, "appliance");
-//
-////        mRecoManager.setMonitoringListener(this);
-//        mRecoManager.setRangingListener(this);
-////        mRecoManager.setScanPeriod(mScanPeriod);
-////        mRecoManager.setSleepPeriod(mSleepPeriod);
-//
-//        mRecoManager.bind(this);
-//
-//    }
-//
-//    private void getAuthBT() {
-//
-//        //If a user device turns off bluetooth, request to turn it on.
-//        //사용자가 블루투스를 켜도록 요청합니다.
-//        mBluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
-//        mBluetoothAdapter = mBluetoothManager.getAdapter();
-//
-//        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
-//            Intent enableBTIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-//            startActivityForResult(enableBTIntent, REQUEST_ENABLE_BT);
-//        }
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//                Log.i("MainActivity", "The location permission (ACCESS_COARSE_LOCATION or ACCESS_FINE_LOCATION) is not granted.");
-//                this.requestLocationPermission();
-//            } else {
-//                Log.i("MainActivity", "The location permission (ACCESS_COARSE_LOCATION or ACCESS_FINE_LOCATION) is already granted.");
-//            }
-//        }
-//    }
-//
-//    private void requestLocationPermission() {
-//        if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
-//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION);
-//            return;
-//        }
-//
-//        Snackbar.make(_rootLayout, "location_permission_rationale", Snackbar.LENGTH_INDEFINITE)
-//                .setAction("ok", new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        ActivityCompat.requestPermissions(
-//                                MainActivity.this,
-//                                new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-//                                REQUEST_LOCATION
-//                        );
-//                    }
-//                }).show();
-//    }
-//
-//
-//    private ArrayList<RECOBeaconRegion> generateBeaconRegion() {
-//        ArrayList<RECOBeaconRegion> regions = new ArrayList<>();
-//
-//        regions.add(new RECOBeaconRegion(RECO_UUID, 11, 111, "entrance"));
-//        regions.add(new RECOBeaconRegion(RECO_UUID, 11, 112, "grocery"));
-//        regions.add(new RECOBeaconRegion(RECO_UUID, 11, 113, "meat"));
-//        regions.add(new RECOBeaconRegion(RECO_UUID, 11, 114, "appliance"));
-//
-//        return regions;
-//    }
-
-    //region monitoring overrides
-
-//    @Override
-//    public void didEnterRegion(RECOBeaconRegion recoBeaconRegion, Collection<RECOBeacon> collection) {
-//        ////////비콘 범위 진입 시 콜백
-//
-//        int beaconCounter = 0;
-//        for (RECOBeacon bc : collection) {
-//            if ( bc.getRssi() > beaconRssiCritical ) {
-//                beaconCounter++;
-//                _txtVSpottedConer.append(
-//                        regionMap.get(bc.getMinor()) + "\n"
-//                );
-//            }
-//        }
-//        if ( beaconCounter == 0 ) _txtVSpottedConer.setText(R.string.no_beacons_spotted);
-//
-//    }
-//
-//    @Override
-//    public void didExitRegion(RECOBeaconRegion recoBeaconRegion) {
-//
-//    }
-//
-//    @Override
-//    public void didStartMonitoringForRegion(RECOBeaconRegion recoBeaconRegion) {
-//
-//    }
-//
-//    @Override
-//    public void didDetermineStateForRegion(RECOBeaconRegionState recoBeaconRegionState, RECOBeaconRegion recoBeaconRegion) {
-//
-//    }
-//
-//    @Override
-//    public void monitoringDidFailForRegion(RECOBeaconRegion recoBeaconRegion, RECOErrorCode recoErrorCode) {
-//
-//    }
-
-    //endregion
-
-    //region ranging overrides
-
-//    /** when some beacons in some ranges itll be fired*/
-//    @Override
-//    public void didRangeBeaconsInRegion(Collection<RECOBeacon> collection, RECOBeaconRegion recoBeaconRegion) {
-//        int beaconCounter = 0;
-//        for (RECOBeacon bc : collection) {
-//            if ( bc.getRssi() > beaconRssiCritical ) {
-//                beaconCounter++;
-//                _txtVSpottedConer.append(
-//                        regionMap.get(bc.getMinor()) + "\n"
-//                );
-//            }
-//        }
-//        if ( beaconCounter == 0 ) _txtVSpottedConer.setText(R.string.no_beacons_spotted);
-//    }
-//
-//    @Override
-//    public void rangingBeaconsDidFailForRegion(RECOBeaconRegion recoBeaconRegion, RECOErrorCode recoErrorCode) {
-//
-//    }
-
-
     //endregion
 
 
-//    @Override
-//    public void onServiceConnect() {
-////        this.start(mRegions);
-//        this.start(region);
-//    }
-//
-//    @Override
-//    public void onServiceFail(RECOErrorCode recoErrorCode) {
-//
-//    }
-//
-//    //    private void start(ArrayList<RECOBeaconRegion> mRegions) {
-//    private void start(RECOBeaconRegion region) {
-////        for (RECOBeaconRegion region : mRegions) {
-////            try {
-//////                region.setRegionExpirationTimeMillis(60*1000L);
-////                mRecoManager.startMonitoringForRegion(region);
-////            } catch (RemoteException e) {
-////                Log.i("RECOMonitoringActivity", "Remote Exception");
-////                e.printStackTrace();
-////            } catch (NullPointerException e) {
-////                Log.i("RecoMonitoringActivity", "Null Pointer Exception");
-////                e.printStackTrace();
-////            }
-////        }
-//        try {
-////            mRecoManager.startMonitoringForRegion(region);
-//            mRecoManager.startRangingBeaconsInRegion(region);
-//        } catch (RemoteException e) {
-//            e.printStackTrace();
-//        }
-//    }
-    //endregion
+    //region beacon overrides and bt connection
 
-    //region activity
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_LOCATION: {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Snackbar.make(_rootLayout, "location_permission_granted", Snackbar.LENGTH_LONG)
-                            .show();
-                } else {
-                    Snackbar.make(_rootLayout, "location_permission_not_granted", Snackbar
-                            .LENGTH_LONG).show();
-                }
-            }
-            default:
-                break;
+    private void connectBeacons() {
+
+        this.getAuthBT();
+        mRecoManager = RECOBeaconManager.getInstance(
+                getApplicationContext(),
+                SCAN_RECO_ONLY,
+                ENABLE_BACKGROUND_RANGING_TIMEOUT
+        );
+
+        region = new RECOBeaconRegion(RECO_UUID, 11, "KCCI Mart");
+        regionMap = new HashMap<>();
+        regionMap.put(111, "entrance");
+        regionMap.put(112, "grocery");
+        regionMap.put(113, "meat");
+        regionMap.put(114, "appliance");
+
+        mRecoManager.setRangingListener(this);
+        mRecoManager.bind(this);
+
+    }
+
+    private void getAuthBT() {
+
+        //If a user device turns off bluetooth, request to turn it on.
+        //사용자가 블루투스를 켜도록 요청합니다.
+        mBluetoothManager = (BluetoothManager) getApplicationContext().getSystemService(Context.BLUETOOTH_SERVICE);
+        mBluetoothAdapter = mBluetoothManager.getAdapter();
+
+        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
+            Intent enableBTIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBTIntent, REQUEST_ENABLE_BT);
         }
     }
 
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+//        switch (requestCode) {
+//            case REQUEST_LOCATION: {
+//                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    Snackbar.make(_rootLayout, "location_permission_granted", Snackbar.LENGTH_LONG)
+//                            .show();
+//                } else {
+//                    Snackbar.make(_rootLayout, "location_permission_not_granted", Snackbar
+//                            .LENGTH_LONG).show();
+//                }
+//            }
+//            default:
+//                break;
+//        }
+//    }
+
+    /** when some beacons in some ranges itll be fired*/
+    @Override
+    public void didRangeBeaconsInRegion(Collection<RECOBeacon> collection, RECOBeaconRegion recoBeaconRegion) {
+        int beaconCounter = 0;
+        for (RECOBeacon bc : collection) {
+            if ( bc.getRssi() > beaconRssiCritical ) {
+                beaconCounter++;
+                _txtVSpottedConer.append(
+                        regionMap.get(bc.getMinor()) + "\n"
+                );
+            }
+        }
+        if ( beaconCounter == 0 ) _txtVSpottedConer.setText(R.string.no_beacons_spotted);
+    }
+
+    @Override
+    public void rangingBeaconsDidFailForRegion(RECOBeaconRegion recoBeaconRegion, RECOErrorCode recoErrorCode) {
+
+    }
+
+    /**
+     * callback when beaconManager service connected
+     */
+    @Override
+    public void onServiceConnect() {
+        this.start(region);
+    }
+
+    /**
+     * fail to connect beaconManager service*/
+    @Override
+    public void onServiceFail(RECOErrorCode recoErrorCode) {
+
+    }
+
+
+    private void start(RECOBeaconRegion region) {
+        try {
+            mRecoManager.startRangingBeaconsInRegion(region);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    protected void stop(RECOBeaconRegion region) {
+        try {
+            mRecoManager.stopRangingBeaconsInRegion(region);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    protected void unbind() {
+        try {
+            mRecoManager.unbind();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //endregion
+
+    //region Activity overrides
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_ENABLE_BT && resultCode == Activity.RESULT_CANCELED) {
@@ -404,45 +330,11 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-//        this.stop(mRegions);
-        beacon.stop(beacon.region);
-        beacon.unbind();
+        stop(region);
+        unbind();
     }
 
-
-//    //    protected void stop(ArrayList<RECOBeaconRegion> regions) {
-//    protected void stop(RECOBeaconRegion region) {
-////        for (RECOBeaconRegion region : regions) {
-////            try {
-////                mRecoManager.stopMonitoringForRegion(region);
-////            } catch (RemoteException e) {
-////                Log.i("RecoMonitoringActivity", "Remote Exception");
-////                e.printStackTrace();
-////            } catch (NullPointerException e) {
-////                Log.i("RecoMonitoringActivity", "Null Pointer Exception");
-////                e.printStackTrace();
-////            }
-////        }
-//        try {
-////            mRecoManager.stopMonitoringForRegion(region);
-//            mRecoManager.stopRangingBeaconsInRegion(region);
-//        } catch (RemoteException e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    private void unbind() {
-//        try {
-//            mRecoManager.unbind();
-//        } catch (RemoteException e) {
-//            Log.i("RecoMonitoringActivity", "Remote Exception");
-//            e.printStackTrace();
-//        }
-//    }
-
     //endregion
-
-
 
     //region viewToScreen
 
