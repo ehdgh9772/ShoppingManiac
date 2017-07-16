@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.LinearLayout;
 
 import com.example.kcci.shoppingmaniac.database.Database;
+import com.example.kcci.shoppingmaniac.database.PriceHistory;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -14,6 +15,8 @@ import org.achartengine.model.XYMultipleSeriesDataset;
 import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
+
+import java.util.ArrayList;
 
 import static com.example.kcci.shoppingmaniac.MainActivity.EXTRA_ID;
 
@@ -25,9 +28,9 @@ public class LineChartActivity extends AppCompatActivity {
 
     // 막대그래프의 가로축
 
-    private String[] mMonth = new String[] {
-            "Jan", "Feb" , "Mar", "Apr", "May", "Jun",
-            "Jul", "Aug" , "Sep", "Oct", "Nov", "Dec"
+    private String[] mMonth = new String[]{
+            "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
     };
 
     private GraphicalView mChartView;
@@ -39,21 +42,21 @@ public class LineChartActivity extends AppCompatActivity {
         setContentView(R.layout.activity_line_chart);
         String id = getIntent().getStringExtra(EXTRA_ID);
 
-        Database database = new Database();
+        final Database database = new Database();
         database.requestPriceHistory(id, new Database.LoadCompleteListener() {
             @Override
             public void onLoadComplete() {
 //                database.get
-                drawChart();
+                drawChart(database.getPriceHistoryList());
             }
         });
 
 
     }
 
-    private void drawChart(){
-        int[] x = { 1,2,3,4,5,6,7,8 };
-        int[] income = {2000,2500,2700,3000,2800,3500,3700,3800};
+    private void drawChart(ArrayList<PriceHistory> historyList) {
+
+        int[] x = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
 //        int[] expense = {2200, 2700, 2900, 2800, 2600, 3000, 3300, 3400 };
 
         // Creating an  XYSeries for Income
@@ -67,8 +70,10 @@ public class LineChartActivity extends AppCompatActivity {
 
         // Adding data to Income and Expense Series
 
-        for(int i=0;i<x.length;i++){
-            incomeSeries.add(x[i], income[i]);
+
+        for (int i = 0; i < historyList.size(); i++) {
+            incomeSeries.add(x[i],
+                    Double.parseDouble(historyList.get(i).getPrice()));
 
 //            expenseSeries.add(x[i],expense[i]);
 
@@ -109,7 +114,6 @@ public class LineChartActivity extends AppCompatActivity {
 //        expenseRenderer.setDisplayChartValues(true);
 
 
-
         // Creating a XYMultipleSeriesRenderer to customize the whole chart
 
         XYMultipleSeriesRenderer multiRenderer = new XYMultipleSeriesRenderer();
@@ -119,9 +123,9 @@ public class LineChartActivity extends AppCompatActivity {
         multiRenderer.setYTitle("금  액");
 //        multiRenderer.setZoomButtonsVisible(true);
 
-        for(int i=0;i<x.length;i++){
+        for (int i = 0; i < historyList.size(); i++) {
 
-            multiRenderer.addXTextLabel(i+1, mMonth[i]);
+            multiRenderer.addXTextLabel(i + 1, mMonth[i]);
 
         }
 
@@ -138,7 +142,6 @@ public class LineChartActivity extends AppCompatActivity {
 
         // Creating an intent to plot line chart using dataset and multipleRenderer
         // Intent intent = ChartFactory.getLineChartIntent(getBaseContext(), dataset, multiRenderer);
-
 
 
         // Start Activity

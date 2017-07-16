@@ -5,10 +5,20 @@ package com.example.shoppingmanager.database;
  */
 
 public class Item {
+
+    private String _itemId;
     private String _categoryId;
     private String _name;
     private String _unit;
     private String _price;
+
+    public String getItemId() {
+        return _itemId;
+    }
+
+    public void setItemId(String itemId) {
+        _itemId = itemId;
+    }
 
     public String getCategoryId() {
         return _categoryId;

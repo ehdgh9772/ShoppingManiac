@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 
 public class DiscountInfo {
     private Bitmap _image;
+    private String _discountId;
     private String _itemId;
     private String _name;
     private String _discountType;
@@ -18,6 +19,14 @@ public class DiscountInfo {
     private String _endTime;
 
     //region getter & setter
+    public String getDiscountId() {
+        return _discountId;
+    }
+
+    void setDiscountId(String discountId) {
+        _discountId = discountId;
+    }
+
     public String getItemId() {
         return _itemId;
     }

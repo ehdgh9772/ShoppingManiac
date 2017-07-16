@@ -1,14 +1,35 @@
 package com.example.kcci.shoppingmaniac.database;
 
+import android.graphics.Bitmap;
+
 /**
  * Created by koo on 17. 7. 13.
  */
 
 public class Item {
+
+    private String _itemId;
+    private Bitmap _image;
     private String _categoryId;
     private String _name;
     private String _unit;
     private String _price;
+
+    public String getItemId() {
+        return _itemId;
+    }
+
+    public void setItemId(String itemId) {
+        _itemId = itemId;
+    }
+
+    public Bitmap getImage() {
+        return _image;
+    }
+
+    public void setImage(Bitmap image) {
+        _image = image;
+    }
 
     public String getCategoryId() {
         return _categoryId;

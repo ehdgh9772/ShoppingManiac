@@ -52,13 +52,21 @@ public class Database {
         Log.i(LOG, "requested");
     }
 
-    public void requestImageFromIndex(int index, LoadCompleteListener loadCompleteListener) {
-        scrap(TYPE_IMAGE,
-                "images/" + _discountInfoList.get(index).getItemId() + ".png",
-                loadCompleteListener);
+    public void requestImageList(ArrayList<String> itemIdList, LoadCompleteListener loadCompleteListener) {
+        for (int i = 0; i < itemIdList.size(); i++) {
+            if (i == itemIdList.size() - 1) {
+                requestImage(itemIdList.get(i), loadCompleteListener);
+            } else {
+                requestImage(itemIdList.get(i), null);
+            }
+        }
     }
 
-    public void requestImage(int itemId, LoadCompleteListener loadCompleteListener) {
+    public void requestImageFromIndex(int index, LoadCompleteListener loadCompleteListener) {
+        requestImage(_discountInfoList.get(index).getItemId(), loadCompleteListener);
+    }
+
+    public void requestImage(String itemId, LoadCompleteListener loadCompleteListener) {
         scrap(TYPE_IMAGE,
                 "images/" + itemId + ".png",
                 loadCompleteListener);
@@ -84,13 +92,16 @@ public class Database {
     }
 
     public void insertItem(String name, String categoryId, String unit, LoadCompleteListener loadCompleteListener) {
-        scrap(TYPE_NONE, INSERT_ITEM, loadCompleteListener, categoryId, unit);
+        scrap(TYPE_NONE, INSERT_ITEM, loadCompleteListener, categoryId, parseQueryString(unit));
     }
 
     public void insertPrice(String itemId, String date, String price, LoadCompleteListener loadCompleteListener) {
-        scrap(TYPE_NONE, INSERT_PRICE, loadCompleteListener, itemId, date, price);
+        scrap(TYPE_NONE, INSERT_PRICE, loadCompleteListener, itemId, parseQueryString(date), price);
     }
 
+    public String parseQueryString(String string) {
+        return "'" + string + "'";
+    }
     //endregion
 
     //region Scrapper
@@ -122,26 +133,32 @@ public class Database {
                     return sb.toString().trim();
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
-                    return "{}";
+                    return null;
                 }
             }
 
             protected void onPostExecute(String str) {              //Stored Procedure 추가시 이 부분에 추가
                 Log.i(LOG, "Posting");
-                if (Objects.equals(url, GET_DISCOUNT_INFO))
-                    setDiscountInfoList(parseToJSON(str));
-                else if (Objects.equals(url, GET_PRICE_HISTORY))
-                    setPriceHistoryList(parseToJSON(str));
-                else if (Objects.equals(url, GET_ITEM_BY_CATEGORY))
-                    setItemArray(parseToJSON(str), GET_ITEM_BY_CATEGORY);
-                else if (Objects.equals(url, GET_ALL_ITEM))
-                    setItemArray(parseToJSON(str), GET_ALL_ITEM);
-                else if (Objects.equals(url, INSERT_DISCOUNT_INFO)
-                        || Objects.equals(url, INSERT_ITEM)
-                        || Objects.equals(url, INSERT_PRICE))
-                    Log.i(LOG, "Insert Done!");
 
-                loadCompleteListener.onLoadComplete();
+                try {
+                    if (Objects.equals(url, GET_DISCOUNT_INFO))
+                        setDiscountInfoList(parseToJSON(str));
+                    else if (Objects.equals(url, GET_PRICE_HISTORY))
+                        setPriceHistoryList(parseToJSON(str));
+                    else if (Objects.equals(url, GET_ITEM_BY_CATEGORY))
+                        setItemArray(parseToJSON(str), GET_ITEM_BY_CATEGORY);
+                    else if (Objects.equals(url, GET_ALL_ITEM))
+                        setItemArray(parseToJSON(str), GET_ALL_ITEM);
+                    else if (Objects.equals(url, INSERT_DISCOUNT_INFO)
+                            || Objects.equals(url, INSERT_ITEM)
+                            || Objects.equals(url, INSERT_PRICE))
+                        Log.i(LOG, "Insert Done!");
+
+                    if (loadCompleteListener != null)
+                        loadCompleteListener.onLoadComplete();
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
             }
 
             private JSONObject parseToJSON(String result) {
@@ -173,8 +190,13 @@ public class Database {
 
             protected void onPostExecute(Bitmap bitmap) {
                 Log.i(LOG, "Posting");
-                setBitmap(bitmap);
-                loadCompleteListener.onLoadComplete();
+                try {
+                    setBitmap(bitmap);
+                    loadCompleteListener.onLoadComplete();
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+
             }
         }
 
@@ -191,12 +213,8 @@ public class Database {
         if (args.length > 0)
             url += "?";
         for (int i = 0; i < args.length; i++) {
-            if(args.length - 1 == i)
-                url += "arg" + i + "=" + args[i];
-            else
-            url += "arg" + i + "=" + args[i] + "&";
+            url += "arg" + i + "=" + args[i];
         }
-
         return url;
     }
     //endregion
@@ -209,6 +227,7 @@ public class Database {
             for (int i = 0; i < jsArray.length(); i++) {
                 JSONObject jsonObj = jsArray.getJSONObject(i);
                 DiscountInfo discountInfo = new DiscountInfo();
+                discountInfo.setDiscountId(jsonObj.getString("DiscountId"));
                 discountInfo.setItemId(jsonObj.getString("ItemId"));
                 discountInfo.setName(jsonObj.getString("Name"));
                 discountInfo.setDiscountType(jsonObj.getString("DiscountType"));
@@ -251,6 +270,7 @@ public class Database {
             for (int i = 0; i < jsArray.length(); i++) {
                 JSONObject jsonObj = jsArray.getJSONObject(i);
                 Item item = new Item();
+                item.setItemId(jsonObj.getString("ItemId"));
                 item.setCategoryId(jsonObj.getString("CategoryId"));
                 item.setPrice(jsonObj.getString("Price"));
                 item.setName(jsonObj.getString("Name"));
