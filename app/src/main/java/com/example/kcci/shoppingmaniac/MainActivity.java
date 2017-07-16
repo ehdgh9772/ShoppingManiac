@@ -150,6 +150,13 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
                 _beaconRecyclerView.setAdapter(new BeaconRecyclerAdapter(_beaconList, R.layout.each_beacon));
             }
         });
+        final Database database = new Database();
+        database.requestAllBeacon(new Database.LoadCompleteListener() {
+            @Override
+            public void onLoadComplete() {
+                System.out.println(database.getBeaconList().get(0).getName());
+            }
+        });
     }
     //endregion
 

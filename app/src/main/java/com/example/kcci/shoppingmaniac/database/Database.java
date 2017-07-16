@@ -14,9 +14,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Objects;
-import java.util.concurrent.ExecutionException;
-
 /**
  * Created by koo on 17. 7. 6.
  */
@@ -28,17 +25,20 @@ public class Database {
     public static final String MEAT = "1";
     public static final String VEGETABLE = "2";
     public static final String HOME_APPLIENCE = "3";
+
+    public static final String GET_DISCOUNT_INFO = "GetDiscountInfo";
+    public static final String GET_PRICE_HISTORY = "GetPriceHistory";
+    public static final String GET_ITEM_BY_CATEGORY = "GetItemByCategory";
+    public static final String GET_ALL_ITEM = "GetAllItem";
+    public static final String GET_ALL_BEACON = "GetAllBeacon";
+    public static final String GET_BEACON_BY_CATEGORY = "GetBeaconByCategory";
+    public static final String GET_BEACON_BY_BEACON_ID = "GetBeaconByBeaconId";
+    public static final String GET_CATEGORY = "GetCategory"; //ToDo : GetCategory 추가
+
     private final int TYPE_NONE = 0;
     private final int TYPE_JSON = 1;
     private final int TYPE_IMAGE = 2;
-    private final String GET_DISCOUNT_INFO = "GetDiscountInfo";
-    private final String GET_PRICE_HISTORY = "GetPriceHistory";
-    private final String GET_ITEM_BY_CATEGORY = "GetItemByCategory";
-    private final String GET_ALL_ITEM = "GetAllItem";
-    private final String INSERT_DISCOUNT_INFO = "InsertDiscountInfo";
-    private final String INSERT_ITEM = "InsertItem";
-    private final String INSERT_PRICE = "InsertPrice";
-    private final String LOG = "Database";
+    private final String LOG_CLASS = "Database";
     //endregion
 
     //region Fields
@@ -46,12 +46,14 @@ public class Database {
     private ArrayList<PriceHistory> _priceHistoryList;
     private ArrayList<Item> _itemList;
     private ArrayList<Bitmap> _bitmapList = new ArrayList<>();
+    private ArrayList<Beacon> _beaconList = new ArrayList<>();
     //endregion
 
     //region Requests
+
     public void requestDiscountInfo(LoadCompleteListener loadCompleteListener) {
         scrap(TYPE_JSON, GET_DISCOUNT_INFO, loadCompleteListener);
-        Log.i(LOG, "requested");
+        Log.i(LOG_CLASS, "requested");
     }
 
     public void requestImageFromIndex(int index, LoadCompleteListener loadCompleteListener) {
@@ -93,6 +95,19 @@ public class Database {
     public void requestAllItem(LoadCompleteListener loadCompleteListener) {
         scrap(TYPE_JSON, GET_ALL_ITEM, loadCompleteListener);
     }
+
+    public void requestAllBeacon(LoadCompleteListener loadCompleteListener) {
+        scrap(TYPE_JSON, GET_ALL_BEACON, loadCompleteListener);
+    }
+
+    public void requestBeaconByCategory(String category, LoadCompleteListener loadCompleteListener) {
+        scrap(TYPE_JSON, GET_BEACON_BY_CATEGORY, loadCompleteListener, category);
+    }
+
+    public void requestBeaconByBeaconId(String category, LoadCompleteListener loadCompleteListener) {
+        scrap(TYPE_JSON, GET_BEACON_BY_BEACON_ID, loadCompleteListener, category);
+    }
+
     //endregion
 
     //region Scrapper
@@ -132,18 +147,29 @@ public class Database {
                 Log.i(LOG, "Posting");
 
                 try {
-                    if (Objects.equals(url, GET_DISCOUNT_INFO))
-                        setDiscountInfoList(parseToJSON(str));
-                    else if (Objects.equals(url, GET_PRICE_HISTORY))
-                        setPriceHistoryList(parseToJSON(str));
-                    else if (Objects.equals(url, GET_ITEM_BY_CATEGORY))
-                        setItemArray(parseToJSON(str), GET_ITEM_BY_CATEGORY);
-                    else if (Objects.equals(url, GET_ALL_ITEM))
-                        setItemArray(parseToJSON(str), GET_ALL_ITEM);
-                    else if (Objects.equals(url, INSERT_DISCOUNT_INFO)
-                            || Objects.equals(url, INSERT_ITEM)
-                            || Objects.equals(url, INSERT_PRICE))
-                        Log.i(LOG, "Insert Done!");
+                    switch (url) {
+                        case GET_DISCOUNT_INFO:
+                            setDiscountInfoList(parseToJSON(str));
+                            break;
+                        case GET_PRICE_HISTORY:
+                            setPriceHistoryList(parseToJSON(str));
+                            break;
+                        case GET_ITEM_BY_CATEGORY:
+                            setItemList(parseToJSON(str), GET_ITEM_BY_CATEGORY);
+                            break;
+                        case GET_ALL_ITEM:
+                            setItemList(parseToJSON(str), GET_ALL_ITEM);
+                            break;
+                        case GET_ALL_BEACON:
+                            setBeaconList(parseToJSON(str), GET_ALL_BEACON);
+                            break;
+                        case GET_BEACON_BY_BEACON_ID:
+                            setBeaconList(parseToJSON(str), GET_BEACON_BY_BEACON_ID);
+                            break;
+                        case GET_BEACON_BY_CATEGORY:
+                            setBeaconList(parseToJSON(str), GET_BEACON_BY_CATEGORY);
+                            break;
+                    }
 
                     if (loadCompleteListener != null)
                         loadCompleteListener.onLoadComplete();
@@ -254,7 +280,7 @@ public class Database {
         }
     }
 
-    private void setItemArray(JSONObject json, String getType) {
+    private void setItemList(JSONObject json, String getType) {
         try {
             JSONArray jsArray = json.getJSONArray(getType);
             _itemList = new ArrayList<>();
@@ -270,6 +296,25 @@ public class Database {
                 _itemList.add(item);
                 Log.i("tag", "put on array");
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setBeaconList(JSONObject json, String getType) {
+        try {
+            JSONArray jsArray = json.getJSONArray(getType);
+            _beaconList = new ArrayList<>();
+            for (int i = 0; i < jsArray.length(); i++) {
+                JSONObject jsonObj = jsArray.getJSONObject(i);
+                Beacon beacon = new Beacon();
+
+                beacon.setBeaconId(jsonObj.getString("BeaconId"));
+                beacon.setName(jsonObj.getString("Name"));
+
+                _beaconList.add(beacon);
+            }
+            Log.i("tag", "put on array");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -303,6 +348,10 @@ public class Database {
         return _itemList;
     }
 
+    public ArrayList<Beacon> getBeaconList() {
+        return _beaconList;
+    }
+
     //endregion
 
     //region LoadCompleteListener
@@ -310,11 +359,12 @@ public class Database {
 
     public interface LoadCompleteListener {
         void onLoadComplete();
+
     }
 
     public void setLoadCompleteListener(LoadCompleteListener loadCompleteListener) {
         _loadCompleteListener = loadCompleteListener;
-        Log.i(LOG, "Listener Setted");
+        Log.i(LOG_CLASS, "Listener Setted");
     }
     //endregion
 }
