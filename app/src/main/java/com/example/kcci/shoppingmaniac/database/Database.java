@@ -148,7 +148,7 @@ public class Database {
                     if (loadCompleteListener != null)
                         loadCompleteListener.onLoadComplete();
                 } catch (Exception e) {
-                    e.getMessage();
+                    System.out.println(e.getMessage());
                 }
             }
 
@@ -181,9 +181,13 @@ public class Database {
 
             protected void onPostExecute(Bitmap bitmap) {
                 Log.i(LOG, "Posting");
-                setBitmap(bitmap);
-                if (loadCompleteListener != null)
+                try {
+                    setBitmap(bitmap);
                     loadCompleteListener.onLoadComplete();
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+
             }
         }
 

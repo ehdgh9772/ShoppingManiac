@@ -133,27 +133,32 @@ public class Database {
                     return sb.toString().trim();
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
-                    return "{}";
+                    return null;
                 }
             }
 
             protected void onPostExecute(String str) {              //Stored Procedure 추가시 이 부분에 추가
                 Log.i(LOG, "Posting");
-                if (Objects.equals(url, GET_DISCOUNT_INFO))
-                    setDiscountInfoList(parseToJSON(str));
-                else if (Objects.equals(url, GET_PRICE_HISTORY))
-                    setPriceHistoryList(parseToJSON(str));
-                else if (Objects.equals(url, GET_ITEM_BY_CATEGORY))
-                    setItemArray(parseToJSON(str), GET_ITEM_BY_CATEGORY);
-                else if (Objects.equals(url, GET_ALL_ITEM))
-                    setItemArray(parseToJSON(str), GET_ALL_ITEM);
-                else if (Objects.equals(url, INSERT_DISCOUNT_INFO)
-                        || Objects.equals(url, INSERT_ITEM)
-                        || Objects.equals(url, INSERT_PRICE))
-                    Log.i(LOG, "Insert Done!");
 
-                if (loadCompleteListener != null && str != null)
-                    loadCompleteListener.onLoadComplete();
+                try {
+                    if (Objects.equals(url, GET_DISCOUNT_INFO))
+                        setDiscountInfoList(parseToJSON(str));
+                    else if (Objects.equals(url, GET_PRICE_HISTORY))
+                        setPriceHistoryList(parseToJSON(str));
+                    else if (Objects.equals(url, GET_ITEM_BY_CATEGORY))
+                        setItemArray(parseToJSON(str), GET_ITEM_BY_CATEGORY);
+                    else if (Objects.equals(url, GET_ALL_ITEM))
+                        setItemArray(parseToJSON(str), GET_ALL_ITEM);
+                    else if (Objects.equals(url, INSERT_DISCOUNT_INFO)
+                            || Objects.equals(url, INSERT_ITEM)
+                            || Objects.equals(url, INSERT_PRICE))
+                        Log.i(LOG, "Insert Done!");
+
+                    if (loadCompleteListener != null)
+                        loadCompleteListener.onLoadComplete();
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
             }
 
             private JSONObject parseToJSON(String result) {
@@ -185,8 +190,13 @@ public class Database {
 
             protected void onPostExecute(Bitmap bitmap) {
                 Log.i(LOG, "Posting");
-                setBitmap(bitmap);
-                loadCompleteListener.onLoadComplete();
+                try {
+                    setBitmap(bitmap);
+                    loadCompleteListener.onLoadComplete();
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+
             }
         }
 
@@ -203,12 +213,8 @@ public class Database {
         if (args.length > 0)
             url += "?";
         for (int i = 0; i < args.length; i++) {
-            if(args.length - 1 == i)
-                url += "arg" + i + "=" + args[i];
-            else
-            url += "arg" + i + "=" + args[i] + "&";
+            url += "arg" + i + "=" + args[i];
         }
-
         return url;
     }
     //endregion
