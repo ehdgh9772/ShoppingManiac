@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity
     ArrayList<String> _itemIdList;
     ArrayList<String> _beaconList;
 
+    //beacon field
     static final String RECO_UUID = "24DDF411-8CF1-440C-87CD-E368DAF9C93E";
     static final boolean SCAN_RECO_ONLY = true;
     static final boolean ENABLE_BACKGROUND_RANGING_TIMEOUT = true;
@@ -198,7 +199,6 @@ public class MainActivity extends AppCompatActivity
     }
     //endregion
 
-
     //region beacon overrides and bt connection
 
     private void connectBeacons() {
@@ -224,9 +224,9 @@ public class MainActivity extends AppCompatActivity
 
     private void getAuthBT() {
 
-        //If a user device turns off bluetooth, request to turn it on.
-        //사용자가 블루투스를 켜도록 요청합니다.
-        mBluetoothManager = (BluetoothManager) getApplicationContext().getSystemService(Context.BLUETOOTH_SERVICE);
+        mBluetoothManager =
+                (BluetoothManager) getApplicationContext()
+                        .getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = mBluetoothManager.getAdapter();
 
         if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
