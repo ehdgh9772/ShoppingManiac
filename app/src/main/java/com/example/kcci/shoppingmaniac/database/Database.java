@@ -24,6 +24,7 @@ import java.util.concurrent.ExecutionException;
 public class Database {
 
     //region Final Values
+    public static final String MAIN = "0";
     public static final String MEAT = "1";
     public static final String VEGETABLE = "2";
     public static final String HOME_APPLIENCE = "3";
@@ -59,7 +60,7 @@ public class Database {
                 loadCompleteListener);
     }
 
-    public void requestImage(ArrayList<String> itemIdList, LoadCompleteListener loadCompleteListener) {
+    public void requestImageList(ArrayList<String> itemIdList, LoadCompleteListener loadCompleteListener) {
         for (int i = 0; i < itemIdList.size(); i++) {
             if (i == itemIdList.size() - 1) {
                 requestImage(itemIdList.get(i), loadCompleteListener);
@@ -85,28 +86,13 @@ public class Database {
                 String.valueOf(itemId));
     }
 
-    public void requestItemByCategory(int category, LoadCompleteListener loadCompleteListener) {
+    public void requestItemByCategory(String category, LoadCompleteListener loadCompleteListener) {
         scrap(TYPE_JSON, GET_ITEM_BY_CATEGORY, loadCompleteListener, String.valueOf(category));
     }
 
     public void requestAllItem(LoadCompleteListener loadCompleteListener) {
         scrap(TYPE_JSON, GET_ALL_ITEM, loadCompleteListener);
     }
-
-    public void insertDiscountInfo(String ItemId, String DiscountedPrice, String StartTime, String EndTime,
-                                   String DiscountType, LoadCompleteListener loadCompleteListener) {
-        scrap(TYPE_NONE, INSERT_DISCOUNT_INFO, loadCompleteListener, ItemId,
-                DiscountedPrice, StartTime, EndTime, DiscountType);
-    }
-
-    public void insertItem(String name, String categoryId, String unit, LoadCompleteListener loadCompleteListener) {
-        scrap(TYPE_NONE, INSERT_ITEM, loadCompleteListener);
-    }
-
-    public void insertPrice(String itemId, String date, String price, LoadCompleteListener loadCompleteListener) {
-        scrap(TYPE_NONE, INSERT_PRICE, loadCompleteListener);
-    }
-
     //endregion
 
     //region Scrapper
@@ -228,6 +214,7 @@ public class Database {
             for (int i = 0; i < jsArray.length(); i++) {
                 JSONObject jsonObj = jsArray.getJSONObject(i);
                 DiscountInfo discountInfo = new DiscountInfo();
+                discountInfo.setDiscountId(jsonObj.getString("DiscountId"));
                 discountInfo.setItemId(jsonObj.getString("ItemId"));
                 discountInfo.setName(jsonObj.getString("Name"));
                 discountInfo.setDiscountType(jsonObj.getString("DiscountType"));
@@ -270,6 +257,7 @@ public class Database {
             for (int i = 0; i < jsArray.length(); i++) {
                 JSONObject jsonObj = jsArray.getJSONObject(i);
                 Item item = new Item();
+                item.setItemId(jsonObj.getString("ItemId"));
                 item.setCategoryId(jsonObj.getString("CategoryId"));
                 item.setPrice(jsonObj.getString("Price"));
                 item.setName(jsonObj.getString("Name"));

@@ -14,7 +14,6 @@ import android.os.RemoteException;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,7 +22,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -32,6 +30,7 @@ import android.widget.TextView;
 
 import com.example.kcci.shoppingmaniac.database.Database;
 import com.example.kcci.shoppingmaniac.database.DiscountInfo;
+import com.example.kcci.shoppingmaniac.database.Item;
 import com.perples.recosdk.RECOBeacon;
 import com.perples.recosdk.RECOBeaconManager;
 import com.perples.recosdk.RECOBeaconRegion;
@@ -89,13 +88,6 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 
         initialize();
 
-        _openDrawerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                popDrawerView();
-            }
-        });
-
         viewDiscountInfo();
 
 //        viewItemInfo();
@@ -107,20 +99,6 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         setAnimation();
         addTest();
 //        scanBeacon();
-    }
-
-    private void addTest() {
-        ImageView imageView = new ImageView(getApplicationContext());
-        imageView.setImageResource(R.drawable.a);
-
-        Button button = (Button) findViewById(R.id.changeList);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                _beaconList.add(Database.MEAT);
-                _beaconRecyclerView.setAdapter(new BeaconRecyclerAdapter(_beaconList, R.layout.each_beacon));
-            }
-        });
     }
 
     /**
@@ -144,6 +122,13 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         _openDrawerButton = findViewById(R.id.btn_main_drawer);
         _openDrawerButton.bringToFront();
 
+        _openDrawerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popDrawerView();
+            }
+        });
+
     }
 
     private void setAnimation() {
@@ -152,6 +137,19 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         _animSetToBottom = AnimationUtils.loadAnimation(this, R.anim.translate_to_bottom);
         _animGrowFromBottom.setAnimationListener(animationListener);
         _animSetToBottom.setAnimationListener(animationListener);
+    }
+
+    private void addTest() {
+        _beaconList.add(Database.MAIN);
+
+        Button button = (Button) findViewById(R.id.changeList);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                _beaconList.add(Database.MEAT);
+                _beaconRecyclerView.setAdapter(new BeaconRecyclerAdapter(_beaconList, R.layout.each_beacon));
+            }
+        });
     }
     //endregion
 
@@ -419,7 +417,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
                     _itemIdList.add(_discountInfoList.get(i).getItemId());
                 }
 
-                database.requestImage(_itemIdList, new Database.LoadCompleteListener() {
+                database.requestImageList(_itemIdList, new Database.LoadCompleteListener() {
                     @Override
                     public void onLoadComplete() {
                         _images = new ArrayList<>();
@@ -435,17 +433,9 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         });
     }
 
-    private void viewItemInfo() {
+    private void viewItemInfo(ArrayList<Item> itemList) {
 
-        List<DiscountInfo> ItemList = new ArrayList<>();
-
-        for (int i = 0; i < 10; i++) {
-
-            DiscountInfo discountInfo = new DiscountInfo();
-
-            ItemList.add(discountInfo);
-        }
-        _recyclerView.setAdapter(new ItemRecyclerAdapter(ItemList, R.layout.card_item));
+        _recyclerView.setAdapter(new ItemRecyclerAdapter(itemList, R.layout.card_item));
         _recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         _recyclerView.setItemAnimator(new DefaultItemAnimator());
     }
@@ -509,25 +499,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
             viewHolder._img.setImageBitmap(_imageList.get(position));
             viewHolder.itemView.setTag(item);
 
-            viewHolder._btnLineChart.setOnClickListener(new View.OnClickListener() {
-                public static final String LOG_TAG = "SpottedBeacons";
-
-                @Override
-                public void onClick(View view) {
-                    switch (view.getId()) {
-
-                        case R.id.btn_item_lineChart:
-
-                            Log.i(LOG_TAG, "Line Chart Start...");
-
-                            Intent intent = new Intent(getApplicationContext(), LineChartActivity.class);
-                            intent.putExtra(EXTRA_ID, item.getItemId());
-                            startActivity(intent);
-
-//                break;
-                    }
-                }
-            });
+            viewHolder._btnLineChart.setOnClickListener(new OnLineChartClickListener(item.getItemId()));
         }
 
         @Override
@@ -550,7 +522,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
             public ViewHolder(View itemView) {
                 super(itemView);
 
-                _img = (ImageView) itemView.findViewById(R.id.img_discount);
+                _img = (ImageView) itemView.findViewById(R.id.imv_discount);
                 _discountType = (TextView) itemView.findViewById(R.id.txv_discount_dcType);
                 _name = (TextView) itemView.findViewById(R.id.txv_discount_Name);
                 _price = (TextView) itemView.findViewById(R.id.txv_item_price);
@@ -563,8 +535,8 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 
     class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapter.ViewHolder> {
 
-        private List<DiscountInfo> itemList;
-        private int itemLayout;
+        private List<Item> _itemList;
+        private int _itemLayout;
 
         /**
          * 생성자
@@ -572,10 +544,10 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
          * @param items
          * @param itemLayout
          */
-        ItemRecyclerAdapter(List<DiscountInfo> items, int itemLayout) {
+        ItemRecyclerAdapter(List<Item> items, int itemLayout) {
 
-            this.itemList = items;
-            this.itemLayout = itemLayout;
+            _itemList = items;
+            _itemLayout = itemLayout;
         }
 
         /**
@@ -587,7 +559,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
          */
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-            View view = LayoutInflater.from(viewGroup.getContext()).inflate(itemLayout, viewGroup, false);
+            View view = LayoutInflater.from(viewGroup.getContext()).inflate(_itemLayout, viewGroup, false);
             return new ViewHolder(view);
         }
 
@@ -602,37 +574,18 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         @Override
         public void onBindViewHolder(ViewHolder viewHolder, int position) {
 
-            DiscountInfo item = itemList.get(position);
+            Item item = _itemList.get(position);
+            viewHolder._img.setImageBitmap(item.getImage());
             viewHolder._name.setText(item.getName());
             viewHolder._price.setText(item.getPrice());
-
-            viewHolder._img.setBackgroundResource(R.drawable.a);
-
             viewHolder.itemView.setTag(item);
 
-            viewHolder._btnLineChart.setOnClickListener(new View.OnClickListener() {
-                public static final String LOG_TAG = "SpottedBeacons";
-
-                @Override
-                public void onClick(View view) {
-                    switch (view.getId()) {
-
-                        case R.id.btn_item_lineChart:
-
-                            Log.i(LOG_TAG, "Line Chart Start...");
-
-                            Intent intent = new Intent(getApplicationContext(), LineChartActivity.class);
-                            startActivity(intent);
-
-//                break;
-                    }
-                }
-            });
+            viewHolder._btnLineChart.setOnClickListener(new OnLineChartClickListener(item.getItemId()));
         }
 
         @Override
         public int getItemCount() {
-            return itemList.size();
+            return _itemList.size();
         }
 
         /**
@@ -640,15 +593,15 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
          */
         class ViewHolder extends RecyclerView.ViewHolder {
 
-            public ImageView _img;
+            private ImageView _img;
             private TextView _name;
             private TextView _price;
-            Button _btnLineChart;
+            private Button _btnLineChart;
 
             public ViewHolder(View itemView) {
                 super(itemView);
 
-                _img = (ImageView) itemView.findViewById(R.id.img_discount);
+                _img = (ImageView) itemView.findViewById(R.id.imv_item);
                 _name = (TextView) itemView.findViewById(R.id.txv_item_Name);
                 _price = (TextView) itemView.findViewById(R.id.txv_item_price);
                 _btnLineChart = (Button) itemView.findViewById(R.id.btn_item_lineChart);
@@ -699,7 +652,25 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
          */
         @Override
         public void onBindViewHolder(ViewHolder viewHolder, int position) {
-            viewHolder._img.setImageResource(R.drawable.b);
+            switch (_beacons.get(position)) {
+                case Database.MAIN:
+                    viewHolder._img.setImageResource(R.drawable.b);
+                    viewHolder._img.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            viewDiscountInfo();
+                        }
+                    });
+                    break;
+                case Database.MEAT:
+                    viewHolder._img.setImageResource(R.drawable.c);
+                    viewHolder._img.setOnClickListener(new OnCategoryClickListener(Database.MEAT));
+                    break;
+                case Database.VEGETABLE:
+                    viewHolder._img.setImageResource(R.drawable.d);
+                    viewHolder._img.setOnClickListener(new OnCategoryClickListener(Database.VEGETABLE));
+            }
+            viewHolder._textView.setText(_beacons.get(position));
         }
 
         @Override
@@ -712,12 +683,57 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
          */
         class ViewHolder extends RecyclerView.ViewHolder {
 
-            public ImageView _img;
+            private ImageView _img;
+            private TextView _textView;
 
             public ViewHolder(View itemView) {
                 super(itemView);
                 _img = (ImageView) itemView.findViewById(R.id.imv_beacon_image);
+                _textView = (TextView) itemView.findViewById(R.id.txv_beacon_text);
             }
+        }
+
+        class OnCategoryClickListener implements View.OnClickListener {
+
+            private String _category;
+
+            public OnCategoryClickListener(String category) {
+
+                _category = category;
+            }
+
+            @Override
+            public void onClick(View v) {
+                final Database database = new Database();
+                database.requestItemByCategory(_category, new Database.LoadCompleteListener() {
+                    @Override
+                    public void onLoadComplete() {
+                        database.getItemList();
+                        viewItemInfo(database.getItemList());
+                    }
+                });
+            }
+        }
+    }
+
+    class OnLineChartClickListener implements View.OnClickListener {
+
+        String _itemId;
+
+        public OnLineChartClickListener(String itemId) {
+
+            _itemId = itemId;
+        }
+
+        @Override
+        public void onClick(View v) {
+
+            Log.i(LOG_TAG, "Line Chart Start...");
+
+            Intent intent = new Intent(getApplicationContext(), LineChartActivity.class);
+            intent.putExtra(EXTRA_ID, _itemId);
+            startActivity(intent);
+
         }
     }
     //endregion
