@@ -160,15 +160,15 @@ public class Database {
                         case GET_ALL_ITEM:
                             setItemList(parseToJSON(str), GET_ALL_ITEM);
                             break;
-                        case GET_ALL_BEACON:
-                            setBeaconList(parseToJSON(str), GET_ALL_BEACON);
-                            break;
-                        case GET_BEACON_BY_BEACON_ID:
-                            setBeaconList(parseToJSON(str), GET_BEACON_BY_BEACON_ID);
-                            break;
-                        case GET_BEACON_BY_CATEGORY:
-                            setBeaconList(parseToJSON(str), GET_BEACON_BY_CATEGORY);
-                            break;
+//                        case GET_ALL_BEACON:
+//                            setBeaconList(parseToJSON(str), GET_ALL_BEACON);
+//                            break;
+//                        case GET_BEACON_BY_BEACON_ID:
+//                            setBeaconList(parseToJSON(str), GET_BEACON_BY_BEACON_ID);
+//                            break;
+//                        case GET_BEACON_BY_CATEGORY:
+//                            setBeaconList(parseToJSON(str), GET_BEACON_BY_CATEGORY);
+//                            break;
                     }
 
                     if (loadCompleteListener != null)
@@ -301,24 +301,24 @@ public class Database {
         }
     }
 
-    private void setBeaconList(JSONObject json, String getType) {
-        try {
-            JSONArray jsArray = json.getJSONArray(getType);
-            _beaconList = new ArrayList<>();
-            for (int i = 0; i < jsArray.length(); i++) {
-                JSONObject jsonObj = jsArray.getJSONObject(i);
-                Beacon beacon = new Beacon();
-
-                beacon.setBeaconId(jsonObj.getString("BeaconId"));
-                beacon.setName(jsonObj.getString("Name"));
-
-                _beaconList.add(beacon);
-            }
-            Log.i("tag", "put on array");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    private void setBeaconList(JSONObject json, String getType) {
+//        try {
+//            JSONArray jsArray = json.getJSONArray(getType);
+//            _beaconList = new ArrayList<>();
+//            for (int i = 0; i < jsArray.length(); i++) {
+//                JSONObject jsonObj = jsArray.getJSONObject(i);
+//                Beacon beacon = new Beacon();
+//
+//                beacon.setBeaconId(jsonObj.getString("BeaconId"));
+//                beacon.setName(jsonObj.getString("Name"));
+//
+//                _beaconList.add(beacon);
+//            }
+//            Log.i("tag", "put on array");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     public void setBitmap(Bitmap bitmap) {
         _bitmapList.add(bitmap);
