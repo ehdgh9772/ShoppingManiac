@@ -11,8 +11,6 @@ import android.widget.Button;
 import android.widget.Toast;
 import android.Manifest;
 
-import com.example.shoppingmanager.database.Database;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Intent intent = new Intent(MainActivity.this, ListInquiry.class);
+                        Intent intent = new Intent(MainActivity.this, DiscountActivity.class);
                         startActivity(intent);
                         Toast.makeText(getApplicationContext(), "아이템 조회화면으로 이동", Toast.LENGTH_SHORT).show();
                     }
