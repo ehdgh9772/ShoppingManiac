@@ -7,6 +7,7 @@ import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -32,7 +33,11 @@ public class ItemRegistration extends AppCompatActivity {
         Button imageShooting = (Button) findViewById(R.id.btn_searchItemId);
         Button listInquiry = (Button) findViewById(R.id.listInquiry);
         Button registration = (Button) findViewById(R.id.btn_commitItem);
-        Database database = new Database();
+        final EditText itemName = (EditText) findViewById(R.id.edt_itemName);
+        final EditText itemCategoryId = (EditText) findViewById(R.id.edt_itemCategoryId);
+        final EditText itemUnit = (EditText) findViewById(R.id.edt_itemUnit);
+
+        final Database database = new Database();
 
         imageShooting.setOnClickListener(
                 new View.OnClickListener() {
@@ -51,7 +56,15 @@ public class ItemRegistration extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        database.insertItem(itemName.getText().toString(),
+                                itemCategoryId.getText().toString(),
+                                itemUnit.getText().toString(),
+                                new Database.LoadCompleteListener(){
+                                    @Override
+                                    public void onLoadComplete() {
 
+                                    }
+                                });
                     }
                 }
         );

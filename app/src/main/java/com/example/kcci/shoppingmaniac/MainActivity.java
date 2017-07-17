@@ -1,14 +1,19 @@
 package com.example.kcci.shoppingmaniac;
 
+import android.Manifest;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -29,19 +34,16 @@ import com.example.kcci.shoppingmaniac.database.Item;
 import com.perples.recosdk.RECOBeacon;
 import com.perples.recosdk.RECOBeaconManager;
 import com.perples.recosdk.RECOBeaconRegion;
+import com.perples.recosdk.RECOBeaconRegionState;
 import com.perples.recosdk.RECOErrorCode;
-import com.perples.recosdk.RECORangingListener;
+import com.perples.recosdk.RECOMonitoringListener;
 import com.perples.recosdk.RECOServiceConnectListener;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static com.example.kcci.shoppingmaniac.R.drawable.b;
-
-public class MainActivity extends AppCompatActivity
-        implements RECOServiceConnectListener, RECORangingListener
-{
+public class MainActivity extends AppCompatActivity implements RECOServiceConnectListener, RECOMonitoringListener {
 
     //region field
 

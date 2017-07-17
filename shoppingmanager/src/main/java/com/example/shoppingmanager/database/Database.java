@@ -92,7 +92,7 @@ public class Database {
     }
 
     public void insertItem(String name, String categoryId, String unit, LoadCompleteListener loadCompleteListener) {
-        scrap(TYPE_NONE, INSERT_ITEM, loadCompleteListener, categoryId, parseQueryString(unit));
+        scrap(TYPE_NONE, INSERT_ITEM, loadCompleteListener, name, categoryId, parseQueryString(unit));
     }
 
     public void insertPrice(String itemId, String date, String price, LoadCompleteListener loadCompleteListener) {
@@ -213,7 +213,7 @@ public class Database {
         if (args.length > 0)
             url += "?";
         for (int i = 0; i < args.length; i++) {
-            url += "arg" + i + "=" + args[i];
+            url += "arg" + i + "=" + args[i]+"&";
         }
         return url;
     }
