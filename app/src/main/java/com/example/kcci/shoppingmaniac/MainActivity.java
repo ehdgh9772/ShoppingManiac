@@ -409,8 +409,15 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         });
     }
 
-    private void viewItemInfo(ArrayList<Item> itemList) {
+    private void viewItemInfo(String _conerName, ArrayList<Item> itemList) {
 
+        Database database = new Database();
+        database.requestItemByCategory(_conerName, new Database.LoadCompleteListener() {
+            @Override
+            public void onLoadComplete() {
+
+            }
+        });
         _recyclerView.setAdapter(new ItemRecyclerAdapter(itemList, R.layout.card_item));
         _recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         _recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -635,14 +642,15 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
                             "drawable",
                             getApplicationContext().getPackageName()
                     );
+            final String _conerName = arySection[_indx];
 
-            viewHolder._textView.setText(arySection[_indx]);
+            viewHolder._textView.setText(_conerName);
             viewHolder._img.setImageResource(_imgSrc);
             viewHolder._img.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(MainActivity.this, _indx, Toast.LENGTH_SHORT).show();
-//                    viewItemInfo();
+//                    Toast.makeText(MainActivity.this, _indx, Toast.LENGTH_SHORT).show();
+                    viewItemInfo(_conerName, );
                 }
             });
 
