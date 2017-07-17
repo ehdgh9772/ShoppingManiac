@@ -285,6 +285,7 @@ public class Database {
             JSONArray jsArray = json.getJSONArray(getType);
             _itemList = new ArrayList<>();
             for (int i = 0; i < jsArray.length(); i++) {
+                Log.i("tag", "starting items stack an array");
                 JSONObject jsonObj = jsArray.getJSONObject(i);
                 Item item = new Item();
                 item.setItemId(jsonObj.getString("ItemId"));
@@ -294,7 +295,7 @@ public class Database {
                 item.setUnit(jsonObj.getString("Unit"));
 
                 _itemList.add(item);
-                Log.i("tag", "put on array");
+                Log.i("tag", "put on item array");
             }
         } catch (Exception e) {
             e.printStackTrace();

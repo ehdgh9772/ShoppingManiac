@@ -22,7 +22,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.kcci.shoppingmaniac.database.Database;
 import com.example.kcci.shoppingmaniac.database.DiscountInfo;
@@ -58,14 +57,16 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
     Animation _animGrowFromBottom;
     Animation _animSetToBottom;
 
+    ArrayList<Item> _itemList;
     ArrayList<DiscountInfo> _discountInfoList;
     ArrayList<Bitmap> _images;
     ArrayList<String> _itemIdList;
-//    ArrayList<Integer> _beaconList;
+    //    ArrayList<Integer> _beaconList;
 //    ArrayList<Beacon> _beaconList;
     ArrayList<RECOBeacon> _beaconList;
     private String[] arySection;
-//    private ArrayList<Integer> _tmpPrev;
+    private String[] arySectionInDB;
+    //    private ArrayList<Integer> _tmpPrev;
 //    private ArrayList<Beacon> _tmpPrev;
     private ArrayList<RECOBeacon> _tmpPrev;
 
@@ -136,26 +137,6 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 
     }
 
-//    private void addTest() {
-//        _beaconList.add(Database.MAIN);
-//
-//        Button button = (Button) findViewById(R.id.changeList);
-//        button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                _beaconList.add(Database.MEAT);
-//                /**updatelist here*/
-//                _beaconRecyclerView.setAdapter(new BeaconRecyclerAdapter(_beaconList, R.layout.each_beacon));
-//            }
-//        });
-//        final Database database = new Database();
-//        database.requestAllBeacon(new Database.LoadCompleteListener() {
-//            @Override
-//            public void onLoadComplete() {
-//                System.out.println(database.getBeaconList().get(0).getName());
-//            }
-//        });
-//    }
 
     private void popDrawerView() {
         if (isPageSlided) {
@@ -210,7 +191,8 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 //        regionMap = new HashMap<>();
 //        for (int i = 0; i < _regionCounter; i++) regionMap.put(111 + i, false);
 
-        arySection = new String[]{"entrance", "meat", "grocery", "appliance"};
+        arySection = new String[]{"entrance", "grocery", "meat", "appliance"};
+        arySectionInDB = new String[]{"0", "2", "1", "3"};
 
         mRecoManager.setRangingListener(this);
         mRecoManager.bind(this);
@@ -253,7 +235,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
             if( recoBeacon.getRssi() > beaconRssiCritical
                     && recoBeacon.getMinor() < arySection.length )
                 _return.add(recoBeacon);
-            }
+        }
 
         Collections.sort(_return, new Comparator<RECOBeacon>() {
             @Override
@@ -409,18 +391,22 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         });
     }
 
-    private void viewItemInfo(String _conerName, ArrayList<Item> itemList) {
+    private void getViewItemInfo(String _conerName) {
 
-        Database database = new Database();
+        final Database database = new Database();
         database.requestItemByCategory(_conerName, new Database.LoadCompleteListener() {
             @Override
             public void onLoadComplete() {
+                _itemList = database.getItemList();
 
+                _recyclerView.setAdapter(new ItemRecyclerAdapter(
+                        _itemList,
+                        R.layout.card_item
+                ));
+                _recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                _recyclerView.setItemAnimator(new DefaultItemAnimator());
             }
         });
-        _recyclerView.setAdapter(new ItemRecyclerAdapter(itemList, R.layout.card_item));
-        _recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        _recyclerView.setItemAnimator(new DefaultItemAnimator());
     }
 
 //endregion
@@ -518,7 +504,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 
     class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapter.ViewHolder> {
 
-        private List<Item> _itemList;
+        private ArrayList<Item> _itemList;
         private int _itemLayout;
 
         /**
@@ -527,7 +513,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
          * @param items
          * @param itemLayout
          */
-        ItemRecyclerAdapter(List<Item> items, int itemLayout) {
+        ItemRecyclerAdapter(ArrayList<Item> items, int itemLayout) {
 
             _itemList = items;
             _itemLayout = itemLayout;
@@ -600,6 +586,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 
         /**
          * 생성자
+         *
          * @param beacons
          * @param layout
          */
@@ -642,17 +629,24 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
                             "drawable",
                             getApplicationContext().getPackageName()
                     );
-            final String _conerName = arySection[_indx];
 
-            viewHolder._textView.setText(_conerName);
+            viewHolder._textView.setText(arySection[_indx]);
             viewHolder._img.setImageResource(_imgSrc);
             viewHolder._img.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    Toast.makeText(MainActivity.this, _indx, Toast.LENGTH_SHORT).show();
-                    viewItemInfo(_conerName, );
+
+                    getViewItemInfo(arySectionInDB[_indx]);
+//                    appendItems(itemList);
+
                 }
+
+//                private void appendItems(ArrayList<Item> itemsByConer) {
+//                    _recyclerView.setAdapter(new ItemRecyclerAdapter(itemsByConer, R.layout.card_item));
+//
             });
+        }
+
 
 //            switch (_beacons.get(position).getMinor()) {
 //                case arySection:
@@ -675,7 +669,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 //            viewHolder._textView.setText(_beacons.get(position));
 
 
-        }
+
 
         @Override
         public int getItemCount() {
@@ -697,27 +691,27 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
             }
         }
 
-        class OnCategoryClickListener implements View.OnClickListener {
-
-            private String _category;
-
-            public OnCategoryClickListener(String category) {
-
-                _category = category;
-            }
-
-            @Override
-            public void onClick(View v) {
-                final Database database = new Database();
-                database.requestItemByCategory(_category, new Database.LoadCompleteListener() {
-                    @Override
-                    public void onLoadComplete() {
-                        database.getItemList();
-                        viewItemInfo(database.getItemList());
-                    }
-                });
-            }
-        }
+//        class OnCategoryClickListener implements View.OnClickListener {
+//
+//            private String _category;
+//
+//            public OnCategoryClickListener(String category) {
+//
+//                _category = category;
+//            }
+//
+//            @Override
+//            public void onClick(View v) {
+//                final Database database = new Database();
+//                database.requestItemByCategory(_category, new Database.LoadCompleteListener() {
+//                    @Override
+//                    public void onLoadComplete() {
+//                        database.getItemList();
+////                        viewItemInfo(database.getItemList());
+//                    }
+//                });
+//            }
+//        }
     }
 
     class OnLineChartClickListener implements View.OnClickListener {
