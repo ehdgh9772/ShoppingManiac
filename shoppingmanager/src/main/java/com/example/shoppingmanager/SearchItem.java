@@ -91,6 +91,7 @@ public class SearchItem extends AppCompatActivity {
             );
         }
 
+
         @Override
         public int getItemCount() {
             return _itemList.size();
