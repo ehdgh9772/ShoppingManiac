@@ -9,6 +9,8 @@ import android.widget.EditText;
 
 import com.example.shoppingmanager.database.Database;
 
+import static com.example.shoppingmanager.SearchItem.REQUEST_CODE;
+
 public class PriceModification extends AppCompatActivity {
 
     EditText itemIdEditText;
@@ -30,7 +32,7 @@ public class PriceModification extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), SearchItem.class);
-                startActivityForResult(intent, RESULT_OK);
+                startActivityForResult(intent, REQUEST_CODE);
                 //intent.getExtras().getString("itemId");
             }
         });
