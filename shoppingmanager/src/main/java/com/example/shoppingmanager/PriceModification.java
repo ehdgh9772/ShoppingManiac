@@ -36,7 +36,7 @@ public class PriceModification extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 database.insertPrice(itemId.getText().toString()
-                        , "'" + selectedDate.getText().toString() + "'"
+                        , selectedDate.getText().toString()
                         , registrationPrice.getText().toString(),
                         new Database.LoadCompleteListener() {
                             @Override
