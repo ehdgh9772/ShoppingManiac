@@ -89,6 +89,29 @@
         app:layout_constraintLeft_toLeftOf="@+id/edt_itemCategoryId"
         app:layout_constraintRight_toRightOf="@+id/edt_itemCategoryId"/>
 
+    <TextView
+        android:id="@+id/txv_itemPrice"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="25dp"
+        android:gravity="center_vertical"
+        android:text="가격"
+        android:textColor="@android:color/black"
+        android:textSize="20dp"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="@+id/txv_itemUnit"
+        app:layout_constraintRight_toRightOf="@+id/txv_itemUnit"
+        app:layout_constraintTop_toBottomOf="@+id/txv_itemUnit"/>
+
+    <EditText
+        android:id="@+id/edt_itemPrice"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:inputType="textPersonName"
+        app:layout_constraintBaseline_toBaselineOf="@+id/txv_itemPrice"
+        app:layout_constraintLeft_toLeftOf="@+id/edt_itemUnit"
+        app:layout_constraintRight_toRightOf="@+id/edt_itemUnit"/>
+
     <Button
         android:id="@+id/btn_commitItem"
         android:layout_width="0dp"
