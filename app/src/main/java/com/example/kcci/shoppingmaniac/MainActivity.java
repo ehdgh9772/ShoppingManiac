@@ -35,7 +35,6 @@ import com.perples.recosdk.RECOServiceConnectListener;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 
 import static com.example.kcci.shoppingmaniac.R.drawable.b;
@@ -64,6 +63,9 @@ public class MainActivity extends AppCompatActivity
     ArrayList<Bitmap> _images;
     ArrayList<String> _itemIdList;
     ArrayList<String> _beaconList;
+    private String[] arySection;
+    private ArrayList<String> _tmp;
+    private ArrayList<String> _tmpPrev;
 
     //beacon field
     static final String RECO_UUID = "24DDF411-8CF1-440C-87CD-E368DAF9C93E";
@@ -77,8 +79,9 @@ public class MainActivity extends AppCompatActivity
     private BluetoothAdapter mBluetoothAdapter;
     protected RECOBeaconManager mRecoManager;
     protected RECOBeaconRegion region;
-    private HashMap<Integer, String> regionMap;
+//    private _spottedRegion
     private int beaconRssiCritical = -85;
+    private int _regionCounter = 4;
 
 
     //endregion
@@ -142,6 +145,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 _beaconList.add(Database.MEAT);
+                /**updatelist here*/
                 _beaconRecyclerView.setAdapter(new BeaconRecyclerAdapter(_beaconList, R.layout.each_beacon));
             }
         });
@@ -204,11 +208,10 @@ public class MainActivity extends AppCompatActivity
         );
 
         region = new RECOBeaconRegion(RECO_UUID, 11, "KCCI Mart");
-        regionMap = new HashMap<>();
-        regionMap.put(111, "entrance");
-        regionMap.put(112, "grocery");
-        regionMap.put(113, "meat");
-        regionMap.put(114, "appliance");
+//        regionMap = new HashMap<>();
+//        for (int i = 0; i < _regionCounter; i++) regionMap.put(111 + i, false);
+
+        arySection = new String[]{"entrance", "meat", "grocery", "appliance"};
 
         mRecoManager.setRangingListener(this);
         mRecoManager.bind(this);
@@ -232,16 +235,21 @@ public class MainActivity extends AppCompatActivity
     /** when some beacons in some ranges itll be fired*/
     @Override
     public void didRangeBeaconsInRegion(Collection<RECOBeacon> collection, RECOBeaconRegion recoBeaconRegion) {
-        int beaconCounter = 0;
-        for (RECOBeacon bc : collection) {
-            if ( bc.getRssi() > beaconRssiCritical ) {
-                beaconCounter++;
-                _txtVSpottedConer.append(
-                        regionMap.get(bc.getMinor()) + "\n"
-                );
+        _tmp = getRangedConerList(collection);
+        if (!_tmp.equals(_tmpPrev)) updateAdapter(_tmp);
+
+    }
+
+    private void updateAdapter(ArrayList<String> _tmp) {
+        _beaconRecyclerView.setAdapter(new BeaconRecyclerAdapter(_tmp, R.layout.each_beacon));
+        final Database database = new Database();
+        database.requestAllBeacon(new Database.LoadCompleteListener() {
+            @Override
+            public void onLoadComplete() {
+                System.out.println(database.getBeaconList().get(0).getName());
             }
-        }
-        if ( beaconCounter == 0 ) _txtVSpottedConer.setText(R.string.no_beacons_spotted);
+        });
+        _tmpPrev = _tmp;
     }
 
     @Override
@@ -288,6 +296,18 @@ public class MainActivity extends AppCompatActivity
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+    }
+
+    /**return sorted array*/
+    private ArrayList<String> getRangedConerList (Collection<RECOBeacon> collection ) {
+
+        ArrayList<String> _return = new ArrayList<>();
+
+        for (RECOBeacon recoBeacon : collection)
+            if( recoBeacon.getRssi() > beaconRssiCritical && recoBeacon.getMinor() < arySection.length )
+                _return.add(arySection[recoBeacon.getMinor()]);
+
+        return _return;
     }
 
     //endregion
@@ -352,7 +372,7 @@ public class MainActivity extends AppCompatActivity
         _recyclerView.setItemAnimator(new DefaultItemAnimator());
     }
 
-    //endregion
+//endregion
 
     //region RecyclerViewAdapters
     class DiscountRecyclerAdapter extends RecyclerView.Adapter<DiscountRecyclerAdapter.ViewHolder> {
@@ -529,11 +549,10 @@ public class MainActivity extends AppCompatActivity
 
         /**
          * 생성자
-         *
-         * @param beacons
+         *  @param beacons
          * @param layout
          */
-        BeaconRecyclerAdapter(List<String> beacons, int layout) {
+        BeaconRecyclerAdapter(ArrayList<String> beacons, int layout) {
 
             _beacons = beacons;
             _layout = layout;
@@ -648,6 +667,6 @@ public class MainActivity extends AppCompatActivity
 
         }
     }
-    //endregion
+//endregion
 }
 
