@@ -27,6 +27,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.kcci.shoppingmaniac.database.Database;
 import com.example.kcci.shoppingmaniac.database.DiscountInfo;
@@ -141,12 +142,25 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
     private void addTest() {
         _beaconList.add(Database.MAIN);
 
-        Button button = (Button) findViewById(R.id.changeList);
-        button.setOnClickListener(new View.OnClickListener() {
+        Button addButton = (Button) findViewById(R.id.addList);
+        addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 _beaconList.add(Database.MEAT);
+                Toast.makeText(MainActivity.this, "비콘 범위안에 들어왔습니다.", Toast.LENGTH_SHORT).show();
                 _beaconRecyclerView.setAdapter(new BeaconRecyclerAdapter(_beaconList, R.layout.each_beacon));
+            }
+        });
+
+        Button deleteButton = (Button) findViewById(R.id.deleteList);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(_beaconList.size() != 1) {
+                    _beaconList.remove(_beaconList.size() - 1);
+                    Toast.makeText(MainActivity.this, "비콘 범위에서 벗어났습니다.", Toast.LENGTH_SHORT).show();
+                    _beaconRecyclerView.setAdapter(new BeaconRecyclerAdapter(_beaconList, R.layout.each_beacon));
+                }
             }
         });
         final Database database = new Database();
@@ -710,7 +724,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 
             @Override
             public void onClick(View v) {
-                final Database database = new Database();
+                final Database database = new Database();   //todo field로부터 List를 받아와 itemInfo에 뿌려줌. Database는 비콘근접시 연결.
                 database.requestItemByCategory(_category, new Database.LoadCompleteListener() {
                     @Override
                     public void onLoadComplete() {
