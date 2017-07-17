@@ -251,9 +251,10 @@ public class Database {
                 discountInfo.setPrice(jsonObj.getString("Price"));
                 discountInfo.setDiscountedPrice(jsonObj.getString("DiscountedPrice"));
                 discountInfo.setCategory(jsonObj.getString("Category"));
-                discountInfo.setStartTime(jsonObj.getString("StartTime"));
-                discountInfo.setEndTime(jsonObj.getString("EndTime"));
+                discountInfo.setStartTime(convertDateTime(jsonObj.getString("StartTime")));
+                discountInfo.setEndTime(convertDateTime(jsonObj.getString("EndTime")));
 
+                Log.i("setDCInfo", discountInfo.getStartTime());
                 _discountInfoList.add(discountInfo);
                 Log.i("tag", "put on array");
             }
@@ -324,6 +325,9 @@ public class Database {
         _bitmapList.add(bitmap);
     }
 
+    private String convertDateTime(String dateTime) {
+        return dateTime.replace("T", "/").replace(dateTime.substring(16), "");
+    }
     //endregion
 
     //region Getter

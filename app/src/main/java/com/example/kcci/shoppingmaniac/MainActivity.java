@@ -505,6 +505,8 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
             viewHolder._discountedPrice.setText(item.getDiscountedPrice());
             viewHolder._img.setImageBitmap(_imageList.get(position));
             viewHolder.itemView.setTag(item);
+            viewHolder._startTime.setText(item.getStartTime());
+            viewHolder._endTime.setText(item.getEndTime());
 
             viewHolder._btnLineChart.setOnClickListener(new OnLineChartClickListener(item.getItemId()));
         }
@@ -524,6 +526,8 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
             private TextView _name;
             private TextView _price;
             private TextView _discountedPrice;
+            private TextView _startTime;
+            private TextView _endTime;
             private Button _btnLineChart;
 
             public ViewHolder(View itemView) {
@@ -534,6 +538,8 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
                 _name = (TextView) itemView.findViewById(R.id.txv_discount_Name);
                 _price = (TextView) itemView.findViewById(R.id.txv_item_price);
                 _discountedPrice = (TextView) itemView.findViewById(R.id.txv_discount_dcPrice);
+                _startTime = (TextView) itemView.findViewById(R.id.txv_discount_startDate);
+                _endTime = (TextView) itemView.findViewById(R.id.txv_discount_endDate);
                 _btnLineChart = (Button) itemView.findViewById(R.id.btn_discount_lineChart);
             }
 

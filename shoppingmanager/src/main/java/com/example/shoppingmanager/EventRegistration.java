@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.shoppingmanager.database.Database;
 
@@ -38,6 +39,7 @@ public class EventRegistration extends AppCompatActivity {
         commitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Toast.makeText(EventRegistration.this, "등록완료", Toast.LENGTH_SHORT).show();
                 database.insertDiscountInfo(itemId.getText().toString(),
                         discountPrice.getText().toString(),
                         startTime.getText().toString(),
