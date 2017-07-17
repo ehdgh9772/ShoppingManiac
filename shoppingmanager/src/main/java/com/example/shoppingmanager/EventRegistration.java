@@ -1,14 +1,18 @@
 package com.example.shoppingmanager;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.shoppingmanager.database.Database;
+
+import java.util.Objects;
 
 import static com.example.shoppingmanager.SearchItem.REQUEST_CODE;
 
@@ -16,6 +20,8 @@ public class EventRegistration extends AppCompatActivity {
 
     String itemId;
     EditText itemIdEditText;
+    private ImageView _imageView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +36,7 @@ public class EventRegistration extends AppCompatActivity {
         final EditText discountType = (EditText) findViewById(R.id.edt_dcType);
         Button searchItemIdButton = (Button) findViewById(R.id.btn_searchItemId);
         Button commitButton = (Button) findViewById(R.id.btn_commitEvent);
+        _imageView = (ImageView) findViewById(R.id.imv_event_registration);
 
         final Database database = new Database();
 
@@ -44,21 +51,23 @@ public class EventRegistration extends AppCompatActivity {
         commitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(EventRegistration.this, "등록완료", Toast.LENGTH_SHORT).show();
+                String itemId = itemIdEditText.getText().toString();
+                String price = discountPrice.getText().toString();
                 String startTimeString = buildDateTime(startDate.getText().toString(), startTime.getText().toString());
                 String endTimeString = buildDateTime(endDate.getText().toString(), endTime.getText().toString());
+                String dcType = discountType.getText().toString();
 
-                database.insertDiscountInfo(itemIdEditText.getText().toString(),
-                        discountPrice.getText().toString(),
-                        startTimeString,
-                        endTimeString,
-                        discountType.getText().toString(),
-                        new Database.LoadCompleteListener() {
-                    @Override
-                    public void onLoadComplete() {
+                if(!Objects.equals(itemId, "") || !Objects.equals(price, "") ||
+                        !Objects.equals(startTimeString, "") || !Objects.equals(endTimeString, "") ||
+                        !Objects.equals(dcType, "")) {
+                    database.insertDiscountInfo(
+                            itemId, price, startTimeString, endTimeString, dcType, null);
+                    Toast.makeText(EventRegistration.this, "등록완료", Toast.LENGTH_SHORT).show();
+                    finish();
+                } else {
+                    Toast.makeText(EventRegistration.this, "입력하지 않은 파라미터가 있습니다.", Toast.LENGTH_SHORT).show();
+                }
 
-                    }
-                });
             }
         });//todo 커밋 완성하기
     }
@@ -72,5 +81,6 @@ public class EventRegistration extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         String ItemId = data.getStringExtra(SearchItem.ITEM_ID);
         itemIdEditText.setText(ItemId);
+        _imageView.setImageBitmap((Bitmap) data.getExtras().get(SearchItem.ITEM_IMAGE));
     }
 }

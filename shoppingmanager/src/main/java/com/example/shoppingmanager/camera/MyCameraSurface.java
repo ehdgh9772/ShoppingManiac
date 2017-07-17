@@ -1,4 +1,4 @@
-package com.example.shoppingmanager;
+package com.example.shoppingmanager.camera;
 
 import android.content.Context;
 import android.hardware.Camera;

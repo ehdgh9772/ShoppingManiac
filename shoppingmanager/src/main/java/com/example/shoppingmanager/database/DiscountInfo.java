@@ -2,11 +2,13 @@ package com.example.shoppingmanager.database;
 
 import android.graphics.Bitmap;
 
+import java.io.Serializable;
+
 /**
  * Created by koo on 17. 7. 6.
  */
 
-public class DiscountInfo {
+public class DiscountInfo implements Serializable {
     private Bitmap _image;
     private String _discountId;
     private String _itemId;

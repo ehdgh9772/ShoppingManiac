@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Intent intent = new Intent(MainActivity.this, DiscountActivity.class);
+                        Intent intent = new Intent(MainActivity.this, DiscountList.class);
                         startActivity(intent);
                         Toast.makeText(getApplicationContext(), "아이템 조회화면으로 이동", Toast.LENGTH_SHORT).show();
                     }

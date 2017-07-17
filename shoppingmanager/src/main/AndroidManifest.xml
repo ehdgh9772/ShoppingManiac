@@ -27,12 +27,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ImageShooting" />
-        <activity android:name=".DiscountActivity" />
+        <activity android:name=".camera.ImageShooting" />
+        <activity android:name=".DiscountList" />
         <activity android:name=".ItemRegistration" />
         <activity android:name=".SearchItem" />
         <activity android:name=".EventRegistration" />
         <activity android:name=".PriceModification"></activity>
+        <activity android:name=".EventModification"/>
     </application>
 
 </manifest>

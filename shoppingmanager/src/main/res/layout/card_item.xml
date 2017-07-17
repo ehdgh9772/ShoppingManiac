@@ -13,7 +13,7 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:id="@+id/img_card_item"
+            android:id="@+id/imv_card_item"
             android:layout_width="100dp"
             android:layout_height="100dp"
             card_view:srcCompat="@drawable/a"
@@ -26,10 +26,10 @@
         <android.support.constraint.ConstraintLayout
             android:layout_width="0dp"
             android:layout_height="0dp"
-            card_view:layout_constraintTop_toTopOf="@+id/img_card_item"
-            card_view:layout_constraintLeft_toRightOf="@+id/img_card_item"
+            card_view:layout_constraintTop_toTopOf="@+id/imv_card_item"
+            card_view:layout_constraintLeft_toRightOf="@+id/imv_card_item"
             card_view:layout_constraintRight_toRightOf="parent"
-            card_view:layout_constraintBottom_toBottomOf="@+id/img_card_item">
+            card_view:layout_constraintBottom_toBottomOf="@+id/imv_card_item">
 
             <android.support.constraint.Guideline
                 android:id="@+id/guideline1"
@@ -93,7 +93,7 @@
             card_view:layout_constraintBottom_toBottomOf="parent"
             card_view:layout_constraintLeft_toLeftOf="parent"
             card_view:layout_constraintRight_toRightOf="parent"
-            card_view:layout_constraintTop_toBottomOf="@+id/img_card_item" />
+            card_view:layout_constraintTop_toBottomOf="@+id/imv_card_item" />
 
     </android.support.constraint.ConstraintLayout>
 

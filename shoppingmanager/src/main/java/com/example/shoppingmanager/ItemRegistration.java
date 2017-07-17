@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.example.shoppingmanager.database.Database;
 
@@ -16,6 +17,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.text.BreakIterator;
+import java.util.Objects;
 
 
 public class ItemRegistration extends AppCompatActivity {
@@ -56,16 +58,18 @@ public class ItemRegistration extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        database.insertItem(itemName.getText().toString(),
-                                itemCategoryId.getText().toString(),
-                                itemUnit.getText().toString(),
-                                itemPrice.getText().toString(),
-                                new Database.LoadCompleteListener(){
-                                    @Override
-                                    public void onLoadComplete() {
-
-                                    }
-                                });
+                        String name = itemName.getText().toString();
+                        String categoryId = itemCategoryId.getText().toString();
+                        String unit = itemUnit.getText().toString();
+                        String price = itemPrice.getText().toString();
+                        if (!Objects.equals(name, "") || !Objects.equals(categoryId, "") ||
+                                !Objects.equals(unit, "") || !Objects.equals(price, "")) {
+                            database.insertItem(name, categoryId, unit, price, null);
+                            Toast.makeText(ItemRegistration.this, "등록완료", Toast.LENGTH_SHORT).show();
+                            finish();
+                        } else {
+                            Toast.makeText(ItemRegistration.this, "입력하지 않은 파라미터가 있습니다.", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
         );
@@ -74,11 +78,11 @@ public class ItemRegistration extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(data != null){
+        if (data != null) {
             Bitmap image_bitmap = null;
             try {
                 image_bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
-                ImageView image = (ImageView)findViewById(R.id.imv_item_registration);
+                ImageView image = (ImageView) findViewById(R.id.imv_item_registration);
                 //배치해놓은 ImageView에 set
                 image.setImageBitmap(image_bitmap);
             } catch (IOException e) {

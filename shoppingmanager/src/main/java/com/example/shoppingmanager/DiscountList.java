@@ -1,5 +1,6 @@
 package com.example.shoppingmanager;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -19,9 +20,10 @@ import com.example.shoppingmanager.database.DiscountInfo;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DiscountActivity extends AppCompatActivity{
-//todo 할인정보 카드뷰에 해당하는 이름으로 변경, 내용을 SearchItem클래스 참고해서 작성(SearchItem도 클래스명 설계 잘못됨)
-//todo CardViewContent 클래스 삭제 예정. 정보를 DiscountInfo 클래스로부터 받아오도록 작성
+public class DiscountList extends AppCompatActivity{
+
+    public static final String EXTRA_IMAGE = "Image";
+    public static final String EXTRA_DISCOUNT_INFO = "DiscountInfo";
     RecyclerView _recyclerView;
     ArrayList<DiscountInfo> _discountInfoList;
     private ArrayList<String> _itemIdList;
@@ -121,14 +123,26 @@ public class DiscountActivity extends AppCompatActivity{
         public void onBindViewHolder(ViewHolder viewHolder, int position) {
 
             final DiscountInfo item = _discountInfoList.get(position);
+            final Bitmap bitmap = _imageList.get(position);
             viewHolder._discountType.setText(item.getDiscountType());
             viewHolder._name.setText(item.getName());
             viewHolder._price.setText(item.getPrice());
             viewHolder._discountedPrice.setText(item.getDiscountedPrice());
-            viewHolder._img.setImageBitmap(_imageList.get(position));
+            viewHolder._img.setImageBitmap(bitmap);
             viewHolder.itemView.setTag(item);
             viewHolder._startTime.setText(item.getStartTime());
             viewHolder._endTime.setText(item.getEndTime());
+            viewHolder._btnLineChart.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable(EXTRA_DISCOUNT_INFO, item);
+                    Intent intent = new Intent(DiscountList.this, EventModification.class);
+                    intent.putExtras(bundle);
+
+                    startActivity(intent);
+                }
+            });
         }
 
         @Override

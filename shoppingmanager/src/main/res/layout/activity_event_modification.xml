@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/txv_evmod_itemId"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:gravity="center_vertical"
+        android:text="아이디"
+        android:textColor="@android:color/black"
+        android:textSize="20dp"
+        android:layout_marginLeft="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/txv_evmod_dcPrice"
+        android:layout_marginRight="0dp"
+        app:layout_constraintRight_toRightOf="@+id/txv_evmod_dcPrice"
+        app:layout_constraintHorizontal_bias="0.0"
+        android:layout_marginBottom="26dp"
+        app:layout_constraintBottom_toTopOf="@+id/txv_evmod_dcPrice"/>
+
+    <EditText
+        android:id="@+id/edt_evmod_itemId"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:inputType="textPersonName"
+        app:layout_constraintBaseline_toBaselineOf="@+id/txv_evmod_itemId"
+        app:layout_constraintLeft_toRightOf="@+id/txv_evmod_itemId"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintHorizontal_bias="0.0" />
+
+    <TextView
+        android:id="@+id/txv_evmod_dcPrice"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:gravity="center_vertical"
+        android:text="할인가격"
+        android:textColor="@android:color/black"
+        android:textSize="20dp"
+        android:layout_marginLeft="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/txv_evmod_startTime"
+        android:layout_marginRight="0dp"
+        app:layout_constraintRight_toRightOf="@+id/txv_evmod_startTime"
+        app:layout_constraintHorizontal_bias="0.0"
+        android:layout_marginBottom="26dp"
+        app:layout_constraintBottom_toTopOf="@+id/txv_evmod_startTime"/>
+
+    <EditText
+        android:id="@+id/edt_evmod_dcPrice"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:inputType="textPersonName"
+        app:layout_constraintBaseline_toBaselineOf="@+id/txv_evmod_dcPrice"
+        app:layout_constraintLeft_toLeftOf="@+id/edt_evmod_itemId"
+        app:layout_constraintRight_toRightOf="@+id/edt_evmod_itemId"
+        app:layout_constraintHorizontal_bias="1.0"/>
+
+    <TextView
+        android:id="@+id/txv_evmod_startTime"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:gravity="center_vertical"
+        android:text="시작 날짜"
+        android:textColor="@android:color/black"
+        android:textSize="20dp"
+        android:layout_marginLeft="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/txv_evmod_endTime"
+        android:layout_marginRight="0dp"
+        app:layout_constraintRight_toRightOf="@+id/txv_evmod_endTime"
+        app:layout_constraintHorizontal_bias="0.0"
+        android:layout_marginBottom="26dp"
+        app:layout_constraintBottom_toTopOf="@+id/txv_evmod_endTime"/>
+
+    <EditText
+        android:id="@+id/edt_evmod_startDate"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:hint="20170101"
+        android:inputType="textPersonName"
+        app:layout_constraintBaseline_toBaselineOf="@+id/txv_evmod_startTime"
+        app:layout_constraintLeft_toLeftOf="@+id/edt_evmod_dcPrice"
+        android:layout_marginLeft="1dp"/>
+
+    <EditText
+        android:id="@+id/edt_evmod_startTime"
+        android:layout_width="70dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="8dp"
+        android:hint="0800"
+        android:inputType="textPersonName"
+        app:layout_constraintBaseline_toBaselineOf="@+id/txv_evmod_startTime"
+        app:layout_constraintLeft_toRightOf="@+id/edt_evmod_startDate"/>
+
+    <TextView
+        android:id="@+id/txv_evmod_endTime"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:gravity="center_vertical"
+        android:text="종료 날짜"
+        android:textColor="@android:color/black"
+        android:textSize="20dp"
+        android:layout_marginLeft="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/txv_evmod_dcType"
+        android:layout_marginRight="0dp"
+        app:layout_constraintRight_toRightOf="@+id/txv_evmod_dcType"
+        app:layout_constraintHorizontal_bias="0.0"
+        android:layout_marginBottom="26dp"
+        app:layout_constraintBottom_toTopOf="@+id/txv_evmod_dcType"/>
+
+    <EditText
+        android:id="@+id/edt_evmod_endDate"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:hint="20170102"
+        android:inputType="textPersonName"
+        app:layout_constraintBaseline_toBaselineOf="@+id/txv_evmod_endTime"
+        app:layout_constraintLeft_toLeftOf="@+id/edt_evmod_startDate"
+        app:layout_constraintRight_toRightOf="@+id/edt_evmod_startDate"/>
+
+    <EditText
+        android:id="@+id/edt_evmod_endTime"
+        android:layout_width="70dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="8dp"
+        android:hint="2230"
+        android:inputType="textPersonName"
+        app:layout_constraintBaseline_toBaselineOf="@+id/txv_evmod_endTime"
+        app:layout_constraintLeft_toRightOf="@+id/edt_evmod_endDate"/>
+
+    <TextView
+        android:id="@+id/txv_evmod_dcType"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="8dp"
+        android:gravity="center_vertical"
+        android:text="이벤트 종류"
+        android:textColor="@android:color/black"
+        android:textSize="20dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginBottom="26dp"
+        app:layout_constraintBottom_toTopOf="@+id/btn_commitEventmod"/>
+
+    <EditText
+        android:id="@+id/edt_evmod_dcType"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:inputType="textPersonName"
+        app:layout_constraintBaseline_toBaselineOf="@+id/txv_evmod_dcType"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/txv_evmod_dcType"
+        android:layout_marginLeft="8dp"/>
+
+    <Button
+        android:id="@+id/btn_commitEventmod"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:text="등록하기"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+
+</android.support.constraint.ConstraintLayout>

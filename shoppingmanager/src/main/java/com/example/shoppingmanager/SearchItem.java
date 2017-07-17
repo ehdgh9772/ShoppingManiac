@@ -1,6 +1,7 @@
 package com.example.shoppingmanager;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,6 +24,7 @@ public class SearchItem extends AppCompatActivity {
     public static final int REQUEST_CODE = 500;
     //todo 적절한 클래스명으로 변경
     public static final String ITEM_ID = "ItemId";
+    public static final String ITEM_IMAGE = "ItemImage";
 
     List<Item> _list;
     RecyclerView recyclerView;
@@ -44,7 +46,20 @@ public class SearchItem extends AppCompatActivity {
             @Override
             public void onLoadComplete() {
                 _list = database.getItemList();
-                recyclerView.setAdapter(new ManagerRecyclerAdapter(_list, R.layout.card_item));
+                ArrayList<String> idList = new ArrayList<>();
+                for (int i = 0; i < _list.size(); i++) {
+                    idList.add(_list.get(i).getItemId());
+                }
+                database.requestImageList(idList, new Database.LoadCompleteListener() {
+                    @Override
+                    public void onLoadComplete() {
+                        ArrayList<Bitmap> images = new ArrayList<>();
+                        for (int i = 0; i < _list.size(); i++) {
+                            images.add(database.getBitmap(i));
+                        }
+                        recyclerView.setAdapter(new ManagerRecyclerAdapter(_list, images, R.layout.card_item));
+                    }
+                });
             }
         });
 
@@ -56,13 +71,15 @@ public class SearchItem extends AppCompatActivity {
 
     private class ManagerRecyclerAdapter extends RecyclerView.Adapter<ManagerRecyclerAdapter.ViewHolder> {
 
-        int _layoutId;
-        List<Item> _itemList;
+        private final ArrayList<Bitmap> _bitmapList;
+        private int _layoutId;
+        private List<Item> _itemList;
 
-        public ManagerRecyclerAdapter(List<Item> itemList, int layoutId) {
+        public ManagerRecyclerAdapter(List<Item> itemList, ArrayList<Bitmap> bitmapList, int layoutId) {
             super();
             _layoutId = layoutId;
             _itemList = itemList;
+            _bitmapList = bitmapList;
         }
 
         @Override
@@ -73,9 +90,10 @@ public class SearchItem extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
-
             final int _position = position;
+
             Item item = _itemList.get(position);
+            holder._img.setImageBitmap(_bitmapList.get(position));
             holder._itemName.setText(item.getName());
             holder._itemPrice.setText(item.getPrice());
             holder.selection.setOnClickListener(
@@ -83,7 +101,11 @@ public class SearchItem extends AppCompatActivity {
                         @Override
                         public void onClick(View v) {
                             Intent intent = new Intent();
-                            intent.putExtra(ITEM_ID,_list.get(_position).getItemId());
+                            intent.putExtra(ITEM_ID, _list.get(_position).getItemId());
+                            Bitmap src = _bitmapList.get(_position);
+                            Bitmap resized = Bitmap.createScaledBitmap(src, src.getWidth()/2, src.getHeight()/2, true);
+
+                            intent.putExtra(ITEM_IMAGE, resized);
                             setResult(REQUEST_CODE, intent);
                             finish();
                         }
@@ -102,13 +124,14 @@ public class SearchItem extends AppCompatActivity {
          */
         class ViewHolder extends RecyclerView.ViewHolder {
 
-            public ImageView _img;
-            public TextView _itemName;
-            public TextView _itemPrice;
+            private ImageView _img;
+            private TextView _itemName;
+            private TextView _itemPrice;
             private Button selection;
 
             public ViewHolder(View itemView) {
                 super(itemView);
+                _img = (ImageView) itemView.findViewById(R.id.imv_card_item);
                 _itemName = (TextView) itemView.findViewById(R.id.txv_card_itemName);
                 _itemPrice = (TextView) itemView.findViewById(R.id.txv_card_itemPrice);
                 selection = (Button) itemView.findViewById(R.id.selection);
