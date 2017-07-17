@@ -90,7 +90,6 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 
         viewDiscountInfo();
 
-//        viewItemInfo();
     }
 
     //region Initialize
