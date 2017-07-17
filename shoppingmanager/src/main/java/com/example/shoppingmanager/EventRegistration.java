@@ -17,10 +17,11 @@ public class EventRegistration extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_registration);
 
-        EditText discountedPriceText = (EditText) findViewById(R.id.edt_dcPrice);
-        EditText startTimeText = (EditText) findViewById(R.id.edt_startTime);
-        EditText endTimeText = (EditText) findViewById(R.id.edt_endTime);
-        EditText discountTypeText = (EditText) findViewById(R.id.edt_dcType);
+        final EditText itemId = (EditText) findViewById(R.id.edt_itemId);
+        final EditText discountPrice = (EditText) findViewById(R.id.edt_dcPrice);
+        final EditText startTime = (EditText) findViewById(R.id.edt_startTime);
+        final EditText endTime = (EditText) findViewById(R.id.edt_endTime);
+        final EditText discountType = (EditText) findViewById(R.id.edt_dcType);
         Button searchItemIdButton = (Button) findViewById(R.id.btn_searchItemId);
         Button commitButton = (Button) findViewById(R.id.btn_commitEvent);
 
@@ -34,15 +35,14 @@ public class EventRegistration extends AppCompatActivity {
             }
         });
 
-        final String discountPrice = discountedPriceText.getText().toString();
-        final String startTime = startTimeText.getText().toString();
-        final String endTime = endTimeText.getText().toString();
-        final String discountType = discountTypeText.getText().toString();
-
         commitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                database.insertDiscountInfo(itemId, discountPrice, startTime, endTime, discountType,
+                database.insertDiscountInfo(itemId.getText().toString(),
+                        discountPrice.getText().toString(),
+                        startTime.getText().toString(),
+                        endTime.getText().toString(),
+                        discountType.getText().toString(),
                         new Database.LoadCompleteListener() {
                     @Override
                     public void onLoadComplete() {
