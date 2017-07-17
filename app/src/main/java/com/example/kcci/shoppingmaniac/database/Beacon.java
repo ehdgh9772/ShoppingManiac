@@ -6,22 +6,31 @@ package com.example.kcci.shoppingmaniac.database;
 
 public class Beacon {
 
-    private String _BeaconId;
-    private String _Name;
+    private String _beaconRegionName;
+    private int _beaconMinor;
+    private int _beaconImg;
 
-    public String getBeaconId() {
-        return _BeaconId;
+    public String get_beaconRegionName() {
+        return _beaconRegionName;
     }
 
-    void setBeaconId(String beaconId) {
-        _BeaconId = beaconId;
+    public void set_beaconRegionName(String _beaconRegionName) {
+        this._beaconRegionName = _beaconRegionName;
     }
 
-    public String getName() {
-        return _Name;
+    public int get_beaconMinor() {
+        return _beaconMinor;
     }
 
-    void setName(String name) {
-        _Name = name;
+    public void set_beaconMinor(int _beaconMinor) {
+        this._beaconMinor = _beaconMinor;
+    }
+
+    public int get_beaconImg() {
+        return _beaconImg;
+    }
+
+    public void set_beaconImg(int _beaconImg) {
+        this._beaconImg = _beaconImg;
     }
 }
