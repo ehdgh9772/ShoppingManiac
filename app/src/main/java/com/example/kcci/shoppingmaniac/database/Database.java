@@ -24,7 +24,7 @@ public class Database {
     public static final String MAIN = "0";
     public static final String MEAT = "1";
     public static final String VEGETABLE = "2";
-    public static final String HOME_APPLIENCE = "3";
+    public static final String APPLIANCE = "3";
 
     public static final String GET_DISCOUNT_INFO = "GetDiscountInfo";
     public static final String GET_PRICE_HISTORY = "GetPriceHistory";
