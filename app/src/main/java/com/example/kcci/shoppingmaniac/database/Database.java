@@ -46,7 +46,7 @@ public class Database {
     private ArrayList<PriceHistory> _priceHistoryList;
     private ArrayList<Item> _itemList;
     private ArrayList<Bitmap> _bitmapList = new ArrayList<>();
-    private ArrayList<Beacon> _beaconList = new ArrayList<>();
+//    private ArrayList<Beacon> _beaconList = new ArrayList<>();
     //endregion
 
     //region Requests
@@ -349,9 +349,9 @@ public class Database {
         return _itemList;
     }
 
-    public ArrayList<Beacon> getBeaconList() {
-        return _beaconList;
-    }
+//    public ArrayList<Beacon> getBeaconList() {
+//        return _beaconList;
+//    }
 
     //endregion
 

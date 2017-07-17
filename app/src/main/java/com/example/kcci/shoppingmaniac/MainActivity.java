@@ -96,7 +96,6 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         connectBeacons();
 
         setAnimation();
-//        addTest();
 
         viewDiscountInfo();
 
