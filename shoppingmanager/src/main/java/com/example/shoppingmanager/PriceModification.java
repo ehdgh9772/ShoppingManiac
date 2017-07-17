@@ -11,13 +11,14 @@ import com.example.shoppingmanager.database.Database;
 
 public class PriceModification extends AppCompatActivity {
 
+    EditText itemIdEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_price_modification);
 
-        final EditText itemId = (EditText) findViewById(R.id.edt_itemId);
+        itemIdEditText = (EditText) findViewById(R.id.edt_itemId);
         final EditText selectedDate = (EditText) findViewById(R.id.edt_selectedDate);
         final EditText registrationPrice = (EditText) findViewById(R.id.edt_registrationPrice);
         Button searchItemIdButton = (Button) findViewById(R.id.btn_searchItemId);
@@ -37,7 +38,7 @@ public class PriceModification extends AppCompatActivity {
         commitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                database.insertPrice(itemId.getText().toString()
+                database.insertPrice(itemIdEditText.getText().toString()
                         , selectedDate.getText().toString()
                         , registrationPrice.getText().toString(),
                         new Database.LoadCompleteListener() {
@@ -48,5 +49,13 @@ public class PriceModification extends AppCompatActivity {
                         });
             }
         });
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        String ItemId = data.getStringExtra(SearchItem.ITEM_ID);
+        itemIdEditText.setText(ItemId);
     }
 }
