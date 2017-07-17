@@ -14,7 +14,7 @@ import com.example.shoppingmanager.database.Database;
 
 import java.util.Objects;
 
-import static com.example.shoppingmanager.SearchItem.REQUEST_CODE;
+import static com.example.shoppingmanager.ItemList.REQUEST_CODE;
 
 public class EventRegistration extends AppCompatActivity {
 
@@ -43,7 +43,7 @@ public class EventRegistration extends AppCompatActivity {
         searchItemIdButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), SearchItem.class);
+                Intent intent = new Intent(getApplicationContext(), ItemList.class);
                 startActivityForResult(intent, REQUEST_CODE);
             }
         });
@@ -79,8 +79,8 @@ public class EventRegistration extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        String ItemId = data.getStringExtra(SearchItem.ITEM_ID);
+        String ItemId = data.getStringExtra(ItemList.ITEM_ID);
         itemIdEditText.setText(ItemId);
-        _imageView.setImageBitmap((Bitmap) data.getExtras().get(SearchItem.ITEM_IMAGE));
+        _imageView.setImageBitmap((Bitmap) data.getExtras().get(ItemList.ITEM_IMAGE));
     }
 }

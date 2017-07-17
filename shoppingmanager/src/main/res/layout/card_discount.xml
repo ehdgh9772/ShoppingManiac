@@ -220,11 +220,11 @@
             android:layout_marginRight="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:text="LINE CHART"
+            android:text="정보 변경하기"
             card_view:layout_constraintBottom_toBottomOf="parent"
             card_view:layout_constraintLeft_toLeftOf="parent"
             card_view:layout_constraintRight_toRightOf="parent"
-            card_view:layout_constraintTop_toBottomOf="@+id/imv_discount" />
+            card_view:layout_constraintTop_toBottomOf="@+id/imv_discount"/>
 
     </android.support.constraint.ConstraintLayout>
 

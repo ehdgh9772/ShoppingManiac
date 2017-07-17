@@ -14,9 +14,9 @@ import com.example.shoppingmanager.database.Database;
 
 import java.util.Objects;
 
-import static com.example.shoppingmanager.SearchItem.REQUEST_CODE;
+import static com.example.shoppingmanager.ItemList.REQUEST_CODE;
 
-public class PriceModification extends AppCompatActivity {
+public class PriceRegistration extends AppCompatActivity {
 
     EditText itemIdEditText;
     ImageView _imageView;
@@ -38,7 +38,7 @@ public class PriceModification extends AppCompatActivity {
         searchItemIdButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), SearchItem.class);
+                Intent intent = new Intent(getApplicationContext(), ItemList.class);
                 startActivityForResult(intent, REQUEST_CODE);
                 //intent.getExtras().getString("itemId");
             }
@@ -60,11 +60,11 @@ public class PriceModification extends AppCompatActivity {
 
                                 }
                             });
-                    Toast.makeText(PriceModification.this, "입력 완료!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PriceRegistration.this, "입력 완료!", Toast.LENGTH_SHORT).show();
                     finish();
                 }
                 else {
-                    Toast.makeText(PriceModification.this, "입력하지 않은 파라미터가 있습니다.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PriceRegistration.this, "입력하지 않은 파라미터가 있습니다.", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -74,8 +74,8 @@ public class PriceModification extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        String ItemId = data.getStringExtra(SearchItem.ITEM_ID);
+        String ItemId = data.getStringExtra(ItemList.ITEM_ID);
         itemIdEditText.setText(ItemId);
-        _imageView.setImageBitmap((Bitmap) data.getExtras().get(SearchItem.ITEM_IMAGE));
+        _imageView.setImageBitmap((Bitmap) data.getExtras().get(ItemList.ITEM_IMAGE));
     }
 }

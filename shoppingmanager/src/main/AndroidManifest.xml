@@ -30,9 +30,9 @@
         <activity android:name=".camera.ImageShooting" />
         <activity android:name=".DiscountList" />
         <activity android:name=".ItemRegistration" />
-        <activity android:name=".SearchItem" />
+        <activity android:name=".ItemList" />
         <activity android:name=".EventRegistration" />
-        <activity android:name=".PriceModification"></activity>
+        <activity android:name=".PriceRegistration"></activity>
         <activity android:name=".EventModification"/>
     </application>
 

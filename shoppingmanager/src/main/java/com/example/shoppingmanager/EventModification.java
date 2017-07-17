@@ -27,7 +27,7 @@ public class EventModification extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_modification);
 
-        DiscountInfo info = (DiscountInfo) getIntent().getSerializableExtra(DiscountList.EXTRA_DISCOUNT_INFO);
+        final DiscountInfo info = (DiscountInfo) getIntent().getSerializableExtra(DiscountList.EXTRA_DISCOUNT_INFO);
 
         itemIdEditText = (EditText) findViewById(R.id.edt_evmod_itemId);
         final EditText discountPrice = (EditText) findViewById(R.id.edt_evmod_dcPrice);
@@ -38,13 +38,13 @@ public class EventModification extends AppCompatActivity {
         final EditText discountType = (EditText) findViewById(R.id.edt_evmod_dcType);
         Button commitButton = (Button) findViewById(R.id.btn_commitEventmod);
 
-        discountPrice.setText(info.getPrice());
+        discountPrice.setText(info.getDiscountedPrice());
         discountType.setText(info.getDiscountType());
 
         String startDateTime = info.getStartTime();
         String endDateTime = info.getEndTime();
 
-        StringBuilder sb = new StringBuilder(startDateTime);
+        /*StringBuilder sb = new StringBuilder(startDateTime);
         sb.deleteCharAt(4);
         startDate.setText(sb.deleteCharAt(7).toString().substring(0, 6));
 
@@ -58,7 +58,7 @@ public class EventModification extends AppCompatActivity {
 
         StringBuilder sb4 = new StringBuilder(endDateTime.substring(11, 16));
         sb4.deleteCharAt(2);
-        endTime.setText(sb4);
+        endTime.setText(sb4);*/
 
         final Database database = new Database();
 
@@ -74,8 +74,8 @@ public class EventModification extends AppCompatActivity {
                 if (!Objects.equals(itemId, "") || !Objects.equals(price, "") ||
                         !Objects.equals(startTimeString, "") || !Objects.equals(endTimeString, "") ||
                         !Objects.equals(dcType, "")) {
-                    database.insertDiscountInfo(
-                            itemId, price, startTimeString, endTimeString, dcType, null);
+                    database.updateDiscountInfo(
+                            info.getDiscountId(), price, startTimeString, endTimeString, dcType, null);
                     Toast.makeText(EventModification.this, "수정완료", Toast.LENGTH_SHORT).show();
                     finish();
                 } else {
@@ -94,7 +94,7 @@ public class EventModification extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        String ItemId = data.getStringExtra(SearchItem.ITEM_ID);
+        String ItemId = data.getStringExtra(ItemList.ITEM_ID);
         itemIdEditText.setText(ItemId);
     }
 }

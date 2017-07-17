@@ -36,6 +36,7 @@ public class Database {
     private final String INSERT_DISCOUNT_INFO = "InsertDiscountInfo";
     private final String INSERT_ITEM = "InsertItem";
     private final String INSERT_PRICE = "InsertPrice";
+    private final String UPDATE_DISCOUNT_INFO = "UpdateDiscountInfo";
     private final String LOG = "Database";
     //endregion
 
@@ -66,7 +67,7 @@ public class Database {
         requestImage(_discountInfoList.get(index).getItemId(), loadCompleteListener);
     }
 
-    public void requestImage(String itemId, LoadCompleteListener loadCompleteListener) {
+    private void requestImage(String itemId, LoadCompleteListener loadCompleteListener) {
         scrap(TYPE_IMAGE,
                 "images/" + itemId + ".png",
                 loadCompleteListener);
@@ -99,7 +100,11 @@ public class Database {
         scrap(TYPE_NONE, INSERT_PRICE, loadCompleteListener, itemId, parseQueryString(date), price);
     }
 
-    public String parseQueryString(String string) {
+    public void updateDiscountInfo(String discountInfoId, String price, String startTime, String endTime, String discountType, LoadCompleteListener loadCompleteListener) {
+        scrap(TYPE_NONE, UPDATE_DISCOUNT_INFO, loadCompleteListener, discountInfoId, price,
+                parseQueryString(startTime), parseQueryString(endTime), parseQueryString(discountType));
+    }
+    private String parseQueryString(String string) {
         return "'" + string + "'";
     }
     //endregion
@@ -285,7 +290,7 @@ public class Database {
         }
     }
 
-    public void setBitmap(Bitmap bitmap) {
+    private void setBitmap(Bitmap bitmap) {
         _bitmapList.add(bitmap);
     }
 

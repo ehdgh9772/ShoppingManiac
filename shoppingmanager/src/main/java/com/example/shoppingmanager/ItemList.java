@@ -19,7 +19,7 @@ import com.example.shoppingmanager.database.Item;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchItem extends AppCompatActivity {
+public class ItemList extends AppCompatActivity {
 
     public static final int REQUEST_CODE = 500;
     //todo 적절한 클래스명으로 변경

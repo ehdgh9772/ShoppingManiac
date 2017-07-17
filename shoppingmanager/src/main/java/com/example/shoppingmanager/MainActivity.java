@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(MainActivity.this, PriceModification.class);
+                        Intent intent = new Intent(MainActivity.this, PriceRegistration.class);
                         startActivity(intent);
                         Toast.makeText(getApplicationContext(), "가격수정 화면으로 이동", Toast.LENGTH_SHORT).show();
                     }
