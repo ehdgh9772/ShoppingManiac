@@ -11,14 +11,16 @@ import android.widget.Toast;
 import com.example.shoppingmanager.database.Database;
 
 public class EventRegistration extends AppCompatActivity {
-    String itemId;
 
+    public static final int REQUEST_CODE = 500;
+    String itemId;
+    EditText itemIdEditText;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_registration);
 
-        final EditText itemId = (EditText) findViewById(R.id.edt_itemId);
+        itemIdEditText = (EditText) findViewById(R.id.edt_itemId);
         final EditText discountPrice = (EditText) findViewById(R.id.edt_dcPrice);
         final EditText startDate = (EditText) findViewById(R.id.edt_startDate);
         final EditText endDate = (EditText) findViewById(R.id.edt_endDate);
@@ -34,7 +36,7 @@ public class EventRegistration extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), SearchItem.class);
-                startActivityForResult(intent, RESULT_OK);
+                startActivityForResult(intent, REQUEST_CODE);
             }
         });
 
@@ -45,7 +47,7 @@ public class EventRegistration extends AppCompatActivity {
                 String startTimeString = buildDateTime(startDate.getText().toString(), startTime.getText().toString());
                 String endTimeString = buildDateTime(endDate.getText().toString(), endTime.getText().toString());
 
-                database.insertDiscountInfo(itemId.getText().toString(),
+                database.insertDiscountInfo(itemIdEditText.getText().toString(),
                         discountPrice.getText().toString(),
                         startTimeString,
                         endTimeString,
@@ -67,7 +69,7 @@ public class EventRegistration extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        System.out.println(data.getData());
-        itemId = data.getDataString();
+        String ItemId = data.getStringExtra(SearchItem.ITEM_ID);
+        itemIdEditText.setText(ItemId);
     }
 }

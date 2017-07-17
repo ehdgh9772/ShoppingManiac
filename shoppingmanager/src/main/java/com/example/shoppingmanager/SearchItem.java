@@ -18,8 +18,11 @@ import com.example.shoppingmanager.database.Item;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.shoppingmanager.EventRegistration.REQUEST_CODE;
+
 public class SearchItem extends AppCompatActivity {
     //todo 적절한 클래스명으로 변경
+    public static final String ITEM_ID = "ItemId";
 
     List<Item> _list;
     RecyclerView recyclerView;
@@ -79,12 +82,10 @@ public class SearchItem extends AppCompatActivity {
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            String itemId;
-                            itemId=_list.get(_position).getItemId();
-
-                            Intent intent = new Intent(getApplicationContext(), PriceModification.class);
-                            //intent.putExtra("itemId", itemId);
-                            startActivityForResult(intent, RESULT_OK);
+                            Intent intent = new Intent();
+                            intent.putExtra(ITEM_ID,_list.get(_position).getItemId());
+                            setResult(REQUEST_CODE, intent);
+                            finish();
                         }
                     }
             );
@@ -109,7 +110,7 @@ public class SearchItem extends AppCompatActivity {
                 super(itemView);
                 _itemName = (TextView) itemView.findViewById(R.id.txv_card_itemName);
                 _itemPrice = (TextView) itemView.findViewById(R.id.txv_card_itemPrice);
-                selection = (Button) findViewById(R.id.selection);
+                selection = (Button) itemView.findViewById(R.id.selection);
             }
         }
     }
