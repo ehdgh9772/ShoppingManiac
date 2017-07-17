@@ -17,7 +17,7 @@
         app:layout_constraintRight_toRightOf="parent"/>
 
     <TextView
-        android:id="@+id/txv_eventName"
+        android:id="@+id/txv_itemName"
         android:layout_width="100dp"
         android:layout_height="50dp"
         android:layout_marginLeft="16dp"
@@ -30,18 +30,18 @@
         app:layout_constraintTop_toBottomOf="@+id/btn_searchItemId"/>
 
     <EditText
-        android:id="@+id/edt_eventName"
+        android:id="@+id/edt_itemName"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:inputType="textPersonName"
-        app:layout_constraintBaseline_toBaselineOf="@+id/txv_eventName"
-        app:layout_constraintLeft_toRightOf="@+id/txv_eventName"
+        app:layout_constraintBaseline_toBaselineOf="@+id/txv_itemName"
+        app:layout_constraintLeft_toRightOf="@+id/txv_itemName"
         app:layout_constraintRight_toRightOf="parent"/>
 
     <TextView
-        android:id="@+id/txv_dcPrice"
+        android:id="@+id/txv_itemCategoryId"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginTop="25dp"
@@ -50,24 +50,24 @@
         android:textColor="@android:color/black"
         android:textSize="20dp"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="@+id/txv_eventName"
-        app:layout_constraintRight_toRightOf="@+id/txv_eventName"
-        app:layout_constraintTop_toBottomOf="@+id/txv_eventName"/>
+        app:layout_constraintLeft_toLeftOf="@+id/txv_itemName"
+        app:layout_constraintRight_toRightOf="@+id/txv_itemName"
+        app:layout_constraintTop_toBottomOf="@+id/txv_itemName"/>
 
     <EditText
-        android:id="@+id/edt_dcPrice"
+        android:id="@+id/edt_itemCategoryId"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginLeft="0dp"
         android:inputType="textPersonName"
-        app:layout_constraintBaseline_toBaselineOf="@+id/txv_dcPrice"
+        app:layout_constraintBaseline_toBaselineOf="@+id/txv_itemCategoryId"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintLeft_toLeftOf="@+id/edt_eventName"
-        app:layout_constraintRight_toRightOf="@+id/edt_eventName"/>
+        app:layout_constraintLeft_toLeftOf="@+id/edt_itemName"
+        app:layout_constraintRight_toRightOf="@+id/edt_itemName"/>
 
 
     <TextView
-        android:id="@+id/txv_startTime"
+        android:id="@+id/txv_itemUnit"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginTop="25dp"
@@ -76,41 +76,18 @@
         android:textColor="@android:color/black"
         android:textSize="20dp"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="@+id/txv_dcPrice"
-        app:layout_constraintRight_toRightOf="@+id/txv_dcPrice"
-        app:layout_constraintTop_toBottomOf="@+id/txv_dcPrice"/>
+        app:layout_constraintLeft_toLeftOf="@+id/txv_itemCategoryId"
+        app:layout_constraintRight_toRightOf="@+id/txv_itemCategoryId"
+        app:layout_constraintTop_toBottomOf="@+id/txv_itemCategoryId"/>
 
     <EditText
-        android:id="@+id/edt_startTime"
+        android:id="@+id/edt_itemUnit"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:inputType="textPersonName"
-        app:layout_constraintBaseline_toBaselineOf="@+id/txv_startTime"
-        app:layout_constraintLeft_toLeftOf="@+id/edt_dcPrice"
-        app:layout_constraintRight_toRightOf="@+id/edt_dcPrice"/>
-
-    <TextView
-        android:id="@+id/txv_endTime"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="25dp"
-        android:gravity="center_vertical"
-        android:text="단위"
-        android:textColor="@android:color/black"
-        android:textSize="20dp"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="@+id/txv_startTime"
-        app:layout_constraintRight_toRightOf="@+id/txv_startTime"
-        app:layout_constraintTop_toBottomOf="@+id/txv_startTime"/>
-
-    <EditText
-        android:id="@+id/edt_endTime"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:inputType="textPersonName"
-        app:layout_constraintBaseline_toBaselineOf="@+id/txv_endTime"
-        app:layout_constraintLeft_toLeftOf="@+id/edt_startTime"
-        app:layout_constraintRight_toRightOf="@+id/edt_startTime"/>
+        app:layout_constraintBaseline_toBaselineOf="@+id/txv_itemUnit"
+        app:layout_constraintLeft_toLeftOf="@+id/edt_itemCategoryId"
+        app:layout_constraintRight_toRightOf="@+id/edt_itemCategoryId"/>
 
     <Button
         android:id="@+id/btn_commitItem"
