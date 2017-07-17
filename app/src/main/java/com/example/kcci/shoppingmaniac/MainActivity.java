@@ -88,8 +88,6 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        initialize();
-
         initLayout();
 
         connectBeacons();
@@ -101,16 +99,6 @@ public class MainActivity extends AppCompatActivity
 
 //        viewItemInfo();
     }
-
-    //region Initialize
-//    private void initialize() {
-//        initLayout();
-//        setAnimation();
-//        addTest();
-//        beaconManager.scanBeacon();
-//    }
-
-
 
     //region initialize layout , test and drawerView animation
     /**
@@ -143,8 +131,6 @@ public class MainActivity extends AppCompatActivity
 
         _txtVSpottedConer = (TextView) findViewById(R.id.txtVSpottedConer);
         _rootLayout = findViewById(R.id.cons_main_frame);
-
-//        beaconManager = new BeaconManager(MainActivity.this, _txtVSpottedConer, _rootLayout);
 
     }
 
@@ -242,22 +228,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-//        switch (requestCode) {
-//            case REQUEST_LOCATION: {
-//                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                    Snackbar.make(_rootLayout, "location_permission_granted", Snackbar.LENGTH_LONG)
-//                            .show();
-//                } else {
-//                    Snackbar.make(_rootLayout, "location_permission_not_granted", Snackbar
-//                            .LENGTH_LONG).show();
-//                }
-//            }
-//            default:
-//                break;
-//        }
-//    }
 
     /** when some beacons in some ranges itll be fired*/
     @Override
