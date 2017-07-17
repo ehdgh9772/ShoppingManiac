@@ -56,7 +56,7 @@ public class Database {
         Log.i(LOG_CLASS, "requested");
     }
 
-    public void requestImageFromIndex(int index, LoadCompleteListener loadCompleteListener) {
+    public void requwestImageFromIndex(int index, LoadCompleteListener loadCompleteListener) {
         scrap(TYPE_IMAGE,
                 "images/" + _discountInfoList.get(index).getItemId() + ".png",
                 loadCompleteListener);

@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 //        viewItemInfo();
     }
 
-    //region initialize layout , test and drawerView animation
+    //region initialize layout, drawerView animation
     /**
      * 레이아웃 초기화
      */
@@ -591,7 +591,6 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
          * @param layout
          */
         BeaconRecyclerAdapter(ArrayList<RECOBeacon> beacons, int layout) {
-
             _beacons = beacons;
             _layout = layout;
         }
@@ -606,8 +605,6 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
             View view = LayoutInflater.from(viewGroup.getContext()).inflate(_layout, viewGroup, false);
-//            int paddingSize = (int) getResources().getDimension(R.dimen.beacon_view_holder_padding);
-//            view.setPadding(paddingSize, paddingSize, paddingSize, paddingSize);
             return new ViewHolder(view);
         }
 
