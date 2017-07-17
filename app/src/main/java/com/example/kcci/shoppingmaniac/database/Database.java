@@ -326,7 +326,7 @@ public class Database {
     }
 
     private String convertDateTime(String dateTime) {
-        return dateTime.replace("T", "/").replace(dateTime.substring(16), "");
+        return dateTime.replace("T", System.getProperty("line.separator")).replace(dateTime.substring(16), "");
     }
     //endregion
 
