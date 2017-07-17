@@ -36,6 +36,7 @@ public class ItemRegistration extends AppCompatActivity {
         final EditText itemName = (EditText) findViewById(R.id.edt_itemName);
         final EditText itemCategoryId = (EditText) findViewById(R.id.edt_itemCategoryId);
         final EditText itemUnit = (EditText) findViewById(R.id.edt_itemUnit);
+        final EditText itemPrice = (EditText) findViewById(R.id.edt_itemPrice);
 
         final Database database = new Database();
 
@@ -59,6 +60,7 @@ public class ItemRegistration extends AppCompatActivity {
                         database.insertItem(itemName.getText().toString(),
                                 itemCategoryId.getText().toString(),
                                 itemUnit.getText().toString(),
+                                itemPrice.getText().toString(),
                                 new Database.LoadCompleteListener(){
                                     @Override
                                     public void onLoadComplete() {
