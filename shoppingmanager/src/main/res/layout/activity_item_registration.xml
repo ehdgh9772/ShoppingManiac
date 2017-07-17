@@ -2,8 +2,23 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/imv_item_registration"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:srcCompat="@drawable/a"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/btn_searchItemId"/>
 
     <Button
         android:id="@+id/btn_searchItemId"
@@ -12,22 +27,24 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:text="이미지 불러오기"
-        app:layout_constraintBaseline_toBaselineOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/txv_itemName"/>
 
     <TextView
         android:id="@+id/txv_itemName"
         android:layout_width="100dp"
         android:layout_height="50dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="8dp"
         android:gravity="center_vertical"
         android:text="이름"
         android:textColor="@android:color/black"
         android:textSize="20dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_searchItemId"/>
+        android:layout_marginBottom="12dp"
+        app:layout_constraintBottom_toTopOf="@+id/txv_itemCategoryId"/>
 
     <EditText
         android:id="@+id/edt_itemName"
@@ -44,7 +61,6 @@
         android:id="@+id/txv_itemCategoryId"
         android:layout_width="0dp"
         android:layout_height="50dp"
-        android:layout_marginTop="25dp"
         android:gravity="center_vertical"
         android:text="범주"
         android:textColor="@android:color/black"
@@ -52,7 +68,8 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="@+id/txv_itemName"
         app:layout_constraintRight_toRightOf="@+id/txv_itemName"
-        app:layout_constraintTop_toBottomOf="@+id/txv_itemName"/>
+        android:layout_marginBottom="12dp"
+        app:layout_constraintBottom_toTopOf="@+id/txv_itemUnit"/>
 
     <EditText
         android:id="@+id/edt_itemCategoryId"
@@ -70,7 +87,6 @@
         android:id="@+id/txv_itemUnit"
         android:layout_width="0dp"
         android:layout_height="50dp"
-        android:layout_marginTop="25dp"
         android:gravity="center_vertical"
         android:text="단위"
         android:textColor="@android:color/black"
@@ -78,7 +94,8 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="@+id/txv_itemCategoryId"
         app:layout_constraintRight_toRightOf="@+id/txv_itemCategoryId"
-        app:layout_constraintTop_toBottomOf="@+id/txv_itemCategoryId"/>
+        android:layout_marginBottom="12dp"
+        app:layout_constraintBottom_toTopOf="@+id/txv_itemPrice"/>
 
     <EditText
         android:id="@+id/edt_itemUnit"
@@ -93,7 +110,6 @@
         android:id="@+id/txv_itemPrice"
         android:layout_width="0dp"
         android:layout_height="50dp"
-        android:layout_marginTop="25dp"
         android:gravity="center_vertical"
         android:text="가격"
         android:textColor="@android:color/black"
@@ -101,7 +117,8 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="@+id/txv_itemUnit"
         app:layout_constraintRight_toRightOf="@+id/txv_itemUnit"
-        app:layout_constraintTop_toBottomOf="@+id/txv_itemUnit"/>
+        android:layout_marginBottom="12dp"
+        app:layout_constraintBottom_toTopOf="@+id/btn_commitItem"/>
 
     <EditText
         android:id="@+id/edt_itemPrice"

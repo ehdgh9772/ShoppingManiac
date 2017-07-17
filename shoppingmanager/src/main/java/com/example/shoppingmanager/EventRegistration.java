@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.shoppingmanager.database.Database;
 
@@ -19,6 +20,8 @@ public class EventRegistration extends AppCompatActivity {
 
         final EditText itemId = (EditText) findViewById(R.id.edt_itemId);
         final EditText discountPrice = (EditText) findViewById(R.id.edt_dcPrice);
+        final EditText startDate = (EditText) findViewById(R.id.edt_startDate);
+        final EditText endDate = (EditText) findViewById(R.id.edt_endDate);
         final EditText startTime = (EditText) findViewById(R.id.edt_startTime);
         final EditText endTime = (EditText) findViewById(R.id.edt_endTime);
         final EditText discountType = (EditText) findViewById(R.id.edt_dcType);
@@ -38,10 +41,14 @@ public class EventRegistration extends AppCompatActivity {
         commitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Toast.makeText(EventRegistration.this, "등록완료", Toast.LENGTH_SHORT).show();
+                String startTimeString = buildDateTime(startDate.getText().toString(), startTime.getText().toString());
+                String endTimeString = buildDateTime(endDate.getText().toString(), endTime.getText().toString());
+
                 database.insertDiscountInfo(itemId.getText().toString(),
                         discountPrice.getText().toString(),
-                        startTime.getText().toString(),
-                        endTime.getText().toString(),
+                        startTimeString,
+                        endTimeString,
                         discountType.getText().toString(),
                         new Database.LoadCompleteListener() {
                     @Override
@@ -51,6 +58,10 @@ public class EventRegistration extends AppCompatActivity {
                 });
             }
         });//todo 커밋 완성하기
+    }
+
+    private String buildDateTime(String date, String time) {
+        return date + time + "00";
     }
 
     @Override

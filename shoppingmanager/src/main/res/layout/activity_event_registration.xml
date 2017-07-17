@@ -84,13 +84,24 @@
         app:layout_constraintTop_toBottomOf="@+id/txv_dcPrice"/>
 
     <EditText
-        android:id="@+id/edt_startTime"
-        android:layout_width="0dp"
+        android:id="@+id/edt_startDate"
+        android:layout_width="100dp"
         android:layout_height="40dp"
+        android:hint="20170101"
         android:inputType="textPersonName"
         app:layout_constraintBaseline_toBaselineOf="@+id/txv_startTime"
         app:layout_constraintLeft_toLeftOf="@+id/edt_dcPrice"
-        app:layout_constraintRight_toRightOf="@+id/edt_dcPrice"/>
+        />
+
+    <EditText
+        android:id="@+id/edt_startTime"
+        android:layout_width="70dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="8dp"
+        android:hint="0800"
+        android:inputType="textPersonName"
+        app:layout_constraintBaseline_toBaselineOf="@+id/txv_startTime"
+        app:layout_constraintLeft_toRightOf="@+id/edt_startDate"/>
 
     <TextView
         android:id="@+id/txv_endTime"
@@ -107,13 +118,24 @@
         app:layout_constraintTop_toBottomOf="@+id/txv_startTime"/>
 
     <EditText
-        android:id="@+id/edt_endTime"
+        android:id="@+id/edt_endDate"
         android:layout_width="0dp"
         android:layout_height="40dp"
+        android:hint="20170102"
         android:inputType="textPersonName"
         app:layout_constraintBaseline_toBaselineOf="@+id/txv_endTime"
-        app:layout_constraintLeft_toLeftOf="@+id/edt_startTime"
-        app:layout_constraintRight_toRightOf="@+id/edt_startTime"/>
+        app:layout_constraintLeft_toLeftOf="@+id/edt_startDate"
+        app:layout_constraintRight_toRightOf="@+id/edt_startDate"/>
+
+    <EditText
+        android:id="@+id/edt_endTime"
+        android:layout_width="70dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="8dp"
+        android:hint="2230"
+        android:inputType="textPersonName"
+        app:layout_constraintBaseline_toBaselineOf="@+id/txv_endTime"
+        app:layout_constraintLeft_toRightOf="@+id/edt_endDate"/>
 
     <TextView
         android:id="@+id/txv_dcType"
@@ -135,8 +157,9 @@
         android:layout_height="40dp"
         android:inputType="textPersonName"
         app:layout_constraintBaseline_toBaselineOf="@+id/txv_dcType"
-        app:layout_constraintLeft_toLeftOf="@+id/edt_endTime"
-        app:layout_constraintRight_toRightOf="@+id/edt_endTime"/>
+        app:layout_constraintLeft_toLeftOf="@+id/edt_endDate"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent"/>
 
     <Button
         android:id="@+id/btn_commitEvent"

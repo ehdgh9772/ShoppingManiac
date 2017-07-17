@@ -88,7 +88,7 @@ public class Database {
     public void insertDiscountInfo(String ItemId, String DiscountedPrice, String StartTime, String EndTime,
                                    String DiscountType, LoadCompleteListener loadCompleteListener) {
         scrap(TYPE_NONE, INSERT_DISCOUNT_INFO, loadCompleteListener, ItemId,
-                DiscountedPrice, StartTime, EndTime, DiscountType);
+                DiscountedPrice, parseQueryString(StartTime), parseQueryString(EndTime), parseQueryString(DiscountType));
     }
 
     public void insertItem(String name, String categoryId, String unit, String price, LoadCompleteListener loadCompleteListener) {
@@ -235,6 +235,7 @@ public class Database {
                 discountInfo.setDiscountedPrice(jsonObj.getString("DiscountedPrice"));
                 discountInfo.setCategory(jsonObj.getString("Category"));
                 discountInfo.setStartTime(jsonObj.getString("StartTime"));
+                Log.i("setDCInfo", discountInfo.getStartTime());
                 discountInfo.setEndTime(jsonObj.getString("EndTime"));
 
                 _discountInfoList.add(discountInfo);

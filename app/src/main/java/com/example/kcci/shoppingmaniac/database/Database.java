@@ -24,7 +24,7 @@ public class Database {
     public static final String MAIN = "0";
     public static final String MEAT = "1";
     public static final String VEGETABLE = "2";
-    public static final String HOME_APPLIENCE = "3";
+    public static final String APPLIANCE = "3";
 
     public static final String GET_DISCOUNT_INFO = "GetDiscountInfo";
     public static final String GET_PRICE_HISTORY = "GetPriceHistory";
@@ -251,9 +251,10 @@ public class Database {
                 discountInfo.setPrice(jsonObj.getString("Price"));
                 discountInfo.setDiscountedPrice(jsonObj.getString("DiscountedPrice"));
                 discountInfo.setCategory(jsonObj.getString("Category"));
-                discountInfo.setStartTime(jsonObj.getString("StartTime"));
-                discountInfo.setEndTime(jsonObj.getString("EndTime"));
+                discountInfo.setStartTime(convertDateTime(jsonObj.getString("StartTime")));
+                discountInfo.setEndTime(convertDateTime(jsonObj.getString("EndTime")));
 
+                Log.i("setDCInfo", discountInfo.getStartTime());
                 _discountInfoList.add(discountInfo);
                 Log.i("tag", "put on array");
             }
@@ -324,6 +325,9 @@ public class Database {
         _bitmapList.add(bitmap);
     }
 
+    private String convertDateTime(String dateTime) {
+        return dateTime.replace("T", System.getProperty("line.separator")).replace(dateTime.substring(16), "");
+    }
     //endregion
 
     //region Getter

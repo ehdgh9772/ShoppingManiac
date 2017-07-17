@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">"ShoppingManiac"</string>
     <string name="action_settings">Settings</string>
+    <string name="no_beacons_spotted">"감지된 상품 코너 정보가 없습니다."</string>
     <string name="item_title">Palais Garnier</string>
     <string name="item_desc">The Palais Garnier which locates in Paris was built from 1861 for
         the Paris Opera.
