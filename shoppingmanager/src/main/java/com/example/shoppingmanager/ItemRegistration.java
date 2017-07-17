@@ -1,7 +1,7 @@
 package com.example.shoppingmanager;
 
 import android.content.Intent;
-import android.net.Uri;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
@@ -9,17 +9,18 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.example.shoppingmanager.database.Database;
 
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.text.BreakIterator;
 
 
 public class ItemRegistration extends AppCompatActivity {
 
+    private final int PICK_FROM_ALBUM = 100;
     ImageView iv;
     private FileInputStream mFileInputStream;
     private URL connectUrl;
@@ -46,9 +47,7 @@ public class ItemRegistration extends AppCompatActivity {
                     public void onClick(View view) {
                         Intent intent = new Intent(Intent.ACTION_PICK);
                         intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
-                        startActivityForResult(intent, 1);
-
-                        Toast.makeText(getApplicationContext(), "촬영 화면으로 이동", Toast.LENGTH_SHORT).show();
+                        startActivityForResult(intent, PICK_FROM_ALBUM);
                     }
                 }
         );
@@ -75,9 +74,17 @@ public class ItemRegistration extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        Uri selPhotoUri = data.getData();
-
+        if(data != null){
+            Bitmap image_bitmap = null;
+            try {
+                image_bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
+                ImageView image = (ImageView)findViewById(R.id.imv_item_registration);
+                //배치해놓은 ImageView에 set
+                image.setImageBitmap(image_bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }

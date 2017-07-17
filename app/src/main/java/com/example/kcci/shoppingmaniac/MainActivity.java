@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity
     private void addTest() {
         _beaconList.add(Database.MAIN);
 
-        Button button = (Button) findViewById(R.id.changeList);
+        Button button = (Button) findViewById(R.id.addList);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
