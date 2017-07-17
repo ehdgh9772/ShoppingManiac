@@ -10,9 +10,10 @@ import android.widget.Toast;
 
 import com.example.shoppingmanager.database.Database;
 
+import static com.example.shoppingmanager.SearchItem.REQUEST_CODE;
+
 public class EventRegistration extends AppCompatActivity {
 
-    public static final int REQUEST_CODE = 500;
     String itemId;
     EditText itemIdEditText;
     @Override

@@ -18,9 +18,9 @@ import com.example.shoppingmanager.database.Item;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.shoppingmanager.EventRegistration.REQUEST_CODE;
-
 public class SearchItem extends AppCompatActivity {
+
+    public static final int REQUEST_CODE = 500;
     //todo 적절한 클래스명으로 변경
     public static final String ITEM_ID = "ItemId";
 
