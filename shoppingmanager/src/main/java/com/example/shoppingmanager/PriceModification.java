@@ -11,6 +11,7 @@ import com.example.shoppingmanager.database.Database;
 
 public class PriceModification extends AppCompatActivity {
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,6 +30,7 @@ public class PriceModification extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), SearchItem.class);
                 startActivityForResult(intent, RESULT_OK);
+                //intent.getExtras().getString("itemId");
             }
         });
 

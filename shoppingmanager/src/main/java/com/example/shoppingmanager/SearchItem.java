@@ -1,5 +1,6 @@
 package com.example.shoppingmanager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -7,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -43,6 +45,7 @@ public class SearchItem extends AppCompatActivity {
             }
         });
 
+
 //        for(int i=0;i<5;i++) _items.add(item[i]);
 
         //recyclerView.setAdapter(new MyRecyclerAdapter(getApplicationContext(),albumList,R.layout.activity_list_inquiry));
@@ -68,9 +71,23 @@ public class SearchItem extends AppCompatActivity {
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
 
+            final int _position = position;
             Item item = _itemList.get(position);
             holder._itemName.setText(item.getName());
             holder._itemPrice.setText(item.getPrice());
+            holder.selection.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String itemId;
+                            itemId=_list.get(_position).getItemId();
+
+                            Intent intent = new Intent(getApplicationContext(), PriceModification.class);
+                            //intent.putExtra("itemId", itemId);
+                            startActivityForResult(intent, RESULT_OK);
+                        }
+                    }
+            );
         }
 
         @Override
@@ -86,14 +103,14 @@ public class SearchItem extends AppCompatActivity {
             public ImageView _img;
             public TextView _itemName;
             public TextView _itemPrice;
+            private Button selection;
 
             public ViewHolder(View itemView) {
                 super(itemView);
                 _itemName = (TextView) itemView.findViewById(R.id.txv_card_itemName);
                 _itemPrice = (TextView) itemView.findViewById(R.id.txv_card_itemPrice);
+                selection = (Button) findViewById(R.id.selection);
             }
-
         }
-
     }
 }
