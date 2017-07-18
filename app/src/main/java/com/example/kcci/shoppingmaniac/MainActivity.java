@@ -256,7 +256,9 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
             }
         });
 
-        if ( !isEntranceChecked && _return.get(0) == 0 ) isEntranceChecked = true;
+        if ( !isEntranceChecked && _return.size() == 1) {
+            if (_return.get(0) == 0 ) isEntranceChecked = true;
+        } 
         else if ( isEntranceChecked && _return.get(0) != 0 ) _return.add(0,0);
 
         return _return;

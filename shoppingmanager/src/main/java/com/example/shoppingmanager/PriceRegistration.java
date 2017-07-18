@@ -76,8 +76,6 @@ public class PriceRegistration extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         String ItemId = data.getStringExtra(ItemList.ITEM_ID);
         itemIdEditText.setText(ItemId);
-        if(_imageView != null) {
-            _imageView.setImageBitmap((Bitmap) data.getExtras().get(ItemList.ITEM_IMAGE));
-        }
+        _imageView.setImageBitmap((Bitmap) data.getExtras().get(ItemList.ITEM_IMAGE));
     }
 }
