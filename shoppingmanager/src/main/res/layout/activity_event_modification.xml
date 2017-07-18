@@ -7,34 +7,6 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/txv_evmod_itemId"
-        android:layout_width="100dp"
-        android:layout_height="40dp"
-        android:gravity="center_vertical"
-        android:text="아이디"
-        android:textColor="@android:color/black"
-        android:textSize="20dp"
-        android:layout_marginLeft="0dp"
-        app:layout_constraintLeft_toLeftOf="@+id/txv_evmod_dcPrice"
-        android:layout_marginRight="0dp"
-        app:layout_constraintRight_toRightOf="@+id/txv_evmod_dcPrice"
-        app:layout_constraintHorizontal_bias="0.0"
-        android:layout_marginBottom="26dp"
-        app:layout_constraintBottom_toTopOf="@+id/txv_evmod_dcPrice"/>
-
-    <EditText
-        android:id="@+id/edt_evmod_itemId"
-        android:layout_width="0dp"
-        android:layout_height="40dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:inputType="textPersonName"
-        app:layout_constraintBaseline_toBaselineOf="@+id/txv_evmod_itemId"
-        app:layout_constraintLeft_toRightOf="@+id/txv_evmod_itemId"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintHorizontal_bias="0.0" />
-
-    <TextView
         android:id="@+id/txv_evmod_dcPrice"
         android:layout_width="0dp"
         android:layout_height="40dp"
@@ -56,9 +28,10 @@
         android:layout_height="40dp"
         android:inputType="textPersonName"
         app:layout_constraintBaseline_toBaselineOf="@+id/txv_evmod_dcPrice"
-        app:layout_constraintLeft_toLeftOf="@+id/edt_evmod_itemId"
-        app:layout_constraintRight_toRightOf="@+id/edt_evmod_itemId"
-        app:layout_constraintHorizontal_bias="1.0"/>
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginLeft="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/edt_evmod_startDate"/>
 
     <TextView
         android:id="@+id/txv_evmod_startTime"
@@ -83,8 +56,10 @@
         android:hint="20170101"
         android:inputType="textPersonName"
         app:layout_constraintBaseline_toBaselineOf="@+id/txv_evmod_startTime"
-        app:layout_constraintLeft_toLeftOf="@+id/edt_evmod_dcPrice"
-        android:layout_marginLeft="1dp"/>
+        android:layout_marginRight="0dp"
+        app:layout_constraintRight_toRightOf="@+id/edt_evmod_endDate"
+        android:layout_marginLeft="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/edt_evmod_endDate"/>
 
     <EditText
         android:id="@+id/edt_evmod_startTime"
@@ -114,13 +89,14 @@
 
     <EditText
         android:id="@+id/edt_evmod_endDate"
-        android:layout_width="0dp"
+        android:layout_width="100dp"
         android:layout_height="40dp"
+        android:layout_marginLeft="0dp"
         android:hint="20170102"
         android:inputType="textPersonName"
         app:layout_constraintBaseline_toBaselineOf="@+id/txv_evmod_endTime"
-        app:layout_constraintLeft_toLeftOf="@+id/edt_evmod_startDate"
-        app:layout_constraintRight_toRightOf="@+id/edt_evmod_startDate"/>
+        app:layout_constraintLeft_toLeftOf="@+id/edt_evmod_dcType"
+        />
 
     <EditText
         android:id="@+id/edt_evmod_endTime"
