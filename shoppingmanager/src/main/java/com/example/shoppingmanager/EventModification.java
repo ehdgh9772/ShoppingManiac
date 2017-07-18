@@ -65,15 +65,13 @@ public class EventModification extends AppCompatActivity {
         commitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String itemId = itemIdEditText.getText().toString();
                 String price = discountPrice.getText().toString();
                 String startTimeString = buildDateTime(startDate.getText().toString(), startTime.getText().toString());
                 String endTimeString = buildDateTime(endDate.getText().toString(), endTime.getText().toString());
                 String dcType = discountType.getText().toString();
 
-                if (!Objects.equals(itemId, "") || !Objects.equals(price, "") ||
-                        !Objects.equals(startTimeString, "") || !Objects.equals(endTimeString, "") ||
-                        !Objects.equals(dcType, "")) {
+                if (!Objects.equals(price, "") || !Objects.equals(startTimeString, "") ||
+                        !Objects.equals(endTimeString, "") || !Objects.equals(dcType, "")) {
                     database.updateDiscountInfo(
                             info.getDiscountId(), price, startTimeString, endTimeString, dcType, null);
                     Toast.makeText(EventModification.this, "수정완료", Toast.LENGTH_SHORT).show();
