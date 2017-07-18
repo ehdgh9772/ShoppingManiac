@@ -103,9 +103,10 @@ public class ItemList extends AppCompatActivity {
                             Intent intent = new Intent();
                             intent.putExtra(ITEM_ID, _list.get(_position).getItemId());
                             Bitmap src = _bitmapList.get(_position);
-                            Bitmap resized = Bitmap.createScaledBitmap(src, src.getWidth()/2, src.getHeight()/2, true);
-
-                            intent.putExtra(ITEM_IMAGE, resized);
+                            if (src != null) {
+                                Bitmap resized = Bitmap.createScaledBitmap(src, src.getWidth() / 2, src.getHeight() / 2, true);
+                                intent.putExtra(ITEM_IMAGE, resized);
+                            }
                             setResult(REQUEST_CODE, intent);
                             finish();
                         }
