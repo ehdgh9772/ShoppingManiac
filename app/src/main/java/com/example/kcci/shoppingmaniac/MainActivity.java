@@ -241,6 +241,8 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 
         if (!hasListDisplayed && _return.size() != 0 ) {
             viewDiscountInfo();
+            _return.add(0, 0);
+            hasFloatDiscountViewIcon = true;
             hasListDisplayed = true;
         }
 
