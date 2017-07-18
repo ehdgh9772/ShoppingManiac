@@ -61,14 +61,12 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
     ArrayList<DiscountInfo> _discountInfoList;
     ArrayList<Bitmap> _images;
     ArrayList<String> _itemIdList;
-    ArrayList<RECOBeacon> _beaconList;
+    ArrayList<Integer> _beaconList;
     private String[] arySection;
     private String[] arySectionInDB;
-    private ArrayList<RECOBeacon> _tmpPrev;
-    private boolean isCheckedEntrance = false;
+    private ArrayList<Integer> _tmpPrev;
+    private boolean isEntranceChecked = false;
 
-
-    //beacon field
     static final String RECO_UUID = "24DDF411-8CF1-440C-87CD-E368DAF9C93E";
     static final boolean SCAN_RECO_ONLY = true;
     static final boolean ENABLE_BACKGROUND_RANGING_TIMEOUT = true;
@@ -80,8 +78,6 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
     protected RECOBeaconManager mRecoManager;
     protected RECOBeaconRegion region;
     private int beaconRssiCritical = -85;
-    //endregion
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,7 +128,6 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         _rootLayout = findViewById(R.id.cons_main_frame);
 
     }
-
 
     private void popDrawerView() {
         if (isPageSlided) {
@@ -213,7 +208,8 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
     public void didRangeBeaconsInRegion(Collection<RECOBeacon> collection,
                                         RECOBeaconRegion recoBeaconRegion) {
 
-        ArrayList<RECOBeacon> _tmp = getRangedConerList(collection);
+//            _txtVSpottedConer.setText(collection.size());
+        ArrayList<Integer> _tmp = getRangedConerList(collection);
         if (!_tmp.equals(_tmpPrev)) updateAdapter(_tmp);
     }
 //            viewDiscountInfo();
@@ -243,29 +239,30 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 //            }
 
     /**return sorted array*/
-    private ArrayList<RECOBeacon> getRangedConerList ( Collection<RECOBeacon> collection ) {
+    private ArrayList<Integer> getRangedConerList (Collection<RECOBeacon> collection ) {
 
-        ArrayList<RECOBeacon> _return = new ArrayList<>();
+        ArrayList<Integer> _return = new ArrayList<>();
 
         for (RECOBeacon recoBeacon : collection) {
             if( recoBeacon.getRssi() > beaconRssiCritical
                     && recoBeacon.getMinor() < arySection.length)
-                _return.add(recoBeacon);
+                _return.add(recoBeacon.getMinor());
         }
 
-        Collections.sort(_return, new Comparator<RECOBeacon>() {
+        Collections.sort(_return, new Comparator<Integer>() {
             @Override
-            public int compare(RECOBeacon o1, RECOBeacon o2) {
-                return o1.getMinor() - o2.getMinor();
+            public int compare(Integer o1, Integer o2) {
+                return o1 - o2;
             }
-
         });
+
+        if ( !isEntranceChecked && _return.get(0) == 0 ) isEntranceChecked = true;
+        else if ( isEntranceChecked && _return.get(0) != 0 ) _return.add(0,0);
 
         return _return;
     }
 
-
-    private void updateAdapter(ArrayList<RECOBeacon> _tmp) {
+    private void updateAdapter(ArrayList<Integer> _tmp) {
 
         _beaconRecyclerView.setAdapter(new BeaconRecyclerAdapter(_tmp, R.layout.each_beacon));
         final Database database = new Database();
@@ -578,7 +575,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 
     class BeaconRecyclerAdapter extends RecyclerView.Adapter<BeaconRecyclerAdapter.ViewHolder> {
 
-        private ArrayList<RECOBeacon> _beacons;
+        private ArrayList<Integer> _beacons;
         private int _layout;
 
         /**
@@ -587,7 +584,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
          * @param beacons
          * @param layout
          */
-        BeaconRecyclerAdapter(ArrayList<RECOBeacon> beacons, int layout) {
+        BeaconRecyclerAdapter(ArrayList<Integer> beacons, int layout) {
             _beacons = beacons;
             _layout = layout;
         }
@@ -616,7 +613,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         @Override
         public void onBindViewHolder(ViewHolder viewHolder, int position) {
 
-            final int _indx = _beacons.get(position).getMinor();
+            final int _indx = _beacons.get(position);
             int _imgSrc = getApplicationContext()
                     .getResources().getIdentifier(
                             "coner" + _indx,
@@ -629,15 +626,15 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
             viewHolder._img.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
-                    getViewItemInfo(arySectionInDB[_indx]);
+                    if ( _indx == 0 ) {
+                        viewDiscountInfo();
+                    } else {
+                        getViewItemInfo(arySectionInDB[_indx]);
+                    }
                 }
-
-//                private void appendItems(ArrayList<Item> itemsByConer) {
-//                    _recyclerView.setAdapter(new ItemRecyclerAdapter(itemsByConer, R.layout.card_item));
-//
             });
         }
+
 
         @Override
         public int getItemCount() {
