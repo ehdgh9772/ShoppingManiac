@@ -46,7 +46,7 @@ public class Database {
     private ArrayList<PriceHistory> _priceHistoryList;
     private ArrayList<Item> _itemList;
     private ArrayList<Bitmap> _bitmapList = new ArrayList<>();
-    private ArrayList<Beacon> _beaconList = new ArrayList<>();
+//    private ArrayList<Beacon> _beaconList = new ArrayList<>();
     //endregion
 
     //region Requests
@@ -56,7 +56,7 @@ public class Database {
         Log.i(LOG_CLASS, "requested");
     }
 
-    public void requestImageFromIndex(int index, LoadCompleteListener loadCompleteListener) {
+    public void requwestImageFromIndex(int index, LoadCompleteListener loadCompleteListener) {
         scrap(TYPE_IMAGE,
                 "images/" + _discountInfoList.get(index).getItemId() + ".png",
                 loadCompleteListener);
@@ -160,15 +160,15 @@ public class Database {
                         case GET_ALL_ITEM:
                             setItemList(parseToJSON(str), GET_ALL_ITEM);
                             break;
-                        case GET_ALL_BEACON:
-                            setBeaconList(parseToJSON(str), GET_ALL_BEACON);
-                            break;
-                        case GET_BEACON_BY_BEACON_ID:
-                            setBeaconList(parseToJSON(str), GET_BEACON_BY_BEACON_ID);
-                            break;
-                        case GET_BEACON_BY_CATEGORY:
-                            setBeaconList(parseToJSON(str), GET_BEACON_BY_CATEGORY);
-                            break;
+//                        case GET_ALL_BEACON:
+//                            setBeaconList(parseToJSON(str), GET_ALL_BEACON);
+//                            break;
+//                        case GET_BEACON_BY_BEACON_ID:
+//                            setBeaconList(parseToJSON(str), GET_BEACON_BY_BEACON_ID);
+//                            break;
+//                        case GET_BEACON_BY_CATEGORY:
+//                            setBeaconList(parseToJSON(str), GET_BEACON_BY_CATEGORY);
+//                            break;
                     }
 
                     if (loadCompleteListener != null)
@@ -286,6 +286,7 @@ public class Database {
             JSONArray jsArray = json.getJSONArray(getType);
             _itemList = new ArrayList<>();
             for (int i = 0; i < jsArray.length(); i++) {
+                Log.i("tag", "starting items stack an array");
                 JSONObject jsonObj = jsArray.getJSONObject(i);
                 Item item = new Item();
                 item.setItemId(jsonObj.getString("ItemId"));
@@ -295,31 +296,31 @@ public class Database {
                 item.setUnit(jsonObj.getString("Unit"));
 
                 _itemList.add(item);
-                Log.i("tag", "put on array");
+                Log.i("tag", "put on item array");
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void setBeaconList(JSONObject json, String getType) {
-        try {
-            JSONArray jsArray = json.getJSONArray(getType);
-            _beaconList = new ArrayList<>();
-            for (int i = 0; i < jsArray.length(); i++) {
-                JSONObject jsonObj = jsArray.getJSONObject(i);
-                Beacon beacon = new Beacon();
-
-                beacon.setBeaconId(jsonObj.getString("BeaconId"));
-                beacon.setName(jsonObj.getString("Name"));
-
-                _beaconList.add(beacon);
-            }
-            Log.i("tag", "put on array");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    private void setBeaconList(JSONObject json, String getType) {
+//        try {
+//            JSONArray jsArray = json.getJSONArray(getType);
+//            _beaconList = new ArrayList<>();
+//            for (int i = 0; i < jsArray.length(); i++) {
+//                JSONObject jsonObj = jsArray.getJSONObject(i);
+//                Beacon beacon = new Beacon();
+//
+//                beacon.setBeaconId(jsonObj.getString("BeaconId"));
+//                beacon.setName(jsonObj.getString("Name"));
+//
+//                _beaconList.add(beacon);
+//            }
+//            Log.i("tag", "put on array");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     public void setBitmap(Bitmap bitmap) {
         _bitmapList.add(bitmap);
@@ -352,9 +353,9 @@ public class Database {
         return _itemList;
     }
 
-    public ArrayList<Beacon> getBeaconList() {
-        return _beaconList;
-    }
+//    public ArrayList<Beacon> getBeaconList() {
+//        return _beaconList;
+//    }
 
     //endregion
 

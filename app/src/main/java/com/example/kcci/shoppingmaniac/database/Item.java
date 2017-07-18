@@ -8,13 +8,16 @@ import android.graphics.Bitmap;
 
 public class Item {
 
+    //region field
     private String _itemId;
     private Bitmap _image;
     private String _categoryId;
     private String _name;
     private String _unit;
     private String _price;
+    //endregion
 
+    //region gsetter
     public String getItemId() {
         return _itemId;
     }
@@ -62,4 +65,5 @@ public class Item {
     void setPrice(String price) {
         _price = price;
     }
+    //endregion
 }
