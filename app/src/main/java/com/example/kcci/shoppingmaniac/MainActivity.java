@@ -66,7 +66,8 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
     private String[] arySection;
     private String[] arySectionInDB;
     private ArrayList<Integer> _tmpPrev;
-    private boolean isEntranceChecked = false;
+    private boolean hasFloatDiscountViewIcon = false;
+    private boolean hasListDisplayed = false;
 
     static final String RECO_UUID = "24DDF411-8CF1-440C-87CD-E368DAF9C93E";
     static final boolean SCAN_RECO_ONLY = true;
@@ -91,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 
         setAnimation();
 
-        viewDiscountInfo();
+//        viewDiscountInfo();
 
 //        viewItemInfo();
     }
@@ -233,17 +234,14 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
             }
         });
 
-        Log.i("tag", String.valueOf(_return.size()));
+        if ( hasFloatDiscountViewIcon ) {
+            _return.add(0, 0);
+            hasFloatDiscountViewIcon = true;
+        }
 
-        if ( _return.size() > 0 ) {
-            _txv_main_location.setText(region.getUniqueIdentifier());
-            Log.i("tag", "dddddd");
-            if (_return.get(0) != 0) {
-                _return.add(0,0);
-                isEntranceChecked = true;
-            }
-        } else if ( isEntranceChecked ) {
-            _return.add(0,0);
+        if (!hasListDisplayed && _return.size() != 0 ) {
+            viewDiscountInfo();
+            hasListDisplayed = true;
         }
 
         return _return;
@@ -261,7 +259,6 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         });
         _tmpPrev = _tmp;
     }
-
 
     @Override
     public void rangingBeaconsDidFailForRegion(RECOBeaconRegion recoBeaconRegion,
