@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
     private View _rootLayout;
     boolean isPageSlided = false;
     private TextView _txtVSpottedConer;
+    private TextView _txv_main_location;
 
     Animation _animGrowFromBottom;
     Animation _animSetToBottom;
@@ -117,6 +118,8 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         _openDrawerButton = findViewById(R.id.btn_main_drawer);
         _openDrawerButton.bringToFront();
 
+        _txv_main_location = (TextView) findViewById(R.id.txv_main_location);
+
         _openDrawerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -124,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
             }
         });
 
-        _txtVSpottedConer = (TextView) findViewById(R.id.txtVSpottedConer);
+//        _txtVSpottedConer = (TextView) findViewById(R.id.txtVSpottedConer);
         _rootLayout = findViewById(R.id.cons_main_frame);
 
     }
@@ -256,8 +259,15 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
             }
         });
 
-        if ( !isEntranceChecked && _return.get(0) == 0 ) isEntranceChecked = true;
-        else if ( isEntranceChecked && _return.get(0) != 0 ) _return.add(0,0);
+        if ( _return.size() > 0 ) {
+            _txv_main_location.setText(region.getUniqueIdentifier());
+            if (_return.get(0) != 0) {
+                _return.add(0,0);
+                isEntranceChecked = true;
+            }
+        } else if ( isEntranceChecked ) {
+            _return.add(0,0);
+        }
 
         return _return;
     }
