@@ -11,8 +11,10 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -105,7 +107,12 @@ public class Database {
                 parseQueryString(startTime), parseQueryString(endTime), parseQueryString(discountType));
     }
     private String parseQueryString(String string) {
-        return "'" + string + "'";
+        try {
+            return "'" + URLEncoder.encode(string, "UTF-8") + "'";
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return "InputError";
     }
     //endregion
 
@@ -126,6 +133,7 @@ public class Database {
                 try {
                     URL url = new URL(baseUrl + uri);
                     HttpURLConnection con = (HttpURLConnection) url.openConnection();
+
                     StringBuilder sb = new StringBuilder();
 
                     bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream()));
