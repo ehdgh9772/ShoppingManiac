@@ -61,14 +61,12 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
     ArrayList<DiscountInfo> _discountInfoList;
     ArrayList<Bitmap> _images;
     ArrayList<String> _itemIdList;
-    //    ArrayList<Integer> _beaconList;
-//    ArrayList<Beacon> _beaconList;
     ArrayList<RECOBeacon> _beaconList;
     private String[] arySection;
     private String[] arySectionInDB;
-    //    private ArrayList<Integer> _tmpPrev;
-//    private ArrayList<Beacon> _tmpPrev;
     private ArrayList<RECOBeacon> _tmpPrev;
+    private boolean isCheckedEntrance = false;
+
 
     //beacon field
     static final String RECO_UUID = "24DDF411-8CF1-440C-87CD-E368DAF9C93E";
@@ -82,9 +80,8 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
     protected RECOBeaconManager mRecoManager;
     protected RECOBeaconRegion region;
     private int beaconRssiCritical = -85;
-
-
     //endregion
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -187,10 +184,8 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         );
 
         region = new RECOBeaconRegion(RECO_UUID, 11, "KCCI Mart");
-//        regionMap = new HashMap<>();
-//        for (int i = 0; i < _regionCounter; i++) regionMap.put(111 + i, false);
 
-        arySection = new String[]{"entrance", "grocery", "meat", "appliance"};
+        arySection = new String[]{"showDiscount", "grocery", "meat", "appliance"};
         arySectionInDB = new String[]{"0", "2", "1", "3"};
 
         mRecoManager.setRangingListener(this);
@@ -209,6 +204,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
             Intent enableBTIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBTIntent, REQUEST_ENABLE_BT);
         }
+
     }
 
 
@@ -217,13 +213,35 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
     public void didRangeBeaconsInRegion(Collection<RECOBeacon> collection,
                                         RECOBeaconRegion recoBeaconRegion) {
 
-//        ArrayList<Integer> _tmp = getRangedConerList(collection);
+//            _txtVSpottedConer.setText(collection.size());
         ArrayList<RECOBeacon> _tmp = getRangedConerList(collection);
-
-//        if (!_tmp.equals(_tmpPrev)) updateAdapter(_tmp);
         if (!_tmp.equals(_tmpPrev)) updateAdapter(_tmp);
-
     }
+//            viewDiscountInfo();
+
+//            isCheckedEntrance = true;
+//            _txtVSpottedConer.setText("is checked entrnace point? : " + isCheckedEntrance);
+
+//            for (RECOBeacon recoBeacon : collection) {
+//                if (recoBeacon.getMinor() == 0
+//                        && recoBeacon.getRssi() > beaconRssiCritical) {
+//                    _txtVSpottedConer.setText(recoBeacon.getMinor());
+//                    break;
+//                }
+//            }
+//            Iterator<RECOBeacon> _iter = collection.iterator();
+//            RECOBeacon _singleSpottedBeacon = _iter.next();
+//
+//            int _minor = _singleSpottedBeacon.getMinor();
+//            int _rssi = _singleSpottedBeacon.getRssi();
+//            _txtVSpottedConer.setText("minor and rssi : " + _minor
+//                    + " " + _rssi);
+
+//            if ( _rssi > beaconRssiCritical && _minor == 0 ) {
+//                _txtVSpottedConer.setText("rssi : " + _rssi + " " + _minor);
+//                viewDiscountInfo();
+//                isCheckedEntrance = true;
+//            }
 
     /**return sorted array*/
     private ArrayList<RECOBeacon> getRangedConerList ( Collection<RECOBeacon> collection ) {
@@ -232,7 +250,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 
         for (RECOBeacon recoBeacon : collection) {
             if( recoBeacon.getRssi() > beaconRssiCritical
-                    && recoBeacon.getMinor() < arySection.length )
+                    && recoBeacon.getMinor() < arySection.length)
                 _return.add(recoBeacon);
         }
 
@@ -247,25 +265,6 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         return _return;
     }
 
-//    private ArrayList<Beacon> getRangedConerList (Collection<RECOBeacon> collection ) {
-//
-//        ArrayList<Integer> _return = new ArrayList<>();
-//
-//        for (RECOBeacon recoBeacon : collection) {
-//            int _minor = recoBeacon.getMinor();
-//            if( recoBeacon.getRssi() > beaconRssiCritical && _minor < arySection.length )
-//                _return.add(_minor);
-//            }
-//
-//        Collections.sort(_return, new Comparator<Integer>() {
-//            @Override
-//            public int compare(Integer o1, Integer o2) {
-//                return o1.compareTo(o2);
-//            }
-//        });
-//
-//        return _return;
-//    }
 
     private void updateAdapter(ArrayList<RECOBeacon> _tmp) {
 
@@ -274,7 +273,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         database.requestAllBeacon(new Database.LoadCompleteListener() {
             @Override
             public void onLoadComplete() {
-//                System.out.println(database.getBeaconList().get(0).getName());
+
             }
         });
         _tmpPrev = _tmp;
@@ -633,8 +632,6 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
                 public void onClick(View v) {
 
                     getViewItemInfo(arySectionInDB[_indx]);
-//                    appendItems(itemList);
-
                 }
 
 //                private void appendItems(ArrayList<Item> itemsByConer) {
@@ -642,30 +639,6 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 //
             });
         }
-
-
-//            switch (_beacons.get(position).getMinor()) {
-//                case arySection:
-//                    viewHolder._img.setImageResource(b);
-//                    viewHolder._img.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View v) {
-//                            viewDiscountInfo();
-//                        }
-//                    });
-//                    break;
-//                case 1:
-//                    viewHolder._img.setImageResource(c);
-//                    viewHolder._img.setOnClickListener(new OnCategoryClickListener(Database.MEAT));
-//                    break;
-//                case Database.VEGETABLE:
-//                    viewHolder._img.setImageResource(R.drawable.d);
-//                    viewHolder._img.setOnClickListener(new OnCategoryClickListener(Database.VEGETABLE));
-//            }
-//            viewHolder._textView.setText(_beacons.get(position));
-
-
-
 
         @Override
         public int getItemCount() {
@@ -687,27 +660,6 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
             }
         }
 
-//        class OnCategoryClickListener implements View.OnClickListener {
-//
-//            private String _category;
-//
-//            public OnCategoryClickListener(String category) {
-//
-//                _category = category;
-//            }
-//
-//            @Override
-//            public void onClick(View v) {
-//                final Database database = new Database();
-//                database.requestItemByCategory(_category, new Database.LoadCompleteListener() {
-//                    @Override
-//                    public void onLoadComplete() {
-//                        database.getItemList();
-////                        viewItemInfo(database.getItemList());
-//                    }
-//                });
-//            }
-//        }
     }
 
     class OnLineChartClickListener implements View.OnClickListener {
@@ -732,4 +684,3 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
     }
 //endregion
 }
-

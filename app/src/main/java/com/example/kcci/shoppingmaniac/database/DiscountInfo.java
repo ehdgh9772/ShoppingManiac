@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
  */
 
 public class DiscountInfo {
+    //region field
     private Bitmap _image;
     private String _discountId;
     private String _itemId;
@@ -17,6 +18,7 @@ public class DiscountInfo {
     private String _category;
     private String _startTime;
     private String _endTime;
+    //endregion
 
     //region getter & setter
     public String getDiscountId() {

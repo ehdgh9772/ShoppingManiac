@@ -5,8 +5,10 @@ package com.example.kcci.shoppingmaniac.database;
  */
 
 public class PriceHistory {
+    //region field
     private String price;
     private String date;
+    //endregion
 
     //region Getter & Setter
     public String getPrice() {
