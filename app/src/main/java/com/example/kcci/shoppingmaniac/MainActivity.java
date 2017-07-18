@@ -221,29 +221,38 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 
         ArrayList<Integer> _return = new ArrayList<>();
 
+        Log.i("tag", String.valueOf(collection.size()));
+
         for (RECOBeacon recoBeacon : collection) {
             if( recoBeacon.getRssi() > beaconRssiCritical
                     && recoBeacon.getMinor() < arySection.length)
                 _return.add(recoBeacon.getMinor());
         }
 
-        Collections.sort(_return, new Comparator<Integer>() {
-            @Override
-            public int compare(Integer o1, Integer o2) {
-                return o1 - o2;
+        if (_return.size() != 0) {
+
+            Collections.sort(_return, new Comparator<Integer>() {
+                @Override
+                public int compare(Integer o1, Integer o2) {
+                    return o1 - o2;
+                }
+            });
+
+            if (!hasListDisplayed) {
+                viewDiscountInfo();
+                hasListDisplayed = true;
             }
-        });
 
-        if ( hasFloatDiscountViewIcon ) {
-            _return.add(0, 0);
-            hasFloatDiscountViewIcon = true;
-        }
+            if (_return.size() != 0) {
+                if (_return.get(0) != 0) {
+                    _return.add(0, 0);
+                }
+            }
 
-        if (!hasListDisplayed && _return.size() != 0 ) {
-            viewDiscountInfo();
-            _return.add(0, 0);
             hasFloatDiscountViewIcon = true;
-            hasListDisplayed = true;
+
+        } else if (hasFloatDiscountViewIcon){
+            _return.add(0, 0);
         }
 
         return _return;
