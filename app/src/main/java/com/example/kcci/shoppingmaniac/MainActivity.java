@@ -213,7 +213,6 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
     public void didRangeBeaconsInRegion(Collection<RECOBeacon> collection,
                                         RECOBeaconRegion recoBeaconRegion) {
 
-//            _txtVSpottedConer.setText(collection.size());
         ArrayList<RECOBeacon> _tmp = getRangedConerList(collection);
         if (!_tmp.equals(_tmpPrev)) updateAdapter(_tmp);
     }

@@ -29,7 +29,6 @@ public class EventModification extends AppCompatActivity {
 
         final DiscountInfo info = (DiscountInfo) getIntent().getSerializableExtra(DiscountList.EXTRA_DISCOUNT_INFO);
 
-        itemIdEditText = (EditText) findViewById(R.id.edt_evmod_itemId);
         final EditText discountPrice = (EditText) findViewById(R.id.edt_evmod_dcPrice);
         final EditText startDate = (EditText) findViewById(R.id.edt_evmod_startDate);
         final EditText endDate = (EditText) findViewById(R.id.edt_evmod_endDate);
