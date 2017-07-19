@@ -22,6 +22,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.kcci.shoppingmaniac.database.Database;
 import com.example.kcci.shoppingmaniac.database.DiscountInfo;
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
     boolean isPageSlided = false;
     private TextView _txtVSpottedConer;
     private TextView _txv_main_location;
+    private int _showingBeacon;
 
     Animation _animGrowFromBottom;
     Animation _animSetToBottom;
@@ -80,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
     protected RECOBeaconManager mRecoManager;
     protected RECOBeaconRegion region;
     private int beaconRssiCritical = -85;
-
+    //endregion
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,13 +93,10 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         connectBeacons();
 
         setAnimation();
-
-//        viewDiscountInfo();
-
-//        viewItemInfo();
     }
 
     //region initialize layout, drawerView animation
+
     /**
      * 레이아웃 초기화
      */
@@ -131,6 +130,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 //        _txtVSpottedConer = (TextView) findViewById(R.id.txtVSpottedConer);
         _rootLayout = findViewById(R.id.cons_main_frame);
 
+        _tmpPrev = new ArrayList<>();
     }
 
     private void popDrawerView() {
@@ -184,8 +184,8 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 
         region = new RECOBeaconRegion(RECO_UUID, 11, "KCCI Mart");
 
-        arySection = new String[]{"showDiscount", "grocery", "meat", "appliance"};
-        arySectionInDB = new String[]{"0", "2", "1", "3"};
+        arySection = new String[]{"showDiscount", "meat", "grocery", "appliance"};
+        arySectionInDB = new String[]{"0", "1", "2", "3"};
 
         mRecoManager.setRangingListener(this);
         mRecoManager.bind(this);
@@ -207,24 +207,36 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
     }
 
 
-    /** when some beacons in some ranges itll be fired*/
+    /**
+     * when some beacons in some ranges itll be fired
+     */
     @Override
     public void didRangeBeaconsInRegion(Collection<RECOBeacon> collection,
                                         RECOBeaconRegion recoBeaconRegion) {
-        Log.i("tag", "called back");
-        ArrayList<Integer> _tmp = getRangedConerList(collection);
-        if (!_tmp.equals(_tmpPrev)) updateAdapter(_tmp);
+        Log.i("tag", "called back" + getRangedConerList(collection));
+        ArrayList<Integer> tmp = getRangedConerList(collection);
+        if (!tmp.equals(_tmpPrev)) {
+            updateAdapter(tmp);
+            Toast.makeText(this, "비콘 입출입이 감지되었습니다.", Toast.LENGTH_SHORT).show();
+            if (!tmp.contains(_showingBeacon)) {
+                viewDiscountInfo();
+                
+            }
+
+        }
     }
 
-    /**return sorted array*/
-    private ArrayList<Integer> getRangedConerList (Collection<RECOBeacon> collection ) {
+    /**
+     * return sorted array
+     */
+    private ArrayList<Integer> getRangedConerList(Collection<RECOBeacon> collection) {
 
         ArrayList<Integer> _return = new ArrayList<>();
 
         Log.i("tag", String.valueOf(collection.size()));
 
         for (RECOBeacon recoBeacon : collection) {
-            if( recoBeacon.getRssi() > beaconRssiCritical
+            if (recoBeacon.getRssi() > beaconRssiCritical
                     && recoBeacon.getMinor() < arySection.length)
                 _return.add(recoBeacon.getMinor());
         }
@@ -251,7 +263,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 
             hasFloatDiscountViewIcon = true;
 
-        } else if (hasFloatDiscountViewIcon){
+        } else if (hasFloatDiscountViewIcon) {
             _return.add(0, 0);
         }
 
@@ -261,20 +273,13 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
     private void updateAdapter(ArrayList<Integer> _tmp) {
 
         _beaconRecyclerView.setAdapter(new BeaconRecyclerAdapter(_tmp, R.layout.each_beacon));
-        final Database database = new Database();
-        database.requestAllBeacon(new Database.LoadCompleteListener() {
-            @Override
-            public void onLoadComplete() {
-
-            }
-        });
         _tmpPrev = _tmp;
     }
 
     @Override
     public void rangingBeaconsDidFailForRegion(RECOBeaconRegion recoBeaconRegion,
                                                RECOErrorCode recoErrorCode) {
-
+        Toast.makeText(this, "Beacon Failed", Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -286,7 +291,8 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
     }
 
     /**
-     * fail to connect beaconManager service*/
+     * fail to connect beaconManager service
+     */
     @Override
     public void onServiceFail(RECOErrorCode recoErrorCode) {
 
@@ -380,20 +386,32 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         });
     }
 
-    private void getViewItemInfo(String _conerName) {
+    private void getViewItemInfo(final String _conerName) {
 
         final Database database = new Database();
         database.requestItemByCategory(_conerName, new Database.LoadCompleteListener() {
             @Override
             public void onLoadComplete() {
                 _itemList = database.getItemList();
-
-                _recyclerView.setAdapter(new ItemRecyclerAdapter(
-                        _itemList,
-                        R.layout.card_item
-                ));
-                _recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                _recyclerView.setItemAnimator(new DefaultItemAnimator());
+                ArrayList<String> idList = new ArrayList<>();
+                for (int i = 0; i < _itemList.size(); i++) {
+                    idList.add(_itemList.get(i).getItemId());
+                }
+                database.requestImageList(idList, new Database.LoadCompleteListener() {
+                    @Override
+                    public void onLoadComplete() {
+                        for (int i = 0; i < _itemList.size(); i++) {
+                            _itemList.get(i).setImage(database.getBitmap(i));
+                        }
+                        _showingBeacon = Integer.valueOf(_conerName);
+                        _recyclerView.setAdapter(new ItemRecyclerAdapter(
+                                _itemList,
+                                R.layout.card_item
+                        ));
+                        _recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                        _recyclerView.setItemAnimator(new DefaultItemAnimator());
+                    }
+                });
             }
         });
     }
@@ -455,6 +473,8 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
             viewHolder._price.setText(item.getPrice());
             viewHolder._discountedPrice.setText(item.getDiscountedPrice());
             viewHolder._img.setImageBitmap(_imageList.get(position));
+            viewHolder._startTime.setText(item.getStartTime());
+            viewHolder._endTime.setText(item.getEndTime());
             viewHolder.itemView.setTag(item);
 
             viewHolder._btnLineChart.setOnClickListener(new OnLineChartClickListener(item.getItemId()));
@@ -475,6 +495,8 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
             private TextView _name;
             private TextView _price;
             private TextView _discountedPrice;
+            private TextView _startTime;
+            private TextView _endTime;
             private Button _btnLineChart;
 
             public ViewHolder(View itemView) {
@@ -485,6 +507,8 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
                 _name = (TextView) itemView.findViewById(R.id.txv_discount_Name);
                 _price = (TextView) itemView.findViewById(R.id.txv_item_price);
                 _discountedPrice = (TextView) itemView.findViewById(R.id.txv_discount_dcPrice);
+                _startTime = (TextView) itemView.findViewById(R.id.txv_discount_startDate);
+                _endTime = (TextView) itemView.findViewById(R.id.txv_discount_endDate);
                 _btnLineChart = (Button) itemView.findViewById(R.id.btn_discount_lineChart);
             }
 
@@ -621,7 +645,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
             viewHolder._img.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if ( _indx == 0 ) {
+                    if (_indx == 0) {
                         viewDiscountInfo();
                     } else {
                         getViewItemInfo(arySectionInDB[_indx]);
@@ -673,5 +697,14 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 
         }
     }
-//endregion
+
+    @Override
+    public void onBackPressed() {
+        if (isPageSlided) {
+            Log.i(LOG_TAG, "slide down");
+            _constraintDrawer.startAnimation(_animGrowFromBottom);
+            _constraintDrawer.setVisibility(View.INVISIBLE);
+        }
+    }
+    //endregion
 }
