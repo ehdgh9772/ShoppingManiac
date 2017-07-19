@@ -50,7 +50,7 @@ public class PriceRegistration extends AppCompatActivity {
                 String date = selectedDate.getText().toString();
                 String price = registrationPrice.getText().toString();
 
-                if(!Objects.equals(date, "") || !Objects.equals(price, "")) {
+                if(!Objects.equals(date, "") && !Objects.equals(price, "")) {
                     database.insertPrice(itemIdEditText.getText().toString()
                             , date
                             , price,
@@ -74,8 +74,13 @@ public class PriceRegistration extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        String ItemId = data.getStringExtra(ItemList.ITEM_ID);
-        itemIdEditText.setText(ItemId);
-        _imageView.setImageBitmap((Bitmap) data.getExtras().get(ItemList.ITEM_IMAGE));
+        try{
+            String ItemId = data.getStringExtra(ItemList.ITEM_ID);
+            itemIdEditText.setText(ItemId);
+            _imageView.setImageBitmap((Bitmap) data.getExtras().get(ItemList.ITEM_IMAGE));
+        } catch(Exception e) {
+            _imageView.setImageResource(R.drawable.no_image);
+        }
+
     }
 }

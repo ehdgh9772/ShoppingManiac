@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 
         setAnimation();
 
-        viewDiscountInfo();
+//        viewDiscountInfo();
 
 //        viewItemInfo();
     }
@@ -236,8 +236,8 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         Log.i("tag", String.valueOf(_return.size()));
 
         if ( _return.size() > 0 ) {
-            _txv_main_location.setText(region.getUniqueIdentifier());
-            Log.i("tag", "dddddd");
+//            _txv_main_location.setText(region.getUniqueIdentifier());
+//            Log.i("tag", "dddddd");
             if (_return.get(0) != 0) {
                 _return.add(0,0);
                 isEntranceChecked = true;

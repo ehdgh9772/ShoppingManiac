@@ -16,12 +16,12 @@
             android:id="@+id/imv_card_item"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            card_view:srcCompat="@drawable/a"
-            card_view:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="8dp"
             android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             card_view:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginStart="8dp"/>
+            card_view:layout_constraintTop_toTopOf="parent"
+            card_view:srcCompat="@drawable/no_image"/>
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="0dp"

@@ -1,5 +1,6 @@
 package com.example.shoppingmanager;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -7,9 +8,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
-import android.Manifest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,10 +24,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button itemRegisteration = (Button) findViewById(R.id.itemRegistration);
-        Button eventButton = (Button) findViewById(R.id.btn_eventRegistration);
-        Button listInquiry = (Button) findViewById(R.id.listInquiry);
-        Button priceModification = (Button) findViewById(R.id.priceModification);
+        ImageView itemRegisteration = (ImageView) findViewById(R.id.itemRegistration);
+        ImageView eventButton = (ImageView) findViewById(R.id.btn_eventRegistration);
+        ImageView listInquiry = (ImageView) findViewById(R.id.btn_discountList);
+        ImageView priceModification = (ImageView) findViewById(R.id.priceModification);
 
         itemRegisteration.setOnClickListener(
                 new View.OnClickListener() {

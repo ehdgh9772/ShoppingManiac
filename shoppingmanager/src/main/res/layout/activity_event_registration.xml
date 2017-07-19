@@ -199,6 +199,6 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/guideline5"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/a"/>
+        app:srcCompat="@drawable/no_image"/>
 
 </android.support.constraint.ConstraintLayout>

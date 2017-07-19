@@ -102,6 +102,7 @@ public class LineChartActivity extends AppCompatActivity {
         incomeRenderer.setLineWidth(5);
         incomeRenderer.setDisplayChartValues(true);
         incomeRenderer.setAnnotationsTextSize(15);
+        incomeRenderer.setChartValuesSpacing(30);
 
 
         // Creating XYSeriesRenderer to customize expenseSeries
@@ -121,6 +122,8 @@ public class LineChartActivity extends AppCompatActivity {
         multiRenderer.setChartTitle("   ----    상품가격추이    ----   ");
         multiRenderer.setXTitle("날  짜");
         multiRenderer.setYTitle("금  액");
+        multiRenderer.setYAxisMax(2000);
+        multiRenderer.setYAxisMin(500);
 //        multiRenderer.setZoomButtonsVisible(true);
 
         for (int i = 0; i < historyList.size(); i++) {

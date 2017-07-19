@@ -57,8 +57,8 @@ public class EventRegistration extends AppCompatActivity {
                 String endTimeString = buildDateTime(endDate.getText().toString(), endTime.getText().toString());
                 String dcType = discountType.getText().toString();
 
-                if(!Objects.equals(itemId, "") || !Objects.equals(price, "") ||
-                        !Objects.equals(startTimeString, "") || !Objects.equals(endTimeString, "") ||
+                if (!Objects.equals(itemId, "") && !Objects.equals(price, "") &&
+                        !Objects.equals(startTimeString, "") && !Objects.equals(endTimeString, "") &&
                         !Objects.equals(dcType, "")) {
                     database.insertDiscountInfo(
                             itemId, price, startTimeString, endTimeString, dcType, null);
@@ -79,8 +79,12 @@ public class EventRegistration extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        String ItemId = data.getStringExtra(ItemList.ITEM_ID);
-        itemIdEditText.setText(ItemId);
-        _imageView.setImageBitmap((Bitmap) data.getExtras().get(ItemList.ITEM_IMAGE));
+        try {
+            String ItemId = data.getStringExtra(ItemList.ITEM_ID);
+            itemIdEditText.setText(ItemId);
+            _imageView.setImageBitmap((Bitmap) data.getExtras().get(ItemList.ITEM_IMAGE));
+        } catch (Exception e) {
+            _imageView.setImageResource(R.drawable.no_image);
+        }
     }
 }
