@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
     private View _rootLayout;
     boolean isPageSlided = false;
     private TextView _txtVSpottedConer;
+    private TextView _txv_main_location;
 
     Animation _animGrowFromBottom;
     Animation _animSetToBottom;
@@ -117,6 +118,8 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         _openDrawerButton = findViewById(R.id.btn_main_drawer);
         _openDrawerButton.bringToFront();
 
+//        _txv_main_location = (TextView) findViewById(R.id.txv_main_location);
+
         _openDrawerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -124,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
             }
         });
 
-        _txtVSpottedConer = (TextView) findViewById(R.id.txtVSpottedConer);
+//        _txtVSpottedConer = (TextView) findViewById(R.id.txtVSpottedConer);
         _rootLayout = findViewById(R.id.cons_main_frame);
 
     }
@@ -207,36 +210,10 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
     @Override
     public void didRangeBeaconsInRegion(Collection<RECOBeacon> collection,
                                         RECOBeaconRegion recoBeaconRegion) {
-
-//            _txtVSpottedConer.setText(collection.size());
+        Log.i("tag", "called back");
         ArrayList<Integer> _tmp = getRangedConerList(collection);
         if (!_tmp.equals(_tmpPrev)) updateAdapter(_tmp);
     }
-//            viewDiscountInfo();
-
-//            isCheckedEntrance = true;
-//            _txtVSpottedConer.setText("is checked entrnace point? : " + isCheckedEntrance);
-
-//            for (RECOBeacon recoBeacon : collection) {
-//                if (recoBeacon.getMinor() == 0
-//                        && recoBeacon.getRssi() > beaconRssiCritical) {
-//                    _txtVSpottedConer.setText(recoBeacon.getMinor());
-//                    break;
-//                }
-//            }
-//            Iterator<RECOBeacon> _iter = collection.iterator();
-//            RECOBeacon _singleSpottedBeacon = _iter.next();
-//
-//            int _minor = _singleSpottedBeacon.getMinor();
-//            int _rssi = _singleSpottedBeacon.getRssi();
-//            _txtVSpottedConer.setText("minor and rssi : " + _minor
-//                    + " " + _rssi);
-
-//            if ( _rssi > beaconRssiCritical && _minor == 0 ) {
-//                _txtVSpottedConer.setText("rssi : " + _rssi + " " + _minor);
-//                viewDiscountInfo();
-//                isCheckedEntrance = true;
-//            }
 
     /**return sorted array*/
     private ArrayList<Integer> getRangedConerList (Collection<RECOBeacon> collection ) {
@@ -256,10 +233,18 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
             }
         });
 
-        if ( !isEntranceChecked && _return.size() == 1) {
-            if (_return.get(0) == 0 ) isEntranceChecked = true;
-        } 
-        else if ( isEntranceChecked && _return.get(0) != 0 ) _return.add(0,0);
+        Log.i("tag", String.valueOf(_return.size()));
+
+        if ( _return.size() > 0 ) {
+            _txv_main_location.setText(region.getUniqueIdentifier());
+            Log.i("tag", "dddddd");
+            if (_return.get(0) != 0) {
+                _return.add(0,0);
+                isEntranceChecked = true;
+            }
+        } else if ( isEntranceChecked ) {
+            _return.add(0,0);
+        }
 
         return _return;
     }
