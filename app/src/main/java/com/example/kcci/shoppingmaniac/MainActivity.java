@@ -66,7 +66,8 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
     private String[] arySection;
     private String[] arySectionInDB;
     private ArrayList<Integer> _tmpPrev;
-    private boolean isEntranceChecked = false;
+    private boolean hasFloatDiscountViewIcon = false;
+    private boolean hasListDisplayed = false;
 
     static final String RECO_UUID = "24DDF411-8CF1-440C-87CD-E368DAF9C93E";
     static final boolean SCAN_RECO_ONLY = true;
@@ -220,30 +221,38 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
 
         ArrayList<Integer> _return = new ArrayList<>();
 
+        Log.i("tag", String.valueOf(collection.size()));
+
         for (RECOBeacon recoBeacon : collection) {
             if( recoBeacon.getRssi() > beaconRssiCritical
                     && recoBeacon.getMinor() < arySection.length)
                 _return.add(recoBeacon.getMinor());
         }
 
-        Collections.sort(_return, new Comparator<Integer>() {
-            @Override
-            public int compare(Integer o1, Integer o2) {
-                return o1 - o2;
-            }
-        });
+        if (_return.size() != 0) {
 
-        Log.i("tag", String.valueOf(_return.size()));
+            Collections.sort(_return, new Comparator<Integer>() {
+                @Override
+                public int compare(Integer o1, Integer o2) {
+                    return o1 - o2;
+                }
+            });
 
-        if ( _return.size() > 0 ) {
-//            _txv_main_location.setText(region.getUniqueIdentifier());
-//            Log.i("tag", "dddddd");
-            if (_return.get(0) != 0) {
-                _return.add(0,0);
-                isEntranceChecked = true;
+            if (!hasListDisplayed) {
+                viewDiscountInfo();
+                hasListDisplayed = true;
             }
-        } else if ( isEntranceChecked ) {
-            _return.add(0,0);
+
+            if (_return.size() != 0) {
+                if (_return.get(0) != 0) {
+                    _return.add(0, 0);
+                }
+            }
+
+            hasFloatDiscountViewIcon = true;
+
+        } else if (hasFloatDiscountViewIcon){
+            _return.add(0, 0);
         }
 
         return _return;
@@ -261,7 +270,6 @@ public class MainActivity extends AppCompatActivity implements RECOServiceConnec
         });
         _tmpPrev = _tmp;
     }
-
 
     @Override
     public void rangingBeaconsDidFailForRegion(RECOBeaconRegion recoBeaconRegion,
