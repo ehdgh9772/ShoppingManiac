@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ImageShooting">
+    tools:context=".camera.ImageShooting">
 
 
     <Button
@@ -18,7 +18,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintBaseline_toBaselineOf="@+id/button_capture" />
 
-    <com.example.shoppingmanager.MyCameraSurface
+    <com.example.shoppingmanager.camera.MyCameraSurface
 
         android:id="@+id/previewFrame"
         android:layout_width="0dp"

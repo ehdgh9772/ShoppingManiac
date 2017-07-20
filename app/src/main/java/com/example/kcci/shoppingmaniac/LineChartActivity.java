@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.LinearLayout;
 
+import com.example.kcci.shoppingmaniac.database.Database;
+import com.example.kcci.shoppingmaniac.database.PriceHistory;
+
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
 import org.achartengine.chart.PointStyle;
@@ -13,64 +16,66 @@ import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 
+import java.util.ArrayList;
+
+import static com.example.kcci.shoppingmaniac.MainActivity.EXTRA_ID;
+
 /**
  * Created by CHJ on 2017-07-07.
  */
 
 public class LineChartActivity extends AppCompatActivity {
 
-
     // 막대그래프의 가로축
 
-    private String[] mMonth = new String[] {
-
-            "Jan", "Feb" , "Mar", "Apr", "May", "Jun",
-
-            "Jul", "Aug" , "Sep", "Oct", "Nov", "Dec"
-
+    private String[] mMonth = new String[]{
+            "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
     };
 
     private GraphicalView mChartView;
 
-
     @Override
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_line_chart);
+        String id = getIntent().getStringExtra(EXTRA_ID);
 
-        drawChart();
+        final Database database = new Database();
+        database.requestPriceHistory(id, new Database.LoadCompleteListener() {
+            @Override
+            public void onLoadComplete() {
+//                database.get
+                drawChart(database.getPriceHistoryList());
+            }
+        });
+
 
     }
 
+    private void drawChart(ArrayList<PriceHistory> historyList) {
 
-    private void drawChart(){
-
-        int[] x = { 1,2,3,4,5,6,7,8 };
-
-        int[] income = { 2000,2500,2700,3000,2800,3500,3700,3800};
-
-        int[] expense = {2200, 2700, 2900, 2800, 2600, 3000, 3300, 3400 };
-
+        int[] x = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+//        int[] expense = {2200, 2700, 2900, 2800, 2600, 3000, 3300, 3400 };
 
         // Creating an  XYSeries for Income
 
-        XYSeries incomeSeries = new XYSeries("수입");
-
+        XYSeries incomeSeries = new XYSeries("가격추이");
 
         // Creating an  XYSeries for Expense
 
-        XYSeries expenseSeries = new XYSeries("지출");
+//        XYSeries expenseSeries = new XYSeries("지출");
 
 
         // Adding data to Income and Expense Series
 
-        for(int i=0;i<x.length;i++){
 
-            incomeSeries.add(x[i], income[i]);
+        for (int i = 0; i < historyList.size(); i++) {
+            incomeSeries.add(x[i],
+                    Double.parseDouble(historyList.get(i).getPrice()));
 
-            expenseSeries.add(x[i],expense[i]);
+//            expenseSeries.add(x[i],expense[i]);
 
         }
 
@@ -79,64 +84,51 @@ public class LineChartActivity extends AppCompatActivity {
 
         XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
 
-
         // Adding Income Series to the dataset
 
         dataset.addSeries(incomeSeries);
 
-
         // Adding Expense Series to dataset
 
-        dataset.addSeries(expenseSeries);
-
+//        dataset.addSeries(expenseSeries);
 
         // Creating XYSeriesRenderer to customize incomeSeries
 
         XYSeriesRenderer incomeRenderer = new XYSeriesRenderer();
-
-        incomeRenderer.setColor(Color.GREEN);
-
+        incomeRenderer.setColor(Color.RED);
+        incomeRenderer.setChartValuesTextSize(30);
         incomeRenderer.setPointStyle(PointStyle.CIRCLE);
-
         incomeRenderer.setFillPoints(true);
-
-        incomeRenderer.setLineWidth(2);
-
+        incomeRenderer.setLineWidth(5);
         incomeRenderer.setDisplayChartValues(true);
+        incomeRenderer.setAnnotationsTextSize(15);
+        incomeRenderer.setChartValuesSpacing(30);
 
 
         // Creating XYSeriesRenderer to customize expenseSeries
 
-        XYSeriesRenderer expenseRenderer = new XYSeriesRenderer();
-
-        expenseRenderer.setColor(Color.RED);
-
-        expenseRenderer.setPointStyle(PointStyle.CIRCLE);
-
-        expenseRenderer.setFillPoints(true);
-
-        expenseRenderer.setLineWidth(2);
-
-        expenseRenderer.setDisplayChartValues(true);
+//        XYSeriesRenderer expenseRenderer = new XYSeriesRenderer();
+//        expenseRenderer.setColor(Color.RED);
+//        expenseRenderer.setPointStyle(PointStyle.CIRCLE);
+//        expenseRenderer.setFillPoints(true);
+//        expenseRenderer.setLineWidth(2);
+//        expenseRenderer.setDisplayChartValues(true);
 
 
         // Creating a XYMultipleSeriesRenderer to customize the whole chart
 
         XYMultipleSeriesRenderer multiRenderer = new XYMultipleSeriesRenderer();
-
         multiRenderer.setXLabels(0);
+        multiRenderer.setChartTitle("   ----    상품가격추이    ----   ");
+        multiRenderer.setXTitle("날  짜");
+        multiRenderer.setYTitle("금  액");
+        multiRenderer.setYAxisMax(2000);
+        multiRenderer.setYAxisMin(500);
+//        multiRenderer.setZoomButtonsVisible(true);
 
-        multiRenderer.setChartTitle("수입 vs 지출 Chart");
+        for (int i = 0; i < historyList.size(); i++) {
 
-        multiRenderer.setXTitle("Year 2017");
-
-        multiRenderer.setYTitle("Amount in Dollars");
-
-        multiRenderer.setZoomButtonsVisible(true);
-
-        for(int i=0;i<x.length;i++){
-
-            multiRenderer.addXTextLabel(i+1, mMonth[i]);
+            multiRenderer.addXTextLabel(i + 1, mMonth[i]);
 
         }
 
@@ -148,14 +140,11 @@ public class LineChartActivity extends AppCompatActivity {
 //         should be same
 
         multiRenderer.addSeriesRenderer(incomeRenderer);
-
-        multiRenderer.addSeriesRenderer(expenseRenderer);
+//        multiRenderer.addSeriesRenderer(expenseRenderer);
 
 
         // Creating an intent to plot line chart using dataset and multipleRenderer
-
         // Intent intent = ChartFactory.getLineChartIntent(getBaseContext(), dataset, multiRenderer);
-
 
 
         // Start Activity
@@ -173,9 +162,9 @@ public class LineChartActivity extends AppCompatActivity {
 
             multiRenderer.setSelectableBuffer(10);
 
-            layout.addView(mChartView, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT,
-
-                    LinearLayout.LayoutParams.FILL_PARENT));
+            layout.addView(mChartView,
+                    new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT,
+                            LinearLayout.LayoutParams.FILL_PARENT));
 
         } else {
 

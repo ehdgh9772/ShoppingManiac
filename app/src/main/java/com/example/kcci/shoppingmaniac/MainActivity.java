@@ -3,199 +3,335 @@ package com.example.kcci.shoppingmaniac;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.RemoteException;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.kcci.shoppingmaniac.database.Database;
+import com.example.kcci.shoppingmaniac.database.DiscountInfo;
+import com.example.kcci.shoppingmaniac.database.Item;
+import com.perples.recosdk.RECOBeacon;
+import com.perples.recosdk.RECOBeaconManager;
+import com.perples.recosdk.RECOBeaconRegion;
+import com.perples.recosdk.RECOErrorCode;
+import com.perples.recosdk.RECORangingListener;
+import com.perples.recosdk.RECOServiceConnectListener;
+
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
-    private RecyclerView lecyclerView;
+public class MainActivity extends AppCompatActivity implements RECOServiceConnectListener, RECORangingListener {
+
+    //region field
 
     public static String LOG_TAG = "MainActivity";
+    public static final String EXTRA_ID = "itemId";
 
+    ConstraintLayout _constraintDrawer;
+    private RecyclerView _beaconRecyclerView;
+    private RecyclerView _recyclerView;
+    private View _openDrawerButton;                            //항상 보이게 할 뷰
+    private View _rootLayout;
+    boolean isPageSlided = false;
+    private TextView _txtVSpottedConer;
+    private TextView _txv_main_location;
+    private int _showingBeacon;
+
+    Animation _animGrowFromBottom;
+    Animation _animSetToBottom;
+
+    ArrayList<Item> _itemList;
+    ArrayList<DiscountInfo> _discountInfoList;
+    ArrayList<Bitmap> _images;
+    ArrayList<String> _itemIdList;
+    ArrayList<Integer> _beaconList;
+    private String[] arySection;
+    private String[] arySectionInDB;
+    private ArrayList<Integer> _tmpPrev;
+    private boolean hasFloatDiscountViewIcon = false;
+    private boolean hasListDisplayed = false;
+
+    static final String RECO_UUID = "24DDF411-8CF1-440C-87CD-E368DAF9C93E";
+    static final boolean SCAN_RECO_ONLY = true;
+    static final boolean ENABLE_BACKGROUND_RANGING_TIMEOUT = true;
+    static final boolean DISCONTINUOUS_SCAN = false;
+    static final int REQUEST_ENABLE_BT = 1;
+
+    private BluetoothManager mBluetoothManager;
+    private BluetoothAdapter mBluetoothAdapter;
+    protected RECOBeaconManager mRecoManager;
+    protected RECOBeaconRegion region;
+    private int beaconRssiCritical = -85;
+    //endregion
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setContentView(R.layout.row_album);
 
-        Button btnLineChart =  (Button)findViewById(R.id.btnLineChart);
-        btnLineChart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                switch (view.getId()) {
+        initLayout();
 
-                    case R.id.btnLineChart:
+        connectBeacons();
 
-                        Toast.makeText(MainActivity.this, "Line Chart", Toast.LENGTH_LONG);
-
-                        Log.i(LOG_TAG, "Line Chart Start...");
-
-                        Intent intent = new Intent(getApplicationContext(), LineChartActivity.class);
-                        startActivity(intent);
-
-//                break;
-                }
-            }
-        });
-
-//        lecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
-        initData();
+        setAnimation();
     }
+
+    //region initialize layout, drawerView animation
 
     /**
      * 레이아웃 초기화
      */
-    /*private void initLayout(){
 
-        lecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
-    }*/
+    private void initLayout() {
 
-    /**
-     * 데이터 초기화
-     */
-    private void initData(){
+        _beaconList = new ArrayList<>();
 
-        List<AlbumActivity> albumList = new ArrayList<AlbumActivity>();
+        _recyclerView = (RecyclerView) findViewById(R.id.recy_main_Item);
+        _constraintDrawer = (ConstraintLayout) findViewById(R.id.cons_main_drawer);
 
-        for (int i =0; i<20; i ++){
+        _beaconRecyclerView = (RecyclerView) findViewById(R.id.recy_main_drawer);
+        _beaconRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        _beaconRecyclerView.setAdapter(new BeaconRecyclerAdapter(_beaconList, R.layout.each_beacon));
 
-            AlbumActivity album = new AlbumActivity();
-            album.setTitle("어느 멋진 날");
-            album.setArtist("정용");
-            album.setImage(R.drawable.a);
-            albumList.add(album);
+        _constraintDrawer.setVisibility(View.INVISIBLE);
+        _constraintDrawer.bringToFront();
+
+        _openDrawerButton = findViewById(R.id.btn_main_drawer);
+        _openDrawerButton.bringToFront();
+
+//        _txv_main_location = (TextView) findViewById(R.id.txv_main_location);
+
+        _openDrawerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popDrawerView();
+            }
+        });
+
+//        _txtVSpottedConer = (TextView) findViewById(R.id.txtVSpottedConer);
+        _rootLayout = findViewById(R.id.cons_main_frame);
+
+        _tmpPrev = new ArrayList<>();
+    }
+
+    private void popDrawerView() {
+        if (isPageSlided) {
+            Log.i(LOG_TAG, "slide down");
+            _constraintDrawer.startAnimation(_animGrowFromBottom);
+            _constraintDrawer.setVisibility(View.INVISIBLE);
+        } else {
+            Log.i(LOG_TAG, "slide up");
+            _constraintDrawer.startAnimation(_animSetToBottom);
+            _constraintDrawer.setVisibility(View.VISIBLE);
         }
-//        lecyclerView.setAdapter(new MyRecyclerAdapter(albumList,R.layout.row_album));
-//        lecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-//        lecyclerView.setItemAnimator(new DefaultItemAnimator());
+    }
+
+    private void setAnimation() {
+        SlidingPageAnimationListener animationListener = new SlidingPageAnimationListener();
+        _animGrowFromBottom = AnimationUtils.loadAnimation(this, R.anim.translate_from_bottom);
+        _animSetToBottom = AnimationUtils.loadAnimation(this, R.anim.translate_to_bottom);
+        _animGrowFromBottom.setAnimationListener(animationListener);
+        _animSetToBottom.setAnimationListener(animationListener);
+    }
+
+    private class SlidingPageAnimationListener implements Animation.AnimationListener {
+        @Override
+        public void onAnimationStart(Animation animation) {
+        }
+
+        @Override
+        public void onAnimationEnd(Animation animation) {
+            isPageSlided = !isPageSlided;
+            Log.i(LOG_TAG, "animation terminated isPageSlided is : " + isPageSlided);
+        }
+
+        @Override
+        public void onAnimationRepeat(Animation animation) {
+
+        }
+    }
+    //endregion
+
+    //region beacon overrides and bt connection
+
+    private void connectBeacons() {
+
+        this.getAuthBT();
+        mRecoManager = RECOBeaconManager.getInstance(
+                getApplicationContext(),
+                SCAN_RECO_ONLY,
+                ENABLE_BACKGROUND_RANGING_TIMEOUT
+        );
+
+        region = new RECOBeaconRegion(RECO_UUID, 11, "KCCI Mart");
+
+        arySection = new String[]{"showDiscount", "meat", "grocery", "appliance"};
+        arySectionInDB = new String[]{"0", "1", "2", "3"};
+
+        mRecoManager.setRangingListener(this);
+        mRecoManager.bind(this);
+
+    }
+
+    private void getAuthBT() {
+
+        mBluetoothManager =
+                (BluetoothManager) getApplicationContext()
+                        .getSystemService(Context.BLUETOOTH_SERVICE);
+        mBluetoothAdapter = mBluetoothManager.getAdapter();
+
+        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
+            Intent enableBTIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBTIntent, REQUEST_ENABLE_BT);
+        }
 
     }
 
 
-    //This is a default proximity uuid of the RECO
-    public static final String RECO_UUID = "24DDF411-8CF1-440C-87CD-E368DAF9C93E";
+    /**
+     * when some beacons in some ranges itll be fired
+     */
+    @Override
+    public void didRangeBeaconsInRegion(Collection<RECOBeacon> collection,
+                                        RECOBeaconRegion recoBeaconRegion) {
+        Log.i("tag", "called back" + getRangedConerList(collection));
+        ArrayList<Integer> tmp = getRangedConerList(collection);
+        if (!tmp.equals(_tmpPrev)) {
+            updateAdapter(tmp);
+            Toast.makeText(this, "비콘 입출입이 감지되었습니다.", Toast.LENGTH_SHORT).show();
+            if (!tmp.contains(_showingBeacon)) {
+                viewDiscountInfo();
+                
+            }
+
+        }
+    }
 
     /**
-     * SCAN_RECO_ONLY:
-     *
-     * If true, the application scans RECO beacons only, otherwise it scans all beacons.
-     * It will be used when the instance of RECOBeaconManager is created.
-     *
-     * true일 경우 레코 비콘만 스캔하며, false일 경우 모든 비콘을 스캔합니다.
-     * RECOBeaconManager 객체 생성 시 사용합니다.
+     * return sorted array
      */
-    public static final boolean SCAN_RECO_ONLY = true;
+    private ArrayList<Integer> getRangedConerList(Collection<RECOBeacon> collection) {
+
+        ArrayList<Integer> _return = new ArrayList<>();
+
+        Log.i("tag", String.valueOf(collection.size()));
+
+        for (RECOBeacon recoBeacon : collection) {
+            if (recoBeacon.getRssi() > beaconRssiCritical
+                    && recoBeacon.getMinor() < arySection.length)
+                _return.add(recoBeacon.getMinor());
+        }
+
+        if (_return.size() != 0) {
+
+            Collections.sort(_return, new Comparator<Integer>() {
+                @Override
+                public int compare(Integer o1, Integer o2) {
+                    return o1 - o2;
+                }
+            });
+
+            if (!hasListDisplayed) {
+                viewDiscountInfo();
+                hasListDisplayed = true;
+            }
+
+            if (_return.size() != 0) {
+                if (_return.get(0) != 0) {
+                    _return.add(0, 0);
+                }
+            }
+
+            hasFloatDiscountViewIcon = true;
+
+        } else if (hasFloatDiscountViewIcon) {
+            _return.add(0, 0);
+        }
+
+        return _return;
+    }
+
+    private void updateAdapter(ArrayList<Integer> _tmp) {
+
+        _beaconRecyclerView.setAdapter(new BeaconRecyclerAdapter(_tmp, R.layout.each_beacon));
+        _tmpPrev = _tmp;
+    }
+
+    @Override
+    public void rangingBeaconsDidFailForRegion(RECOBeaconRegion recoBeaconRegion,
+                                               RECOErrorCode recoErrorCode) {
+        Toast.makeText(this, "Beacon Failed", Toast.LENGTH_SHORT).show();
+    }
 
     /**
-     * ENABLE_BACKGROUND_RANGING_TIMEOUT:
-     *
-     * If true, the application stops to range beacons in the entered region automatically in 10 seconds (background),
-     * otherwise it continues to range beacons. (It affects the battery consumption.)
-     * It will be used when the instance of RECOBeaconManager is created.
-     *
-     * 백그라운드 ranging timeout을 설정합니다.
-     * true일 경우, 백그라운드에서 입장한 region에서 ranging이 실행 되었을 때, 10초 후 자동으로 정지합니다.
-     * false일 경우, 계속 ranging을 실행합니다. (배터리 소모율에 영향을 끼칩니다.)
-     * RECOBeaconManager 객체 생성 시 사용합니다.
+     * callback when beaconManager service connected
      */
-    public static final boolean ENABLE_BACKGROUND_RANGING_TIMEOUT = true;
+    @Override
+    public void onServiceConnect() {
+        this.start(region);
+    }
 
     /**
-     * DISCONTINUOUS_SCAN:
-     *
-     * There is a known android bug that some android devices scan BLE devices only once.
-     * (link: http://code.google.com/p/android/issues/detail?id=65863)
-     * To resolve the bug in our SDK, you can use setDiscontinuousScan() method of the RECOBeaconManager.
-     * This method is to set whether the device scans BLE devices continuously or discontinuously.
-     * The default is set as FALSE. Please set TRUE only for specific devices.
-     *
-     * 일부 안드로이드 기기에서 BLE 장치들을 스캔할 때, 한 번만 스캔 후 스캔하지 않는 버그(참고: http://code.google.com/p/android/issues/detail?id=65863)가 있습니다.
-     * 해당 버그를 SDK에서 해결하기 위해, RECOBeaconManager에 setDiscontinuousScan() 메소드를 이용할 수 있습니다.
-     * 해당 메소드는 기기에서 BLE 장치들을 스캔할 때(즉, ranging 시에), 연속적으로 계속 스캔할 것인지, 불연속적으로 스캔할 것인지 설정하는 것입니다.
-     * 기본 값은 FALSE로 설정되어 있으며, 특정 장치에 대해 TRUE로 설정하시길 권장합니다.
+     * fail to connect beaconManager service
      */
-    public static final boolean DISCONTINUOUS_SCAN = false;
+    @Override
+    public void onServiceFail(RECOErrorCode recoErrorCode) {
 
-    private static final int REQUEST_ENABLE_BT = 1;
-    private static final int REQUEST_LOCATION = 10;
+    }
 
-    private BluetoothManager mBluetoothManager;
-    private BluetoothAdapter mBluetoothAdapter;
 
-    private View mLayout;
+    private void start(RECOBeaconRegion region) {
+        try {
+            mRecoManager.startRangingBeaconsInRegion(region);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
 
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main);
-//        mLayout = findViewById(R.id.mainLayout);
-//
-//        View includedLayout = (View) findViewById(R.id.reco_settings_values );
-//        TextView mRecoOnlyText = (TextView) includedLayout.findViewById(R.id.recoRecoonlySetting);
-//        if( SCAN_RECO_ONLY ) {
-//            mRecoOnlyText.setText(R.string.settings_result_true);
-//        } else {
-//            mRecoOnlyText.setText(R.string.settings_result_false);
-//        }
-//
-//        TextView mDiscontinuousText = (TextView) includedLayout.findViewById(R.id.recoDiscontinouosSetting);
-//        if( DISCONTINUOUS_SCAN ) {
-//            mDiscontinuousText.setText(R.string.settings_result_true);
-//        } else {
-//            mDiscontinuousText.setText(R.string.settings_result_false);
-//        }
-//
-//        TextView mBackgroundRangingTimeoutText = (TextView) includedLayout.findViewById(R.id.recoBackgroundtimeoutSetting);
-//        if( ENABLE_BACKGROUND_RANGING_TIMEOUT ) {
-//            mBackgroundRangingTimeoutText.setText(R.string.settings_result_true);
-//        } else {
-//            mBackgroundRangingTimeoutText.setText(R.string.settings_result_false);
-//        }
-//
-//        //If a user device turns off bluetooth, request to turn it on.
-//        //사용자가 블루투스를 켜도록 요청합니다.
-//        mBluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
-//        mBluetoothAdapter = mBluetoothManager.getAdapter();
-//
-//        if(mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
-//            Intent enableBTIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-//            startActivityForResult(enableBTIntent, REQUEST_ENABLE_BT);
-//        }
-//
-//        /**
-//         * In order to use RECO SDK for Android API 23 (Marshmallow) or higher,
-//         * the location permission (ACCESS_COARSE_LOCATION or ACCESS_FINE_LOCATION) is required.
-//         * Please refer to the following permission guide and sample code provided by Google.
-//         *
-//         * 안드로이드 API 23 (마시멜로우)이상 버전부터, 정상적으로 RECO SDK를 사용하기 위해서는
-//         * 위치 권한 (ACCESS_COARSE_LOCATION 혹은 ACCESS_FINE_LOCATION)을 요청해야 합니다.
-//         * 권한 요청의 경우, 구글에서 제공하는 가이드를 참고하시기 바랍니다.
-//         *
-//         * http://www.google.com/design/spec/patterns/permissions.html
-//         * https://github.com/googlesamples/android-RuntimePermissions
-//         */
-//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            if(ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//                Log.i("MainActivity", "The location permission (ACCESS_COARSE_LOCATION or ACCESS_FINE_LOCATION) is not granted.");
-//                this.requestLocationPermission();
-//            } else {
-//                Log.i("MainActivity", "The location permission (ACCESS_COARSE_LOCATION or ACCESS_FINE_LOCATION) is already granted.");
-//            }
-//        }
-//    }
 
+    protected void stop(RECOBeaconRegion region) {
+        try {
+            mRecoManager.stopRangingBeaconsInRegion(region);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    protected void unbind() {
+        try {
+            mRecoManager.unbind();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    //endregion
+
+    //region Activity overrides
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_ENABLE_BT && resultCode == Activity.RESULT_CANCELED) {
-            //If the request to turn on bluetooth is denied, the app will be finished.
+            //If the requestDiscountInfo to turn on bluetooth is denied, the app will be finished.
             //사용자가 블루투스 요청을 허용하지 않았을 경우, 어플리케이션은 종료됩니다.
             finish();
             return;
@@ -203,129 +339,372 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-//        switch(requestCode) {
-//            case REQUEST_LOCATION : {
-//                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                    Snackbar.make(mLayout, R.string.location_permission_granted, Snackbar.LENGTH_LONG).show();
-//                } else {
-//                    Snackbar.make(mLayout, R.string.location_permission_not_granted, Snackbar.LENGTH_LONG).show();
-//                }
-//            }
-//            default :
-//                break;
-//        }
-//
-//
-//    }
-
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//
-//        if(this.isBackgroundMonitoringServiceRunning(this)) {
-//            ToggleButton toggle = (ToggleButton)findViewById(R.id.backgroundMonitoringToggleButton);
-//            toggle.setChecked(true);
-//        }
-//
-//        if(this.isBackgroundRangingServiceRunning(this)) {
-//            ToggleButton toggle = (ToggleButton)findViewById(R.id.backgroundRangingToggleButton);
-//            toggle.setChecked(true);
-//        }
-//    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        stop(region);
+        unbind();
     }
 
-    /**
-     * In order to use RECO SDK for Android API 23 (Marshmallow) or higher,
-     * the location permission (ACCESS_COARSE_LOCATION or ACCESS_FINE_LOCATION) is required.
-     *
-     * This sample project requests "ACCESS_COARSE_LOCATION" permission only,
-     * but you may request "ACCESS_FINE_LOCATION" permission depending on your application.
-     *
-     * "ACCESS_COARSE_LOCATION" permission is recommended.
-     *
-     * 안드로이드 API 23 (마시멜로우)이상 버전부터, 정상적으로 RECO SDK를 사용하기 위해서는
-     * 위치 권한 (ACCESS_COARSE_LOCATION 혹은 ACCESS_FINE_LOCATION)을 요청해야 합니다.
-     *
-     * 본 샘플 프로젝트에서는 "ACCESS_COARSE_LOCATION"을 요청하지만, 필요에 따라 "ACCESS_FINE_LOCATION"을 요청할 수 있습니다.
-     *
-     * 당사에서는 ACCESS_COARSE_LOCATION 권한을 권장합니다.
-     *
-     */
-//    private void requestLocationPermission() {
-//        if(!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
-//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION);
-//            return;
-//        }
-//
-//        Snackbar.make(mLayout, R.string.location_permission_rationale, Snackbar.LENGTH_INDEFINITE)
-//                .setAction(R.string.ok, new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION);
-//                    }
-//                })
-//                .show();
-//    }
-//
-//    public void onMonitoringToggleButtonClicked(View v) {
-//        ToggleButton toggle = (ToggleButton)v;
-//        if(toggle.isChecked()) {
-//            Log.i("MainActivity", "onMonitoringToggleButtonClicked off to on");
-//            Intent intent = new Intent(this, com.iot.finalproject.RecoBackgroundMonitoringService.class);
-//            startService(intent);
-//        } else {
-//            Log.i("MainActivity", "onMonitoringToggleButtonClicked on to off");
-//            stopService(new Intent(this, com.iot.finalproject.RecoBackgroundMonitoringService.class));
-//        }
-//    }
-//
-//    public void onRangingToggleButtonClicked(View v) {
-//        ToggleButton toggle = (ToggleButton)v;
-//        if(toggle.isChecked()) {
-//            Log.i("MainActivity", "onRangingToggleButtonClicked off to on");
-//            Intent intent = new Intent(this, com.iot.finalproject.RecoBackgroundRangingService.class);
-//            startService(intent);
-//        } else {
-//            Log.i("MainActivity", "onRangingToggleButtonClicked on to off");
-//            stopService(new Intent(this, com.iot.finalproject.RecoBackgroundRangingService.class));
-//        }
-//    }
-//
-//    public void onButtonClicked(View v) {
-//        Button btn = (Button)v;
-//        if(btn.getId() == R.id.monitoringButton) {
-//            final Intent intent = new Intent(this, com.iot.finalproject.RecoMonitoringActivity.class);
-//            startActivity(intent);
-//        } else {
-//            final Intent intent = new Intent(this, com.iot.finalproject.RecoRangingActivity.class);
-//            startActivity(intent);
-//        }
-//    }
-//
-//    private boolean isBackgroundMonitoringServiceRunning(Context context) {
-//        ActivityManager am = (ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
-//        for(ActivityManager.RunningServiceInfo runningService : am.getRunningServices(Integer.MAX_VALUE)) {
-//            if(com.iot.finalproject.RecoBackgroundMonitoringService.class.getName().equals(runningService.service.getClassName())) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-//
-//    private boolean isBackgroundRangingServiceRunning(Context context) {
-//        ActivityManager am = (ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
-//        for(ActivityManager.RunningServiceInfo runningService : am.getRunningServices(Integer.MAX_VALUE)) {
-//            if(com.iot.finalproject.RecoBackgroundRangingService.class.getName().equals(runningService.service.getClassName())) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-}
+    //endregion
 
+    //region viewToScreen
+
+    /**
+     * Discount 정보
+     */
+    private void viewDiscountInfo() {
+        final Database database = new Database();
+        database.requestDiscountInfo(new Database.LoadCompleteListener() {
+            @Override
+            public void onLoadComplete() {
+                _itemIdList = new ArrayList<>();
+                _discountInfoList = database.getDiscountInfoList();
+                for (int i = 0; i < _discountInfoList.size(); i++) {
+                    _itemIdList.add(_discountInfoList.get(i).getItemId());
+                }
+
+                database.requestImageList(_itemIdList, new Database.LoadCompleteListener() {
+                    @Override
+                    public void onLoadComplete() {
+                        _images = new ArrayList<>();
+                        for (int i = 0; i < _discountInfoList.size(); i++) {
+                            _images.add(database.getBitmap(i));
+                        }
+                        _recyclerView.setAdapter(new DiscountRecyclerAdapter(
+                                _discountInfoList,
+                                _images,
+                                R.layout.card_discount
+                        ));
+                        _recyclerView.setLayoutManager(new LinearLayoutManager(
+                                getApplicationContext()
+                        ));
+                        _recyclerView.setItemAnimator(new DefaultItemAnimator());
+                    }
+                });
+            }
+        });
+    }
+
+    private void getViewItemInfo(final String _conerName) {
+
+        final Database database = new Database();
+        database.requestItemByCategory(_conerName, new Database.LoadCompleteListener() {
+            @Override
+            public void onLoadComplete() {
+                _itemList = database.getItemList();
+                ArrayList<String> idList = new ArrayList<>();
+                for (int i = 0; i < _itemList.size(); i++) {
+                    idList.add(_itemList.get(i).getItemId());
+                }
+                database.requestImageList(idList, new Database.LoadCompleteListener() {
+                    @Override
+                    public void onLoadComplete() {
+                        for (int i = 0; i < _itemList.size(); i++) {
+                            _itemList.get(i).setImage(database.getBitmap(i));
+                        }
+                        _showingBeacon = Integer.valueOf(_conerName);
+                        _recyclerView.setAdapter(new ItemRecyclerAdapter(
+                                _itemList,
+                                R.layout.card_item
+                        ));
+                        _recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                        _recyclerView.setItemAnimator(new DefaultItemAnimator());
+                    }
+                });
+            }
+        });
+    }
+
+//endregion
+
+    //region RecyclerViewAdapters
+    class DiscountRecyclerAdapter extends RecyclerView.Adapter<DiscountRecyclerAdapter.ViewHolder> {
+
+        private List<DiscountInfo> _discountInfoList;
+        private List<Bitmap> _imageList;
+        private int _layout;
+
+        /**
+         * 생성자
+         *
+         * @param discountInfoList
+         * @param layout
+         */
+        DiscountRecyclerAdapter(List<DiscountInfo> discountInfoList, List<Bitmap> imageList, int layout) {
+
+            _discountInfoList = discountInfoList;
+            _imageList = imageList;
+            _layout = layout;
+        }
+
+        /**
+         * 레이아웃을 만들어서 Holer에 저장
+         *
+         * @param viewGroup
+         * @param viewType
+         * @return
+         */
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+
+            View view = LayoutInflater.from(viewGroup.getContext()).inflate(_layout, viewGroup, false);
+            return new ViewHolder(view);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return super.getItemId(position);
+        }
+
+        /**
+         * listView getView 를 대체
+         * 넘겨 받은 데이터를 화면에 출력하는 역할
+         *
+         * @param viewHolder
+         * @param position
+         */
+        @Override
+        public void onBindViewHolder(ViewHolder viewHolder, int position) {
+
+            final DiscountInfo item = _discountInfoList.get(position);
+            viewHolder._discountType.setText(item.getDiscountType());
+            viewHolder._name.setText(item.getName());
+            viewHolder._price.setText(item.getPrice());
+            viewHolder._discountedPrice.setText(item.getDiscountedPrice());
+            viewHolder._img.setImageBitmap(_imageList.get(position));
+            viewHolder._startTime.setText(item.getStartTime());
+            viewHolder._endTime.setText(item.getEndTime());
+            viewHolder.itemView.setTag(item);
+
+            viewHolder._btnLineChart.setOnClickListener(new OnLineChartClickListener(item.getItemId()));
+        }
+
+        @Override
+        public int getItemCount() {
+            return _discountInfoList.size();
+        }
+
+        /**
+         * 뷰 재활용을 위한 viewHolder
+         */
+        class ViewHolder extends RecyclerView.ViewHolder {
+
+            private ImageView _img;
+            private TextView _discountType;
+            private TextView _name;
+            private TextView _price;
+            private TextView _discountedPrice;
+            private TextView _startTime;
+            private TextView _endTime;
+            private Button _btnLineChart;
+
+            public ViewHolder(View itemView) {
+                super(itemView);
+
+                _img = (ImageView) itemView.findViewById(R.id.imv_discount);
+                _discountType = (TextView) itemView.findViewById(R.id.txv_discount_dcType);
+                _name = (TextView) itemView.findViewById(R.id.txv_discount_Name);
+                _price = (TextView) itemView.findViewById(R.id.txv_item_price);
+                _discountedPrice = (TextView) itemView.findViewById(R.id.txv_discount_dcPrice);
+                _startTime = (TextView) itemView.findViewById(R.id.txv_discount_startDate);
+                _endTime = (TextView) itemView.findViewById(R.id.txv_discount_endDate);
+                _btnLineChart = (Button) itemView.findViewById(R.id.btn_discount_lineChart);
+            }
+
+        }
+    }
+
+    class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapter.ViewHolder> {
+
+        private ArrayList<Item> _itemList;
+        private int _itemLayout;
+
+        /**
+         * 생성자
+         *
+         * @param items
+         * @param itemLayout
+         */
+        ItemRecyclerAdapter(ArrayList<Item> items, int itemLayout) {
+
+            _itemList = items;
+            _itemLayout = itemLayout;
+        }
+
+        /**
+         * 레이아웃을 만들어서 Holer에 저장
+         *
+         * @param viewGroup
+         * @param viewType
+         * @return
+         */
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+            View view = LayoutInflater.from(viewGroup.getContext()).inflate(_itemLayout, viewGroup, false);
+            return new ViewHolder(view);
+        }
+
+
+        /**
+         * listView getView 를 대체
+         * 넘겨 받은 데이터를 화면에 출력하는 역할
+         *
+         * @param viewHolder
+         * @param position
+         */
+        @Override
+        public void onBindViewHolder(ViewHolder viewHolder, int position) {
+
+            Item item = _itemList.get(position);
+            viewHolder._img.setImageBitmap(item.getImage());
+            viewHolder._name.setText(item.getName());
+            viewHolder._price.setText(item.getPrice());
+            viewHolder.itemView.setTag(item);
+
+            viewHolder._btnLineChart.setOnClickListener(new OnLineChartClickListener(item.getItemId()));
+        }
+
+        @Override
+        public int getItemCount() {
+            return _itemList.size();
+        }
+
+        /**
+         * 뷰 재활용을 위한 viewHolder
+         */
+        class ViewHolder extends RecyclerView.ViewHolder {
+
+            private ImageView _img;
+            private TextView _name;
+            private TextView _price;
+            private Button _btnLineChart;
+
+            public ViewHolder(View itemView) {
+                super(itemView);
+
+                _img = (ImageView) itemView.findViewById(R.id.imv_item);
+                _name = (TextView) itemView.findViewById(R.id.txv_item_Name);
+                _price = (TextView) itemView.findViewById(R.id.txv_item_price);
+                _btnLineChart = (Button) itemView.findViewById(R.id.btn_item_lineChart);
+            }
+
+        }
+    }
+
+    class BeaconRecyclerAdapter extends RecyclerView.Adapter<BeaconRecyclerAdapter.ViewHolder> {
+
+        private ArrayList<Integer> _beacons;
+        private int _layout;
+
+        /**
+         * 생성자
+         *
+         * @param beacons
+         * @param layout
+         */
+        BeaconRecyclerAdapter(ArrayList<Integer> beacons, int layout) {
+            _beacons = beacons;
+            _layout = layout;
+        }
+
+        /**
+         * 레이아웃을 만들어서 Holer에 저장
+         *
+         * @param viewGroup
+         * @param viewType
+         * @return
+         */
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+            View view = LayoutInflater.from(viewGroup.getContext()).inflate(_layout, viewGroup, false);
+            return new ViewHolder(view);
+        }
+
+
+        /**
+         * listView getView 를 대체
+         * 넘겨 받은 데이터를 화면에 출력하는 역할
+         *
+         * @param viewHolder
+         * @param position
+         */
+        @Override
+        public void onBindViewHolder(ViewHolder viewHolder, int position) {
+
+            final int _indx = _beacons.get(position);
+            int _imgSrc = getApplicationContext()
+                    .getResources().getIdentifier(
+                            "coner" + _indx,
+                            "drawable",
+                            getApplicationContext().getPackageName()
+                    );
+
+            viewHolder._textView.setText(arySection[_indx]);
+            viewHolder._img.setImageResource(_imgSrc);
+            viewHolder._img.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (_indx == 0) {
+                        viewDiscountInfo();
+                    } else {
+                        getViewItemInfo(arySectionInDB[_indx]);
+                    }
+                }
+            });
+        }
+
+
+        @Override
+        public int getItemCount() {
+            return _beacons.size();
+        }
+
+        /**
+         * 뷰 재활용을 위한 viewHolder
+         */
+        class ViewHolder extends RecyclerView.ViewHolder {
+
+            private ImageView _img;
+            private TextView _textView;
+
+            public ViewHolder(View itemView) {
+                super(itemView);
+                _img = (ImageView) itemView.findViewById(R.id.imv_beacon_image);
+                _textView = (TextView) itemView.findViewById(R.id.txv_beacon_text);
+            }
+        }
+
+    }
+
+    class OnLineChartClickListener implements View.OnClickListener {
+
+        String _itemId;
+
+        public OnLineChartClickListener(String itemId) {
+
+            _itemId = itemId;
+        }
+
+        @Override
+        public void onClick(View v) {
+
+            Log.i(LOG_TAG, "Line Chart Start...");
+
+            Intent intent = new Intent(getApplicationContext(), LineChartActivity.class);
+            intent.putExtra(EXTRA_ID, _itemId);
+            startActivity(intent);
+
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (isPageSlided) {
+            Log.i(LOG_TAG, "slide down");
+            _constraintDrawer.startAnimation(_animGrowFromBottom);
+            _constraintDrawer.setVisibility(View.INVISIBLE);
+        }
+    }
+    //endregion
+}

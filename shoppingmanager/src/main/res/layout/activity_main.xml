@@ -1,140 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/imageShooting"
+    <ImageView
+        android:id="@+id/itemRegistration"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:adjustViewBounds="true"
+        android:text="상품정보 등록하기"
+        android:textSize="30dp"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/guideline7"
+        app:layout_constraintTop_toTopOf="@+id/guideline1"
+        app:srcCompat="@drawable/menu1"/>
+
+    <ImageView
+        android:id="@+id/btn_eventRegistration"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:adjustViewBounds="true"
+        android:text="할인정보 등록하기"
+        android:textSize="30dp"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="@+id/guideline7"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline1"
+        app:srcCompat="@drawable/menu2"/>
+
+    <ImageView
+        android:id="@+id/btn_discountList"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="7dp"
+        android:adjustViewBounds="true"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/guideline7"
+        app:layout_constraintTop_toBottomOf="@+id/itemRegistration"
+        app:srcCompat="@drawable/menu3"/>
+
+    <ImageView
+        android:id="@+id/priceModification"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:adjustViewBounds="true"
+        android:text="가격 수정하기"
+        android:textSize="30dp"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="@+id/guideline7"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_eventRegistration"
+        app:srcCompat="@drawable/menu4"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:text="이미지 촬영" />
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.15"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="77dp"/>
 
-    <Button
-        android:id="@+id/listInquiry"
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/imageShooting"
-        android:text="리스트 조회" />
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5"
+        tools:layout_editor_absoluteX="192dp"
+        tools:layout_editor_absoluteY="0dp"/>
 
-    <TextView
-        android:id="@+id/itemNameTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignTop="@+id/itemNameEditText"
-        android:layout_marginLeft="33dp"
-        android:layout_marginStart="33dp"
-        android:layout_toLeftOf="@+id/itemNameEditText"
-        android:layout_toStartOf="@+id/itemNameEditText"
-        android:gravity="center_vertical"
-        android:text="이름"
-        android:textColor="@android:color/black"
-        android:textSize="20dp" />
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/guideline1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/title"/>
 
-    <EditText
-        android:id="@+id/itemNameEditText"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/listInquiry"
-        android:layout_marginEnd="40dp"
-        android:layout_marginRight="40dp"
-        android:layout_marginTop="23dp"
-        android:ems="10"
-        android:inputType="textPersonName" />
-
-    <TextView
-        android:id="@+id/itemPriceTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_alignLeft="@+id/itemNameTextView"
-        android:layout_alignStart="@+id/itemNameTextView"
-        android:layout_alignTop="@+id/itemPriceEditText"
-        android:layout_toLeftOf="@+id/itemPriceEditText"
-        android:gravity="center_vertical"
-        android:text="가격"
-        android:textColor="@android:color/black"
-        android:textSize="20dp" />
-
-    <EditText
-        android:id="@+id/itemPriceEditText"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_below="@+id/itemNameEditText"
-        android:layout_marginTop="20dp"
-        android:layout_toEndOf="@+id/itemNameTextView"
-        android:layout_toRightOf="@+id/itemNameTextView"
-        android:ems="10"
-        android:inputType="textPersonName" />
-
-    <TextView
-        android:id="@+id/itemIdTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_alignLeft="@+id/itemPriceTextView"
-        android:layout_alignStart="@+id/itemPriceTextView"
-        android:layout_below="@+id/itemPriceTextView"
-        android:layout_marginTop="28dp"
-        android:layout_toLeftOf="@+id/itemIdEditText"
-        android:gravity="center_vertical"
-        android:text="아이디"
-        android:textColor="@android:color/black"
-        android:textSize="20dp" />
-
-    <EditText
-        android:id="@+id/itemIdEditText"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_above="@+id/itemUnitTextView"
-        android:layout_toEndOf="@+id/itemPriceTextView"
-        android:layout_toRightOf="@+id/itemPriceTextView"
-        android:ems="10"
-        android:inputType="textPersonName" />
-
-    <TextView
-        android:id="@+id/itemUnitTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_alignLeft="@+id/itemIdTextView"
-        android:layout_alignStart="@+id/itemIdTextView"
-        android:layout_below="@+id/itemIdTextView"
-        android:layout_marginTop="22dp"
-        android:layout_toLeftOf="@+id/itemUnitEditText"
-        android:layout_toStartOf="@+id/itemUnitEditText"
-        android:gravity="center_vertical"
-        android:text="단위"
-        android:textColor="@android:color/black"
-        android:textSize="20dp" />
-
-    <EditText
-        android:id="@+id/itemUnitEditText"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_alignTop="@+id/itemUnitTextView"
-        android:layout_toEndOf="@+id/itemIdTextView"
-        android:layout_toRightOf="@+id/itemIdTextView"
-        android:ems="10"
-        android:inputType="textPersonName" />
-
-    <Button
-        android:id="@+id/registration"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentStart="true"
-        android:text="등록하기" />
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>
